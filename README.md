@@ -2,7 +2,7 @@
 A Simple Tool for Parsing Quotations
 
 ## Simple Installation
-Drop the qris.exe binary into the /Windows/System32/ folder.
+Drop the `qris.exe` binary into the `/Windows/System32/` folder.
 
 ## Using the Tool
 Open a terminal box.
