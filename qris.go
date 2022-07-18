@@ -278,8 +278,18 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 	year := pf.Citation.Year
 
 	for _, q := range pf.Quotes {
+
+		// Abstract to hold first 55 characters of quote body.
+		var abst string
+		if len(q.Body) < 55 {
+			abst = q.Body
+		} else {
+			abst = q.Body[:55]
+		}
+
 		fmt.Fprintln(file, "TY  - ABST")
 		fmt.Fprintln(file, "C5  -", fid)
+		fmt.Fprintln(file, "T1  -", abst)
 		fmt.Fprintln(file, "AB  -", cit)
 		fmt.Fprintln(file, "A1  -", name)
 		fmt.Fprintln(file, "Y1  -", year)
