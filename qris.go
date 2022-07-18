@@ -35,6 +35,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 )
 
 // A `Line` is a string of content coupled with a line number reference to the
@@ -273,6 +274,7 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 	defer file.Close()
 
 	fid := strings.TrimSuffix(pf.Filename, filepath.Ext(pf.Filename))
+	tstamp := time.Now()
 	cit := pf.Citation.Body
 	name := pf.Citation.Name
 	year := pf.Citation.Year
@@ -289,6 +291,7 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 
 		fmt.Fprintln(file, "TY  - ABST")
 		fmt.Fprintln(file, "C5  -", fid)
+		fmt.Fprintln(file, "ID  -", tstamp)
 		fmt.Fprintln(file, "T1  -", abst)
 		fmt.Fprintln(file, "AB  -", cit)
 		fmt.Fprintln(file, "A1  -", name)
