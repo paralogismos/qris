@@ -273,7 +273,6 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 	defer file.Close()
 
 	fid := strings.TrimSuffix(pf.Filename, filepath.Ext(pf.Filename))
-	//	src := pf.Title
 	cit := pf.Citation.Body
 	name := pf.Citation.Name
 	year := pf.Citation.Year
