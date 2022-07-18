@@ -85,31 +85,5 @@ func main() {
 		pf := qris.ParseFile(pFile)
 		qris.WriteDiscards(pf.Discards, pDiscard)
 		qris.WriteQuotes(&pf, pQuotes)
-		/*
-			fmt.Println("\n*************************")
-			fmt.Println("Quotes file:", pQuotes)
-			fmt.Println("Discard file:", pDiscard)
-			fmt.Println("File:", pf.Filename)
-			fmt.Println("Source:", pf.Title)
-			fmt.Println("Citation:", pf.Citation.Body)
-			fmt.Println("    Name:", pf.Citation.Name)
-			fmt.Println("    Year:", pf.Citation.Year)
-			fmt.Println("-------------------------")
-			fmt.Println("-        QUOTES         -")
-			fmt.Println("-------------------------")
-			for _, q := range pf.Quotes {
-				fmt.Println(q.Body)
-				fmt.Println("    Page:", q.Page)
-				fmt.Println("    Supp:", q.Supp, "\n")
-			}
-		*/
-		//		fmt.Println("-------------------------")
-		//		fmt.Println("-       DISCARDS        -")
-		//		fmt.Println("-------------------------")
-		//		for _, d := range pf.Discards {
-		//			fmt.Println("<", d.LineNo, ">")
-		//			fmt.Println(d.Body, "\n")
-		//		}
-		//		fmt.Println("*************************\n")
 	}
 }
