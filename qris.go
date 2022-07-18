@@ -281,7 +281,6 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 	for _, q := range pf.Quotes {
 		fmt.Fprintln(file, "TY  - ABST")
 		fmt.Fprintln(file, "ID  -", id)
-		fmt.Fprintln(file, "T1  -", src)
 		fmt.Fprintln(file, "C1  -", cit)
 		fmt.Fprintln(file, "A1  -", name)
 		fmt.Fprintln(file, "Y1  -", year)
