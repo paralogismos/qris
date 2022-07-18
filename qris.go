@@ -25,7 +25,7 @@
 //       [discarded line]
 //
 
-package engine
+package qris
 
 import (
 	"bufio"

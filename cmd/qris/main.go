@@ -67,7 +67,7 @@ func main() {
 	var dataList []string
 
 	if os.Args[1] == "-b" {
-		dataList = engine.GetFileList(absInputPath) // parsed from input file
+		dataList = qris.GetFileList(absInputPath) // parsed from input file
 	} else {
 		dataList = append(dataList, filepath.Base(absInputPath)) // parsed from command-line
 	}
@@ -82,9 +82,9 @@ func main() {
 		// File to store discarded lines
 		pDiscard := base + "_DISCARD.txt"
 
-		pf := engine.ParseFile(pFile)
-		engine.WriteDiscards(pf.Discards, pDiscard)
-		engine.WriteQuotes(&pf, pQuotes)
+		pf := qris.ParseFile(pFile)
+		qris.WriteDiscards(pf.Discards, pDiscard)
+		qris.WriteQuotes(&pf, pQuotes)
 		/*
 			fmt.Println("\n*************************")
 			fmt.Println("Quotes file:", pQuotes)
