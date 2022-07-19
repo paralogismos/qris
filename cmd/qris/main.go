@@ -47,7 +47,7 @@ func main() {
 		fmt.Println(usr.HomeDir) // display home directory
 		os.Exit(0)
 	} else if os.Args[1] == "-b" {
-		inputPath = os.Args[2] // path to file containing list of files
+		inputPath = os.Args[2] // path to folder containing files
 	} else {
 		inputPath = os.Args[1] // path to single file
 	}
@@ -57,19 +57,32 @@ func main() {
 	// taken from the command-line.
 	//	testInput := "/rees_quotes/qris_test.txt"
 
-	// path to file or list to be processed
+	// path to file or folder to be processed
 	absInputPath := filepath.Join(usr.HomeDir, inputPath)
 
 	// directory of files to be processed
-	dataPath := filepath.Dir(absInputPath)
+	var dataPath string
+	if os.Args[1] == "-b" {
+		dataPath = absInputPath
+	} else {
+		dataPath = filepath.Dir(absInputPath)
+	}
 
 	// list of files to be processed
 	var dataList []string
 
 	if os.Args[1] == "-b" {
-		dataList = qris.GetFileList(absInputPath) // parsed from input file
+		files, err := os.ReadDir(absInputPath)
+		if err != nil {
+			log.Fatal(err)
+		}
+		// create list of files in working directory
+		for _, file := range files {
+			dataList = append(dataList, file.Name())
+		}
 	} else {
-		dataList = append(dataList, filepath.Base(absInputPath)) // parsed from command-line
+		// create list containing only one file from command-line
+		dataList = append(dataList, filepath.Base(absInputPath))
 	}
 
 	// Parse all files
