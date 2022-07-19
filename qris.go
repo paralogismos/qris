@@ -273,8 +273,15 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 	}
 	defer file.Close()
 
+	// batch ID
+	bid := filepath.Base(filepath.Dir(fname))
+
+	// file ID
 	fid := strings.TrimSuffix(pf.Filename, filepath.Ext(pf.Filename))
+
+	// timestamp: when file was processed
 	tstamp := time.Now()
+
 	cit := pf.Citation.Body
 	name := pf.Citation.Name
 	year := pf.Citation.Year
@@ -290,6 +297,7 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 		}
 
 		fmt.Fprintln(file, "TY  - ABST")
+		fmt.Fprintln(file, "AV  -", bid)
 		fmt.Fprintln(file, "C5  -", fid)
 		fmt.Fprintln(file, "ID  -", tstamp)
 		fmt.Fprintln(file, "T1  -", abst)
