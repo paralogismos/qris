@@ -30,7 +30,7 @@ func main() {
 	// Parse command line flags
 	home := flag.Bool("home", false, "Show user's home directory")
 	batch := flag.Bool("batch", false, "Batch process files")
-
+	valid := flag.Bool("valid", false, "Validate UTF8 files")
 	flag.Parse()
 
 	// Collect path information from command line.
@@ -54,6 +54,8 @@ func main() {
 	case *batch:
 		// User wants to batch-process files.
 		dataPath = absInputPath // path to folder containing files
+	case *valid:
+		fallthrough
 	default:
 		// No flags are acceptable only when a filepath is provided.
 		if !isPath {
@@ -79,18 +81,38 @@ func main() {
 		dataList = append(dataList, filepath.Base(absInputPath))
 	}
 
-	// Parse all files
-	for _, file := range dataList {
-		// File to store parsed quotes
-		pFile := filepath.Join(dataPath, file)
-		base := strings.TrimSuffix(pFile, filepath.Ext(pFile))
-		pQuotes := base + "_PARSED.ris"
+	if *valid {
+		// Only validate files.
+		n := len(dataList)
+		if n == 1 {
+			fmt.Println("Validating one file....")
+		} else {
+			fmt.Printf("Validating %d files....\n", n)
+		}
+		allPassed := true
+		for _, file := range dataList {
+			fmt.Println(file)
+			vFile := filepath.Join(dataPath, file)
+			isPassed := qris.ValidateUTF8(vFile)
+			allPassed = allPassed && isPassed
+		}
+		if allPassed {
+			fmt.Println("All files were valid UTF8.")
+		}
+	} else {
+		// Parse all files.
+		for _, file := range dataList {
+			// File to store parsed quotes
+			pFile := filepath.Join(dataPath, file)
+			base := strings.TrimSuffix(pFile, filepath.Ext(pFile))
+			pQuotes := base + "_PARSED.ris"
 
-		// File to store discarded lines
-		pDiscard := base + "_DISCARD.txt"
+			// File to store discarded lines
+			pDiscard := base + "_DISCARD.txt"
 
-		pf := qris.ParseFile(pFile)
-		qris.WriteDiscards(pf.Discards, pDiscard)
-		qris.WriteQuotes(&pf, pQuotes)
+			pf := qris.ParseFile(pFile)
+			qris.WriteDiscards(pf.Discards, pDiscard)
+			qris.WriteQuotes(&pf, pQuotes)
+		}
 	}
 }

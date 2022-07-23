@@ -36,6 +36,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+	"unicode/utf8"
 )
 
 // A `Line` is a string of content coupled with a line number reference to the
@@ -309,4 +310,25 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 		fmt.Fprintln(file, "AD  -", q.Supp)
 		fmt.Fprintln(file, "ER  -")
 	}
+}
+
+func ValidateUTF8(fpath string) bool {
+	file, err := os.Open(fpath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	lineNo := 1
+	isValid := true
+	for scanner.Scan() {
+		if !utf8.ValidString(scanner.Text()) {
+			fmt.Printf("  + First invalid UTF8 in line %d\n", lineNo)
+			isValid = false
+			break
+		}
+		lineNo++
+	}
+	return isValid
 }
