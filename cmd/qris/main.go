@@ -29,7 +29,6 @@ func main() {
 
 	// Parse command line flags
 	dir := flag.String("dir", "", "Set current working directory")
-	home := flag.Bool("home", false, "Show user's home directory")
 	batch := flag.Bool("batch", false, "Batch process files")
 	valid := flag.Bool("valid", false, "Validate UTF8 files")
 	flag.Parse()
@@ -73,10 +72,6 @@ func main() {
 	fmt.Println("Working in directory", workDir)
 
 	switch {
-	case *home:
-		// User requests home directory display.
-		fmt.Println(usr.HomeDir) // display home directory
-		os.Exit(0)
 	case *batch:
 		// User wants to batch-process files.
 		dataPath = absInputPath // path to folder containing files
