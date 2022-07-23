@@ -10,14 +10,14 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
 	"os/user"
 	"path/filepath"
-	"strings"
-
 	"qris"
+	"strings"
 )
 
 func main() {
@@ -27,51 +27,45 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Process command-line arguments
+	// Parse command line flags
+	home := flag.Bool("home", false, "Show user's home directory")
+	batch := flag.Bool("batch", false, "Batch process files")
 
-	// Develop multiple file entry option?
+	flag.Parse()
 
-	// Help facility
-	if len(os.Args) < 2 {
-		fmt.Println("Usage:")
-		fmt.Println(os.Args[0], "               -- This help screen")
-		fmt.Println(os.Args[0], "-h             -- display home directory path")
-		fmt.Println(os.Args[0], "[filename]     -- process a single file")
-		fmt.Println(os.Args[0], "-b [filename]  -- process a list of files")
-		os.Exit(0)
+	// Collect path information from command line.
+	var inputPath string
+	var absInputPath string
+	var dataPath string
+	isPath := false
+	if len(flag.Args()) > 0 {
+		isPath = true
+		inputPath = flag.Args()[0]
+		absInputPath = filepath.Join(usr.HomeDir, inputPath)
+		// Initialize `dataPath` assuming single file (-batch is false)
+		dataPath = filepath.Dir(absInputPath)
 	}
 
-	// Collect user path entry.
-	inputPath := ""
-	if os.Args[1] == "-h" {
+	switch {
+	case *home:
+		// User requests home directory display.
 		fmt.Println(usr.HomeDir) // display home directory
 		os.Exit(0)
-	} else if os.Args[1] == "-b" {
-		inputPath = os.Args[2] // path to folder containing files
-	} else {
-		inputPath = os.Args[1] // path to single file
-	}
-
-	// Obtain list of files to work from
-	// In a simple command-line interface, `testInput` should be a parameter
-	// taken from the command-line.
-	//	testInput := "/rees_quotes/qris_test.txt"
-
-	// path to file or folder to be processed
-	absInputPath := filepath.Join(usr.HomeDir, inputPath)
-
-	// directory of files to be processed
-	var dataPath string
-	if os.Args[1] == "-b" {
-		dataPath = absInputPath
-	} else {
-		dataPath = filepath.Dir(absInputPath)
+	case *batch:
+		// User wants to batch-process files.
+		dataPath = absInputPath // path to folder containing files
+	default:
+		// No flags are acceptable only when a filepath is provided.
+		if !isPath {
+			flag.Usage()
+			os.Exit(1)
+		}
 	}
 
 	// list of files to be processed
 	var dataList []string
 
-	if os.Args[1] == "-b" {
+	if *batch {
 		files, err := os.ReadDir(absInputPath)
 		if err != nil {
 			log.Fatal(err)
