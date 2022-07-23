@@ -48,6 +48,10 @@ func main() {
 	}
 
 	// Get current working directory.
+	// TODO: look in home directory (~/qris/) for a config file
+	//       that stores a working directory path. If it exists,
+	//       set the current working directory accordingly.
+	//       Otherwise use `os.Getwd()` to get it from the system.
 	workDir, err := os.Getwd()
 	if err != nil {
 		fmt.Println("Unable to get working directory")
@@ -55,6 +59,8 @@ func main() {
 	}
 
 	// Set working directory.
+	// TODO: store the new current working directory path in a
+	//       config file in the home directory (~/qris/).
 	if *dir != "" {
 		workDir, err = filepath.Abs(*dir)
 		if err != nil {
