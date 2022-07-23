@@ -11,7 +11,7 @@ You can type `qris` , `qris -h`, or `qris -help` to see a help menu.
 
 Type `qris -home` to see the path to your home directory.
 
-Place a workspace folder in your home directory. This folder should contain any files to be parsed. Below, `<directory path>` is the path to a workspace folder which is assumed to be under your home directory. Note that this path _must not include the name of your home directory_. In other words, `<directory path>` is the path to your workspace folder relative to your home directory. 
+Place a workspace folder in your home directory. This folder should contain any files to be parsed. Below, `<directory path>` is the path to a workspace folder which is assumed to be under your home directory. Note that this path _must not include the name of your home directory_. In other words, `<directory path>` is the path to your workspace folder relative to your home directory. Similarly, `<file path>` is the path to an actual file to be parsed, relative to your home directory.
 
 ### Parsing One File
 To parse one file, type `qris <file path>`.
