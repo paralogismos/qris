@@ -28,6 +28,7 @@ func main() {
 	}
 
 	// Parse command line flags
+	dir := flag.String("dir", "", "Set current working directory")
 	home := flag.Bool("home", false, "Show user's home directory")
 	batch := flag.Bool("batch", false, "Batch process files")
 	valid := flag.Bool("valid", false, "Validate UTF8 files")
@@ -45,6 +46,25 @@ func main() {
 		// Initialize `dataPath` assuming single file (-batch is false)
 		dataPath = filepath.Dir(absInputPath)
 	}
+
+	// Get current working directory.
+	workDir, err := os.Getwd()
+	if err != nil {
+		fmt.Println("Unable to get working directory")
+		os.Exit(1)
+	}
+
+	// Set working directory.
+	if *dir != "" {
+		workDir, err = filepath.Abs(*dir)
+		if err != nil {
+			fmt.Println("Unable to update working directory")
+			os.Exit(1)
+		}
+	}
+
+	// Always show current working directory.
+	fmt.Println("Working in directory", workDir)
 
 	switch {
 	case *home:
