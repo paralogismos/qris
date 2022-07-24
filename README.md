@@ -23,6 +23,7 @@ Usage of qris:
   -v    Validate UTF8 files.
 ```
 
+### Setting a Working Directory
 Whenever the `qris` command is invoked, the current working directory is displayed.
 
 Type `qris -d` to set a working directory. The argument to the `-d` flag can be either an absolute path or a path relative to the current working directory. If no working directory is set, `qris` uses whatever working directory the system has assigned to your terminal window.
