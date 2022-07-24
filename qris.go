@@ -335,7 +335,7 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 		fmt.Fprintln(file, "AB  -", citBody)
 		fmt.Fprintln(file, "A1  -", citName)
 		fmt.Fprintln(file, "Y1  -", citYear)
-		fmt.Fprintln(file, "CN  -", citNote)
+		fmt.Fprintln(file, "T2  -", citNote)
 		fmt.Fprintln(file, "T3  -", q.Body)
 		fmt.Fprintln(file, "SP  -", q.Page)
 		fmt.Fprintln(file, "PB  -", q.Supp)
