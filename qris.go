@@ -281,11 +281,11 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 	fid := strings.TrimSuffix(pf.Filename, filepath.Ext(pf.Filename))
 
 	// timestamp: when file was processed
-	tstamp := time.Now()
+	tstamp := time.Now().Format("2006/01/02")
 
 	cit := pf.Citation.Body
 	name := pf.Citation.Name
-	year := pf.Citation.Year + "///Spring" // Modified to fit YYYY/MM/DD/OTHER
+	year := pf.Citation.Year
 
 	for _, q := range pf.Quotes {
 
@@ -298,17 +298,17 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 			abst = q.Body[:abstSize]
 		}
 
-		fmt.Fprintln(file, "TY  - ABST")
+		fmt.Fprintln(file, "TY  - Generic")
 		fmt.Fprintln(file, "VL  -", bid)
-		fmt.Fprintln(file, "C5  -", fid)
-		fmt.Fprintln(file, "ID  -", tstamp)
+		fmt.Fprintln(file, "UR  -", fid)
+		fmt.Fprintln(file, "AD  -", tstamp)
 		fmt.Fprintln(file, "T1  -", abst)
 		fmt.Fprintln(file, "AB  -", cit)
 		fmt.Fprintln(file, "A1  -", name)
 		fmt.Fprintln(file, "Y1  -", year)
 		fmt.Fprintln(file, "T3  -", q.Body)
 		fmt.Fprintln(file, "SP  -", q.Page)
-		fmt.Fprintln(file, "AD  -", q.Supp)
+		fmt.Fprintln(file, "PB  -", q.Supp)
 		fmt.Fprintln(file, "ER  -")
 	}
 }
