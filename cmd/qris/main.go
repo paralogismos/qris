@@ -15,7 +15,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/user"
 	"path/filepath"
 	"strings"
 
@@ -23,15 +22,8 @@ import (
 )
 
 func main() {
-	// Get user's home directory.
-	usr, err := user.Current()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	absHomePath := usr.HomeDir
-
 	// Parse command line flags
+	conf := flag.Bool("config", false, "Show path to configuration file.")
 	dir := flag.String("dir", "",
 		"Set the current working directory.")
 	filePath := flag.String("f", "",
@@ -47,16 +39,41 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Check for config directory and create if missing.
+	const configDir = "qris"
+	const configFile = "qris.conf"
+	var configPath string
+	userConfig, err := os.UserConfigDir()
+	if err != nil {
+		fmt.Println("Unable to access user configuration directory")
+	} else {
+		configDirPath := filepath.Join(userConfig, configDir)
+		_, err := os.ReadDir(configDirPath)
+		if err != nil {
+			err := os.Mkdir(configDirPath, 0666)
+			if err != nil {
+				fmt.Println("Unable to create configuration directory")
+			}
+		}
+		configPath = filepath.Join(userConfig, configDir, configFile)
+	}
+
+	if *conf {
+		fmt.Println("Configuration file at", configPath)
+	}
+
 	// Get current working directory.
-	// TODO: look in home directory (~/qris/) for a config file
-	//       that stores a working directory path. If it exists,
-	//       set the current working directory accordingly.
-	//       Otherwise use `os.Getwd()` to get it from the system.
+	// Look in home directory (~/qris/) for a config file that stores
+	// a working directory path. If it exists, set the current working
+	// directory accordingly. Otherwise use `os.Getwd()` to get it from
+	// the system.
 	var workDir string
-	config, err := os.Open(filepath.Join(absHomePath, "qris/qris.conf"))
+	config, err := os.Open(configPath)
 	if err == nil {
 		scanner := bufio.NewScanner(config)
-		workDir = scanner.Text()
+		if scanner.Scan() {
+			workDir = scanner.Text()
+		}
 	} else {
 		workDir, err = os.Getwd()
 		if err != nil {
@@ -67,8 +84,7 @@ func main() {
 	config.Close()
 
 	// Set working directory.
-	// TODO: store the new current working directory path in a
-	//       config file in the home directory (~/qris/).
+	// Store the new current working directory path in a configuration file.
 	if *dir != "" {
 		workDir, err = filepath.Abs(*dir)
 		if err != nil {
@@ -79,6 +95,14 @@ func main() {
 			fmt.Println("Unable to update working directory")
 			os.Exit(1)
 		}
+		config, err := os.Create(configPath)
+		if err != nil {
+			fmt.Println("Unable to create configuration file")
+		} else {
+			fmt.Println("Storing config data:", workDir)
+			fmt.Fprintln(config, workDir)
+		}
+		config.Close()
 	}
 
 	// Always show current working directory.
