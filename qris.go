@@ -289,12 +289,13 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 
 	for _, q := range pf.Quotes {
 
-		// Abstract to hold first 55 characters of quote body.
+		// Abstract to hold first characters of quote body.
+		const abstSize = 100
 		var abst string
-		if len(q.Body) < 55 {
+		if len(q.Body) < abstSize {
 			abst = q.Body
 		} else {
-			abst = q.Body[:55]
+			abst = q.Body[:abstSize]
 		}
 
 		fmt.Fprintln(file, "TY  - ABST")
