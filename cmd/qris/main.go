@@ -30,7 +30,7 @@ func main() {
 		"Path to a file to be parsed, relative to working directory.")
 	batchPath := flag.String("b", "",
 		"Path to a directory containing files to be parsed, relative to working directory.")
-	valid := flag.Bool("v", false, "Validate UTF8 files.")
+	validate := flag.Bool("v", false, "Validate UTF8 files.")
 	flag.Parse()
 
 	if *filePath != "" && *batchPath != "" {
@@ -73,6 +73,14 @@ func main() {
 		scanner := bufio.NewScanner(config)
 		if scanner.Scan() {
 			workDir = scanner.Text()
+			if os.Chdir(workDir) != nil {
+				fmt.Println("Unable to use configured working directory")
+				workDir, err = os.Getwd()
+				if err != nil {
+					fmt.Println("Unable to get current working directory")
+					os.Exit(1)
+				}
+			}
 		}
 	} else {
 		workDir, err = os.Getwd()
@@ -119,7 +127,7 @@ func main() {
 	// First populate `dataList` with any batch files.
 	if *batchPath != "" {
 		// Allow dot argument to indicate batch files found in working directory.
-		if workPath == "." {
+		if *batchPath == "." {
 			workPath = workDir
 		} else {
 			workPath, _ = filepath.Abs(*batchPath)
@@ -142,38 +150,32 @@ func main() {
 		}
 	}
 
-	if *valid {
-		// Only validate files.
-		n := len(dataList)
-		if n == 1 {
-			fmt.Println("Validating one file....")
-		} else {
-			fmt.Printf("Validating %d files....\n", n)
-		}
-		allPassed := true
-		for _, file := range dataList {
-			fmt.Println(file)
-			vFile := filepath.Join(workPath, file)
-			isPassed := qris.ValidateUTF8(vFile)
-			allPassed = allPassed && isPassed
-		}
-		if allPassed {
-			fmt.Println("All files were valid UTF8.")
-		}
-	} else {
-		// Parse all files.
-		for _, file := range dataList {
-			// File to store parsed quotes
-			pFile := filepath.Join(workPath, file)
-			base := strings.TrimSuffix(pFile, filepath.Ext(pFile))
-			pQuotes := base + "_PARSED.ris"
+	// Parse all files.
+	allPassed := true // For UTF8 validation option
+	for _, file := range dataList {
 
-			// File to store discarded lines
-			pDiscard := base + "_DISCARD.txt"
+		// Display file name as it is processed
+		fmt.Println(file)
 
-			pf := qris.ParseFile(pFile)
-			qris.WriteDiscards(pf.Discards, pDiscard)
-			qris.WriteQuotes(&pf, pQuotes)
+		// File path to process
+		pFile := filepath.Join(workPath, file)
+
+		if *validate {
+			allPassed = allPassed && qris.ValidateUTF8(pFile)
 		}
+
+		// File to store parsed quotes
+		base := strings.TrimSuffix(pFile, filepath.Ext(pFile))
+		pQuotes := base + "_PARSED.ris"
+
+		// File to store discarded lines
+		pDiscard := base + "_DISCARD.txt"
+
+		pf := qris.ParseFile(pFile)
+		qris.WriteDiscards(pf.Discards, pDiscard)
+		qris.WriteQuotes(&pf, pQuotes)
+	}
+	if *validate && allPassed {
+		fmt.Println("All files were valid UTF8.")
 	}
 }
