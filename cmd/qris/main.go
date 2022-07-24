@@ -27,24 +27,17 @@ func main() {
 		log.Fatal(err)
 	}
 
+	fmt.Println("Home directory:", usr.HomeDir)
+
 	// Parse command line flags
-	dir := flag.String("dir", "", "Set current working directory")
-	batch := flag.Bool("batch", false, "Batch process files")
+	dir := flag.String("dir", "",
+		"Set current working directory")
+	filePath := flag.String("f", "",
+		"Path to a file to be parsed")
+	batchPath := flag.String("b", "",
+		"Path to a directory containing files to be parsed")
 	valid := flag.Bool("valid", false, "Validate UTF8 files")
 	flag.Parse()
-
-	// Collect path information from command line.
-	var inputPath string
-	var absInputPath string
-	var dataPath string
-	isPath := false
-	if len(flag.Args()) > 0 {
-		isPath = true
-		inputPath = flag.Args()[0]
-		absInputPath = filepath.Join(usr.HomeDir, inputPath)
-		// Initialize `dataPath` assuming single file (-batch is false)
-		dataPath = filepath.Dir(absInputPath)
-	}
 
 	// Get current working directory.
 	// TODO: look in home directory (~/qris/) for a config file
@@ -63,6 +56,10 @@ func main() {
 	if *dir != "" {
 		workDir, err = filepath.Abs(*dir)
 		if err != nil {
+			fmt.Println("Unable to create new working directory")
+			os.Exit(1)
+		}
+		if os.Chdir(workDir) != nil {
 			fmt.Println("Unable to update working directory")
 			os.Exit(1)
 		}
@@ -71,25 +68,19 @@ func main() {
 	// Always show current working directory.
 	fmt.Println("Working in directory", workDir)
 
-	switch {
-	case *batch:
-		// User wants to batch-process files.
-		dataPath = absInputPath // path to folder containing files
-	case *valid:
-		fallthrough
-	default:
-		// No flags are acceptable only when a filepath is provided.
-		if !isPath {
-			flag.Usage()
-			os.Exit(1)
-		}
-	}
-
-	// list of files to be processed
+	// `dataList` is a list of files to be processed.
 	var dataList []string
 
-	if *batch {
-		files, err := os.ReadDir(absInputPath)
+	// `workPath` is the absolute path to files to be processed.
+	// `batchPath` may include directory structure relative to the
+	// working directory, and this additional directory structure is
+	// included in `workPath`.
+	var workPath string
+
+	// First populate `dataList` with any batch files.
+	if *batchPath != "" {
+		workPath, _ = filepath.Abs(*batchPath)
+		files, err := os.ReadDir(workPath)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -98,8 +89,13 @@ func main() {
 			dataList = append(dataList, file.Name())
 		}
 	} else {
-		// create list containing only one file from command-line
-		dataList = append(dataList, filepath.Base(absInputPath))
+		// Otherwise add a single file to `dataList` if one was supplied.
+		if *filePath != "" {
+			workPath, err = filepath.Abs(*filePath)
+			var workFile string
+			workPath, workFile = filepath.Split(workPath)
+			dataList = append(dataList, workFile)
+		}
 	}
 
 	if *valid {
@@ -113,7 +109,7 @@ func main() {
 		allPassed := true
 		for _, file := range dataList {
 			fmt.Println(file)
-			vFile := filepath.Join(dataPath, file)
+			vFile := filepath.Join(workPath, file)
 			isPassed := qris.ValidateUTF8(vFile)
 			allPassed = allPassed && isPassed
 		}
@@ -124,7 +120,7 @@ func main() {
 		// Parse all files.
 		for _, file := range dataList {
 			// File to store parsed quotes
-			pFile := filepath.Join(dataPath, file)
+			pFile := filepath.Join(workPath, file)
 			base := strings.TrimSuffix(pFile, filepath.Ext(pFile))
 			pQuotes := base + "_PARSED.ris"
 
