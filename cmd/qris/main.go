@@ -99,7 +99,6 @@ func main() {
 		if err != nil {
 			fmt.Println("Unable to create configuration file")
 		} else {
-			fmt.Println("Storing config data:", workDir)
 			fmt.Fprintln(config, workDir)
 		}
 		config.Close()
