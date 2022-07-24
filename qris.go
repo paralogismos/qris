@@ -178,7 +178,7 @@ func cleanLines(lines Lines) Lines {
 }
 
 // Regular Expressions
-var citationName = regexp.MustCompile(`^\pL+`)
+var citationName = regexp.MustCompile(`^\pL+,\pZs*\pL+`)
 var citationYear = regexp.MustCompile(`\pN{4}`)
 var quoteEnd = regexp.MustCompile(`\t\s*p+\..*`)
 var quotePage = regexp.MustCompile(`p{1,2}\.\s*\pN+,*\s*\pN*`)
@@ -193,7 +193,7 @@ func ParseFile(fpath string) ParsedFile {
 
 	for _, l := range rls[2:] {
 		if q, ok := parseQuote(l); ok {
-			qs = append(qs, q) // no page or supp yet
+			qs = append(qs, q)
 		} else {
 			ds = append(ds, l)
 		}
@@ -215,10 +215,10 @@ func parseCitation(rl Line) Citation {
 
 	body := rl.Body
 
-	return newCitation(name, year, body) // no name or year yet
+	return newCitation(name, year, body)
 }
 
-// A function stub that always returns an unparsed quote at the moment.
+// TODO: add support for parsing notes following a quote.
 func parseQuote(q Line) (Quote, bool) {
 	lineNo, body, page, supp := 0, "", "", ""
 
@@ -304,7 +304,7 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 		fmt.Fprintln(file, "AD  -", tstamp)
 		fmt.Fprintln(file, "T1  -", abst)
 		fmt.Fprintln(file, "AB  -", cit)
-		fmt.Fprintln(file, "A1  -", name) // last name, first name
+		fmt.Fprintln(file, "A1  -", name)
 		fmt.Fprintln(file, "Y1  -", year)
 		fmt.Fprintln(file, "T3  -", q.Body)
 		fmt.Fprintln(file, "SP  -", q.Page)
