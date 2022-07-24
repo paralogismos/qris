@@ -21,6 +21,8 @@ import (
 	"qris"
 )
 
+const qrisVersion = "v0.5.0-alpha"
+
 func main() {
 	// Parse command line flags
 	conf := flag.Bool("config", false, "Show path to configuration file.")
@@ -111,6 +113,9 @@ func main() {
 		}
 		config.Close()
 	}
+
+	// Always show current qris version
+	fmt.Println("qris version", qrisVersion)
 
 	// Always show current working directory.
 	fmt.Println("Working in directory", workDir)
