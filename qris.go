@@ -285,7 +285,7 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 
 	cit := pf.Citation.Body
 	name := pf.Citation.Name
-	year := pf.Citation.Year
+	year := pf.Citation.Year + "///Spring" // Modified to fit YYYY/MM/DD/OTHER
 
 	for _, q := range pf.Quotes {
 
