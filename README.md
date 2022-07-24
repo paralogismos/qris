@@ -10,15 +10,16 @@ Open a terminal box.
 You can type `qris` , `qris -h`, or `qris -help` to see the following help menu:
 
 ```
+$ qris -help
 Usage of qris:
   -b string
-        Path to a directory containing files to be parsed, relative to working directory.
+        Path to a directory containing files to be parsed, absolute or relative.
   -config
         Show path to configuration file.
   -d string
         Set the current working directory.
   -f string
-        Path to a file to be parsed, relative to working directory.
+        Path to a file to be parsed, absolute or relative.
   -v    Validate UTF8 files.
 ```
 
