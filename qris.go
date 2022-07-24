@@ -7,16 +7,20 @@
 //   The first line is the title of the source
 //
 //   The second line is a citation
-//     - the citation should be parsed into family-name, year, and raw-citation
+//     - the citation should be parsed into name, year, raw-citation,
+//       and a note-field
+//       - notes preceding any quotes are assumed to be attached to the citation
 //
 //   The remaining lines are quotes IF they end in a page number, followed
 //   by an optional supplementary field.
 //     - predicate to determine quoteness
-//     - parse raw quotes into quote, page-number, and supplementary-field
+//     - parse raw quotes into quote, page-number, supplementary-field,
+//       and note-field
 //       - supplementary field starts with "^w" delimiter to be discarded
 //
-//   Some quotes are followed by a descriptive line
-//     - can these be identified?
+//   Some quotes are followed by a note ending with "-jmr"
+//     - these should be identified and added to the Note field of a Quote
+//       of the most recent quote, if one exists.
 //
 //   Blank lines are discarded
 //
@@ -64,13 +68,15 @@ type Citation struct {
 	Name string
 	Year string // type doesn't matter since we are writing to a file
 	Body string
+	Note string
 }
 
-func newCitation(name, year, body string) Citation {
+func newCitation(name, year, body, note string) Citation {
 	return Citation{
 		Name: name,
 		Year: year,
 		Body: body,
+		Note: note,
 	}
 }
 
@@ -84,14 +90,16 @@ type Quote struct {
 	Body   string
 	Page   string
 	Supp   string
+	Note   string
 }
 
-func newQuote(lineNo int, body, page, supp string) Quote {
+func newQuote(lineNo int, body, page, supp, note string) Quote {
 	return Quote{
 		LineNo: lineNo,
 		Body:   body,
 		Page:   page,
 		Supp:   supp,
+		Note:   note,
 	}
 }
 
@@ -180,6 +188,7 @@ func cleanLines(lines Lines) Lines {
 // Regular Expressions
 var citationName = regexp.MustCompile(`^\pL+,\pZs*\pL+`)
 var citationYear = regexp.MustCompile(`\pN{4}`)
+var noteEnd = regexp.MustCompile(`jmr$`)
 var quoteEnd = regexp.MustCompile(`\t\s*p+\..*`)
 var quotePage = regexp.MustCompile(`p{1,2}\.\s*\pN+,*\s*\pN*`)
 
@@ -192,13 +201,21 @@ func ParseFile(fpath string) ParsedFile {
 	ds := Lines{}
 
 	for _, l := range rls[2:] {
-		if q, ok := parseQuote(l); ok {
-			qs = append(qs, q)
+		if n, ok := parseNote(l); ok {
+			lastQuoteIdx := len(qs) - 1
+			if lastQuoteIdx >= 0 {
+				qs[lastQuoteIdx].Note = n
+			} else {
+				cit.Note = n
+			}
 		} else {
-			ds = append(ds, l)
+			if q, ok := parseQuote(l); ok {
+				qs = append(qs, q)
+			} else {
+				ds = append(ds, l)
+			}
 		}
 	}
-
 	return newParsedFile(fn, tit, cit, qs, ds)
 }
 
@@ -214,8 +231,18 @@ func parseCitation(rl Line) Citation {
 	}
 
 	body := rl.Body
+	note := ""
 
-	return newCitation(name, year, body)
+	return newCitation(name, year, body, note)
+}
+
+func parseNote(l Line) (string, bool) {
+	isNote := false
+	body := strings.TrimSpace(l.Body)
+	if noteEnd.FindStringIndex(body) != nil {
+		isNote = true
+	}
+	return body, isNote
 }
 
 // TODO: add support for parsing notes following a quote.
@@ -251,7 +278,8 @@ func parseQuote(q Line) (Quote, bool) {
 		}
 	}
 
-	return newQuote(lineNo, body, page, supp), isQuote
+	note := ""
+	return newQuote(lineNo, body, page, supp, note), isQuote
 }
 
 func WriteDiscards(ds Lines, fname string) {
@@ -283,9 +311,10 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 	// timestamp: when file was processed
 	tstamp := time.Now().Format("2006/01/02")
 
-	cit := pf.Citation.Body
-	name := pf.Citation.Name
-	year := pf.Citation.Year
+	citBody := pf.Citation.Body
+	citName := pf.Citation.Name
+	citYear := pf.Citation.Year
+	citNote := pf.Citation.Note
 
 	for _, q := range pf.Quotes {
 
@@ -303,13 +332,14 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 		fmt.Fprintln(file, "UR  -", fid)
 		fmt.Fprintln(file, "AD  -", tstamp)
 		fmt.Fprintln(file, "T1  -", abst)
-		fmt.Fprintln(file, "AB  -", cit)
-		fmt.Fprintln(file, "A1  -", name)
-		fmt.Fprintln(file, "Y1  -", year)
+		fmt.Fprintln(file, "AB  -", citBody)
+		fmt.Fprintln(file, "A1  -", citName)
+		fmt.Fprintln(file, "Y1  -", citYear)
+		fmt.Fprintln(file, "CN  -", citNote)
 		fmt.Fprintln(file, "T3  -", q.Body)
 		fmt.Fprintln(file, "SP  -", q.Page)
 		fmt.Fprintln(file, "PB  -", q.Supp)
-		//		fmt.Fprintln(file, "CY  -", q.Note)
+		fmt.Fprintln(file, "CY  -", q.Note)
 		fmt.Fprintln(file, "ER  -")
 	}
 }
