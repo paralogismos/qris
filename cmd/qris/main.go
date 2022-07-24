@@ -10,14 +10,16 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"log"
 	"os"
 	"os/user"
 	"path/filepath"
-	"qris"
 	"strings"
+
+	"qris"
 )
 
 func main() {
@@ -27,7 +29,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Home directory:", usr.HomeDir)
+	absHomePath := usr.HomeDir
 
 	// Parse command line flags
 	dir := flag.String("dir", "",
@@ -50,11 +52,19 @@ func main() {
 	//       that stores a working directory path. If it exists,
 	//       set the current working directory accordingly.
 	//       Otherwise use `os.Getwd()` to get it from the system.
-	workDir, err := os.Getwd()
-	if err != nil {
-		fmt.Println("Unable to get working directory")
-		os.Exit(1)
+	var workDir string
+	config, err := os.Open(filepath.Join(absHomePath, "qris/qris.conf"))
+	if err == nil {
+		scanner := bufio.NewScanner(config)
+		workDir = scanner.Text()
+	} else {
+		workDir, err = os.Getwd()
+		if err != nil {
+			fmt.Println("Unable to get current working directory")
+			os.Exit(1)
+		}
 	}
+	config.Close()
 
 	// Set working directory.
 	// TODO: store the new current working directory path in a
@@ -62,7 +72,7 @@ func main() {
 	if *dir != "" {
 		workDir, err = filepath.Abs(*dir)
 		if err != nil {
-			fmt.Println("Unable to create new working directory")
+			fmt.Println("Unable to create new working directory path")
 			os.Exit(1)
 		}
 		if os.Chdir(workDir) != nil {
