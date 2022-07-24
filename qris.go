@@ -298,7 +298,7 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 		}
 
 		fmt.Fprintln(file, "TY  - ABST")
-		fmt.Fprintln(file, "AV  -", bid)
+		fmt.Fprintln(file, "VL  -", bid)
 		fmt.Fprintln(file, "C5  -", fid)
 		fmt.Fprintln(file, "ID  -", tstamp)
 		fmt.Fprintln(file, "T1  -", abst)
