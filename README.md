@@ -46,6 +46,8 @@ To parse a batch of files, type `qris -b <directory path>`.
 
 Here `<directory path>` can be an absolute path, or a path relative to your workspace directory, but in either case the path must lead to a workspace folder which contains files to be parsed.
 
+The `-b` flag also accepts a dot argument, `.`, which indicates that the files in the working directory are to be parsed. Thus, `qris -b batch` tells `qris` to parse the files in the `batch` folder under the working directory, but `qris -b .` tells `qris` to parse the files found directly in the working directory.
+
 All files found in `<directory path>` will be parsed. Two output files, one `.ris` file and one `DISCARD.txt` file, will be created for each input file and placed in the workspace folder.
 
 For example, `qris -b workspace/batch` would parse all files found in the `batch` subdirectory of the `workspace` folder found in your home directory.
