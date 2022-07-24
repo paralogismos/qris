@@ -24,13 +24,13 @@ import (
 func main() {
 	// Parse command line flags
 	conf := flag.Bool("config", false, "Show path to configuration file.")
-	dir := flag.String("dir", "",
+	dir := flag.String("d", "",
 		"Set the current working directory.")
 	filePath := flag.String("f", "",
 		"Path to a file to be parsed, relative to working directory.")
 	batchPath := flag.String("b", "",
 		"Path to a directory containing files to be parsed, relative to working directory.")
-	valid := flag.Bool("valid", false, "Validate UTF8 files.")
+	valid := flag.Bool("v", false, "Validate UTF8 files.")
 	flag.Parse()
 
 	if *filePath != "" && *batchPath != "" {
