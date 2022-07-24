@@ -31,12 +31,12 @@ func main() {
 
 	// Parse command line flags
 	dir := flag.String("dir", "",
-		"Set current working directory")
+		"Set the current working directory.")
 	filePath := flag.String("f", "",
-		"Path to a file to be parsed")
+		"Path to a file to be parsed, relative to working directory.")
 	batchPath := flag.String("b", "",
-		"Path to a directory containing files to be parsed")
-	valid := flag.Bool("valid", false, "Validate UTF8 files")
+		"Path to a directory containing files to be parsed, relative to working directory.")
+	valid := flag.Bool("valid", false, "Validate UTF8 files.")
 	flag.Parse()
 
 	if *filePath != "" && *batchPath != "" {
@@ -85,7 +85,12 @@ func main() {
 
 	// First populate `dataList` with any batch files.
 	if *batchPath != "" {
-		workPath, _ = filepath.Abs(*batchPath)
+		// Allow dot argument to indicate batch files found in working directory.
+		if workPath == "." {
+			workPath = workDir
+		} else {
+			workPath, _ = filepath.Abs(*batchPath)
+		}
 		files, err := os.ReadDir(workPath)
 		if err != nil {
 			log.Fatal(err)
