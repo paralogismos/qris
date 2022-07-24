@@ -39,6 +39,12 @@ func main() {
 	valid := flag.Bool("valid", false, "Validate UTF8 files")
 	flag.Parse()
 
+	if *filePath != "" && *batchPath != "" {
+		fmt.Println("-f and -b flags may not be used together")
+		flag.Usage()
+		os.Exit(1)
+	}
+
 	// Get current working directory.
 	// TODO: look in home directory (~/qris/) for a config file
 	//       that stores a working directory path. If it exists,
