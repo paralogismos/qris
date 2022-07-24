@@ -27,9 +27,9 @@ func main() {
 	dir := flag.String("d", "",
 		"Set the current working directory.")
 	filePath := flag.String("f", "",
-		"Path to a file to be parsed, relative to working directory.")
+		"Path to a file to be parsed, absolute or relative.")
 	batchPath := flag.String("b", "",
-		"Path to a directory containing files to be parsed, relative to working directory.")
+		"Path to a directory containing files to be parsed, absolute or relative.")
 	validate := flag.Bool("v", false, "Validate UTF8 files.")
 	flag.Parse()
 
