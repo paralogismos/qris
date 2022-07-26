@@ -270,6 +270,9 @@ func parseNote(l Line) (string, bool) {
 func parseQuote(q Line) (Quote, bool) {
 	lineNo, body, page, supp := 0, "", "", ""
 
+	// Malformed page numbers are recoreded using `pageUnknown`.
+	const pageUnknown = "00"
+
 	// Predominant Case: tab-delimited quote ends
 	endMatchIndices := quoteEnd.FindStringIndex(q.Body)
 	isQuote := endMatchIndices != nil
@@ -287,7 +290,7 @@ func parseQuote(q Line) (Quote, bool) {
 
 		if pageMatchIndices == nil {
 			// Unable to parse page number
-			page = "UNKNOWN"
+			page = pageUnknown
 		} else {
 			page = strings.TrimSpace(endMatch[:pageMatchIndices[1]])
 			supp = strings.TrimSpace(endMatch[pageMatchIndices[1]:])
