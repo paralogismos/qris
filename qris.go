@@ -189,7 +189,28 @@ func cleanLines(lines Lines) Lines {
 var citationName = regexp.MustCompile(`^\pL+,\pZs*\pL+`)
 var citationYear = regexp.MustCompile(`\pN{4}`)
 var noteEnd = regexp.MustCompile(`jmr$`)
+
 var quoteEnd = regexp.MustCompile(`\t\s*p+\..*`)
+
+//var quoteEnd = regexp.MustCompile(`\s*p+\..*$U`)
+//
+// The `quoteEnd` regex was matching a tab delimiter placed before the
+// page number information on each quote line. This was to distinguish
+// the end of the quote from other appearances of page numbers within the
+// body of the quote.
+//
+// Recall that the end of a quote may contain other information following
+// the page numbers, so any characters which follow should be matched.
+// This can lead to false identification of the end of a quote by matching
+// starting from the first page number that appears in the body of the quote.
+//
+// Sometimes the information following an actual page number for a quote
+// itself includes a page number! The tab delimiter is the best way to
+// distinguish the end of a quote; my suggestion is that the user should
+// modify input files as needed by inserting a tab before the page number
+// that marks the end of a quote. The _DISCARD.txt file can be used to
+// identify these cases.
+
 var quotePage = regexp.MustCompile(`p{1,2}\.\s*\pN+,*\s*\pN*`)
 
 func ParseFile(fpath string) ParsedFile {
