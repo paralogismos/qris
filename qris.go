@@ -211,7 +211,7 @@ var quoteEnd = regexp.MustCompile(`\t\s*[pP]+\..*`)
 // that marks the end of a quote. The _DISCARD.txt file can be used to
 // identify these cases.
 
-var quotePage = regexp.MustCompile(`[pP]{1,2}\.\s*\pN+,*\s*\pN*`)
+var quotePage = regexp.MustCompile(`[pP]{1,2}\.\s*\pN+\s*[,-]*\s*\pN*`)
 
 func ParseFile(fpath string) ParsedFile {
 	rls := cleanLines(getLines(fpath))
