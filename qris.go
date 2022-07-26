@@ -284,10 +284,14 @@ func parseQuote(q Line) (Quote, bool) {
 
 		// Split end into page and supplementary field
 		pageMatchIndices := quotePage.FindStringIndex(endMatch)
-		fmt.Println("endMatch", endMatch)                  // DEBUG PRINT
-		fmt.Println("pageMatchIndices:", pageMatchIndices) // DEBUG PRINT
-		page = strings.TrimSpace(endMatch[:pageMatchIndices[1]])
-		supp = strings.TrimSpace(endMatch[pageMatchIndices[1]:])
+
+		if pageMatchIndices == nil {
+			// Unable to parse page number
+			page = "UNKNOWN"
+		} else {
+			page = strings.TrimSpace(endMatch[:pageMatchIndices[1]])
+			supp = strings.TrimSpace(endMatch[pageMatchIndices[1]:])
+		}
 
 		// Special Case: simple page # at end of quote, no tabs
 	} else if bodyEnd := len(q.Body) - 13; bodyEnd > 0 {
