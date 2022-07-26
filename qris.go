@@ -190,7 +190,7 @@ var citationName = regexp.MustCompile(`^\pL+,\pZs*\pL+`)
 var citationYear = regexp.MustCompile(`\pN{4}`)
 var noteEnd = regexp.MustCompile(`jmr$`)
 
-var quoteEnd = regexp.MustCompile(`\t\s*p+\..*`)
+var quoteEnd = regexp.MustCompile(`\t\s*[pP]+\..*`)
 
 //var quoteEnd = regexp.MustCompile(`\s*p+\..*$U`)
 //
@@ -211,7 +211,7 @@ var quoteEnd = regexp.MustCompile(`\t\s*p+\..*`)
 // that marks the end of a quote. The _DISCARD.txt file can be used to
 // identify these cases.
 
-var quotePage = regexp.MustCompile(`p{1,2}\.\s*\pN+,*\s*\pN*`)
+var quotePage = regexp.MustCompile(`[pP]{1,2}\.\s*\pN+,*\s*\pN*`)
 
 func ParseFile(fpath string) ParsedFile {
 	rls := cleanLines(getLines(fpath))
@@ -284,6 +284,8 @@ func parseQuote(q Line) (Quote, bool) {
 
 		// Split end into page and supplementary field
 		pageMatchIndices := quotePage.FindStringIndex(endMatch)
+		fmt.Println("endMatch", endMatch)                  // DEBUG PRINT
+		fmt.Println("pageMatchIndices:", pageMatchIndices) // DEBUG PRINT
 		page = strings.TrimSpace(endMatch[:pageMatchIndices[1]])
 		supp = strings.TrimSpace(endMatch[pageMatchIndices[1]:])
 
