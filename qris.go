@@ -357,6 +357,10 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 			abst = q.Body[:abstSize]
 		}
 
+		// TODO: Tag `q.Body` with T1 and remove the T3 tag.
+		//       Jack no longer feels like the 100 character teaser
+		//       is needed, so `abstSize` and `abst` above can be removed.
+
 		fmt.Fprintln(file, "TY  - Generic")
 		fmt.Fprintln(file, "VL  -", bid)
 		fmt.Fprintln(file, "UR  -", fid)
