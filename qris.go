@@ -30,10 +30,10 @@
 //
 // TODO:
 //
-// X - Omit quote teaser
-// _ - Tag quote body with T1 instead of T3
+// x - Omit quote teaser
+// x - Tag quote body with T1 instead of T3
 // _ - Preserve contiguous letter suffixes in citation dates
-// _ - Substitute "?" for "UNKNOWN" in malformed page number cases
+// x - Substitute "?" for "UNKNOWN" in malformed page number cases
 // _ - Capture page numbers in roman numerals
 // _ - Strip page number indicators from page numbers
 //
@@ -280,7 +280,7 @@ func parseQuote(q Line) (Quote, bool) {
 	lineNo, body, page, supp := 0, "", "", ""
 
 	// Malformed page numbers are recoreded using `pageUnknown`.
-	const pageUnknown = "00"
+	const pageUnknown = "?"
 
 	// Predominant Case: tab-delimited quote ends
 	endMatchIndices := quoteEnd.FindStringIndex(q.Body)
