@@ -28,6 +28,15 @@
 //     - >[line #]
 //       [discarded line]
 //
+// TODO:
+//
+// _ Omit quote teaser
+// _ Tag quote body with T1 instead of T3
+// _ Preserve contiguous letter suffixes in citation dates
+// _ Substitute "?" for "UNKNOWN" in malformed page number cases
+// _ Capture page numbers in roman numerals
+// _ Strip page number indicators from page numbers
+//
 
 package qris
 
