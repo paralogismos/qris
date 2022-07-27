@@ -30,12 +30,12 @@
 //
 // TODO:
 //
-// _ Omit quote teaser
-// _ Tag quote body with T1 instead of T3
-// _ Preserve contiguous letter suffixes in citation dates
-// _ Substitute "?" for "UNKNOWN" in malformed page number cases
-// _ Capture page numbers in roman numerals
-// _ Strip page number indicators from page numbers
+// X - Omit quote teaser
+// _ - Tag quote body with T1 instead of T3
+// _ - Preserve contiguous letter suffixes in citation dates
+// _ - Substitute "?" for "UNKNOWN" in malformed page number cases
+// _ - Capture page numbers in roman numerals
+// _ - Strip page number indicators from page numbers
 //
 
 package qris
@@ -358,28 +358,26 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 	for _, q := range pf.Quotes {
 
 		// Abstract to hold first characters of quote body.
-		const abstSize = 100
-		var abst string
-		if len(q.Body) < abstSize {
-			abst = q.Body
-		} else {
-			abst = q.Body[:abstSize]
-		}
-
-		// TODO: Tag `q.Body` with T1 and remove the T3 tag.
-		//       Jack no longer feels like the 100 character teaser
-		//       is needed, so `abstSize` and `abst` above can be removed.
+		// Removed functionality; will remove completely as soon as verified.
+		/*
+			const abstSize = 100
+			var abst string
+			if len(q.Body) < abstSize {
+				abst = q.Body
+			} else {
+				abst = q.Body[:abstSize]
+			}
+		*/
 
 		fmt.Fprintln(file, "TY  - Generic")
 		fmt.Fprintln(file, "VL  -", bid)
 		fmt.Fprintln(file, "UR  -", fid)
 		fmt.Fprintln(file, "AD  -", tstamp)
-		fmt.Fprintln(file, "T1  -", abst)
 		fmt.Fprintln(file, "AB  -", citBody)
 		fmt.Fprintln(file, "A1  -", citName)
 		fmt.Fprintln(file, "Y1  -", citYear)
 		fmt.Fprintln(file, "T2  -", citNote)
-		fmt.Fprintln(file, "T3  -", q.Body)
+		fmt.Fprintln(file, "T1  -", q.Body)
 		fmt.Fprintln(file, "SP  -", q.Page)
 		fmt.Fprintln(file, "PB  -", q.Supp)
 		fmt.Fprintln(file, "CY  -", q.Note)
