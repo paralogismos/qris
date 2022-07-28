@@ -32,12 +32,14 @@ Once you set a working directory, the path to the directory is saved in a config
 
 Place a workspace folder in your working directory. This folder should contain any files to be parsed. Below, `<directory path>` is the path to a workspace folder which is assumed to be under your working directory.
 
+Only files ending with a `.txt` extension will be parsed. Since the file of parsed results ends in `.ris` and the file of discarded lines ends in `.log`, this means that you can run `qris` twice in the same directory without needing to delete previous results or polluting the directory with extraneous files.
+
 ### Parsing One File
 To parse one file, type `qris -f <file path>`.
 
 Here `<file path>` can be an absolute path, or a path relative to your working directory, but in either case the path must lead to an actual file to be parsed.
 
-Two output files will be created in the workspace folder. One `.ris` file will contain the result of parsing the input file, and one `DISCARD.txt` file will contain any lines which were not parsed. Each unparsed line is preceded by a line number indicating where the line may be found in the original unparsed file.
+Two output files will be created in the workspace folder. One `PARSED.ris` file will contain the result of parsing the input file, and one `DISCARD.log` file will contain any lines which were not parsed. Each unparsed line is preceded by a line number indicating where the line may be found in the original unparsed file.
 
 For example, `qris -f workspace/myFileUTF8.txt` would parse the `myFileUTF8.txt` file found in the `workspace` folder found in your working directory, placing the output in the `workspace` folder.
 
@@ -48,7 +50,7 @@ Here `<directory path>` can be an absolute path, or a path relative to your work
 
 The `-b` flag also accepts a dot argument, `.`, which indicates that the files in the working directory are to be parsed. Thus, `qris -b batch` tells `qris` to parse the files in the `batch` folder under the working directory, but `qris -b .` tells `qris` to parse the files found directly in the working directory.
 
-All files found in `<directory path>` will be parsed. Two output files, one `.ris` file and one `DISCARD.txt` file, will be created for each input file and placed in the workspace folder.
+All files found in `<directory path>` will be parsed. Two output files, one `PARSED.ris` file and one `DISCARD.log` file, will be created for each input file and placed in the workspace folder.
 
 For example, `qris -b workspace/batch` would parse all files found in the `batch` subdirectory of the `workspace` folder found in your home directory.
 
