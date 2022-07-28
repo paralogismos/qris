@@ -21,7 +21,7 @@ import (
 	"qris"
 )
 
-const qrisVersion = "v0.5.3-alpha"
+const qrisVersion = "v0.5.4-alpha"
 const parsedSuffix = "_PARSED.ris"
 const discardSuffix = "_DISCARDS.log"
 
