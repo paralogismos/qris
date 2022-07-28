@@ -35,7 +35,7 @@
 // _ - Preserve contiguous letter suffixes in citation dates
 // x - Substitute "?" for "UNKNOWN" in malformed page number cases
 // _ - Capture page numbers in roman numerals
-// _ - Strip page number indicators from page numbers
+// x - Strip page number indicators from page numbers
 //
 
 package qris
@@ -222,6 +222,8 @@ var quoteEnd = regexp.MustCompile(`\t\s*[pP]+\..*`)
 
 var quotePage = regexp.MustCompile(`[pP]{1,2}\.\s*\pN+\s*[,-]*\s*\pN*`)
 
+var pageNumber = regexp.MustCompile(`\pN+\s*[,-]*\s*\pN*`)
+
 func ParseFile(fpath string) ParsedFile {
 	rls := cleanLines(getLines(fpath))
 	fn := filepath.Base(fpath)
@@ -301,7 +303,9 @@ func parseQuote(q Line) (Quote, bool) {
 			// Unable to parse page number
 			page = pageUnknown
 		} else {
-			page = strings.TrimSpace(endMatch[:pageMatchIndices[1]])
+			page = pageNumber.FindString(
+				strings.TrimSpace(endMatch[:pageMatchIndices[1]]))
+
 			supp = strings.TrimSpace(endMatch[pageMatchIndices[1]:])
 		}
 
@@ -313,7 +317,8 @@ func parseQuote(q Line) (Quote, bool) {
 
 		if isQuote {
 			body = strings.TrimSpace(q.Body[:pageMatchIndices[0]+bodyEnd])
-			page = strings.TrimSpace(simpleEnd[pageMatchIndices[0]:])
+			page = pageNumber.FindString(
+				strings.TrimSpace(simpleEnd[pageMatchIndices[0]:]))
 		}
 	}
 
