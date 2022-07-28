@@ -32,7 +32,7 @@
 //
 // x - Omit quote teaser
 // x - Tag quote body with T1 instead of T3
-// _ - Preserve contiguous letter suffixes in citation dates
+// x - Preserve contiguous letter suffixes in citation dates
 // x - Substitute "?" for "UNKNOWN" in malformed page number cases
 // _ - Capture page numbers in roman numerals
 // x - Strip page number indicators from page numbers
@@ -196,7 +196,7 @@ func cleanLines(lines Lines) Lines {
 
 // Regular Expressions
 var citationName = regexp.MustCompile(`^\pL+,\pZs*\pL+`)
-var citationYear = regexp.MustCompile(`\pN{4}`)
+var citationYear = regexp.MustCompile(`\pN{4}\pL*`)
 var noteEnd = regexp.MustCompile(`jmr$`)
 
 var quoteEnd = regexp.MustCompile(`\t\s*[pP]+\..*`)
