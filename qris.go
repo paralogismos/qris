@@ -36,6 +36,7 @@
 // x - Substitute "?" for "UNKNOWN" in malformed page number cases
 // x - Capture page numbers in roman numerals
 // x - Strip page number indicators from page numbers
+// x - Fix bug in parsing supplementary fields ending in note marker ("jmr")
 //
 
 package qris
@@ -235,7 +236,8 @@ func ParseFile(fpath string) ParsedFile {
 	ds := Lines{}
 
 	for _, l := range rls[2:] {
-		if n, ok := parseNote(l); ok {
+		q, isQuote := parseQuote(l)
+		if n, isNote := parseNote(l); !isQuote && isNote {
 			lastQuoteIdx := len(qs) - 1
 			if lastQuoteIdx >= 0 {
 				qs[lastQuoteIdx].Note = n
@@ -243,13 +245,14 @@ func ParseFile(fpath string) ParsedFile {
 				cit.Note = n
 			}
 		} else {
-			if q, ok := parseQuote(l); ok {
+			if isQuote {
 				qs = append(qs, q)
 			} else {
 				ds = append(ds, l)
 			}
 		}
 	}
+
 	return newParsedFile(fn, tit, cit, qs, ds)
 }
 
