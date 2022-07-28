@@ -21,7 +21,7 @@ import (
 	"qris"
 )
 
-const qrisVersion = "v0.5.2-alpha"
+const qrisVersion = "v0.5.3-alpha"
 
 func main() {
 	// Parse command line flags
