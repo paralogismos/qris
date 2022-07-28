@@ -34,7 +34,7 @@
 // x - Tag quote body with T1 instead of T3
 // x - Preserve contiguous letter suffixes in citation dates
 // x - Substitute "?" for "UNKNOWN" in malformed page number cases
-// _ - Capture page numbers in roman numerals
+// x - Capture page numbers in roman numerals
 // x - Strip page number indicators from page numbers
 //
 
@@ -220,9 +220,11 @@ var quoteEnd = regexp.MustCompile(`\t\s*[pP]+\..*`)
 // that marks the end of a quote. The _DISCARD.txt file can be used to
 // identify these cases.
 
-var quotePage = regexp.MustCompile(`[pP]{1,2}\.\s*\pN+\s*[,-]*\s*\pN*`)
+var quotePage = regexp.MustCompile(
+	`[pP]{1,2}\.\s*[\pNiIvVxXlL]+\s*[,-]*\s*[\pNiIvVxXlL]*`)
 
-var pageNumber = regexp.MustCompile(`\pN+\s*[,-]*\s*\pN*`)
+var pageNumber = regexp.MustCompile(
+	`[\pNiIvVxXlL]+\s*[,-]*\s*[\pNiIvVxXlL]*`)
 
 func ParseFile(fpath string) ParsedFile {
 	rls := cleanLines(getLines(fpath))
