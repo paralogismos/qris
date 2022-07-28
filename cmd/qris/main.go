@@ -22,6 +22,8 @@ import (
 )
 
 const qrisVersion = "v0.5.3-alpha"
+const parsedSuffix = "_PARSED.ris"
+const discardSuffix = "_DISCARDS.log"
 
 func main() {
 	// Parse command line flags
@@ -158,6 +160,12 @@ func main() {
 	// Parse all files.
 	allPassed := true // For UTF8 validation option
 	for _, file := range dataList {
+		// Skip any file not ending with .txt extension.
+		// Note that directories ending with .txt WILL be
+		// processed, and this will cause a panic.
+		if filepath.Ext(file) != ".txt" {
+			continue
+		}
 
 		// Display file name as it is processed
 		fmt.Println(file)
@@ -171,10 +179,10 @@ func main() {
 
 		// File to store parsed quotes
 		base := strings.TrimSuffix(pFile, filepath.Ext(pFile))
-		pQuotes := base + "_PARSED.ris"
+		pQuotes := base + parsedSuffix
 
 		// File to store discarded lines
-		pDiscard := base + "_DISCARD.txt"
+		pDiscard := base + discardSuffix
 
 		pf := qris.ParseFile(pFile)
 		qris.WriteDiscards(pf.Discards, pDiscard)
