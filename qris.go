@@ -38,6 +38,11 @@
 // x - Strip page number indicators from page numbers
 // x - Fix bug in parsing supplementary fields ending in note marker ("jmr")
 //
+// _ - Add functionality to store up to N notes following a quote.
+//     - Store notes in a slice or dictionary
+//     - Map notes array to numbered tags, e.g., C1, C2, ....
+//     - Need to discuss this with Jack
+//
 
 package qris
 
