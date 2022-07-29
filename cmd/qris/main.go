@@ -41,7 +41,7 @@ func main() {
 	flag.Parse()
 
 	if *filePath != "" && *batchPath != "" {
-		fmt.Fprintf(os.Stderr, "-f and -b flags may not be used together\n")
+		fmt.Fprintln(os.Stderr, "-f and -b flags may not be used together")
 		flag.Usage()
 		os.Exit(1)
 	}
@@ -50,14 +50,14 @@ func main() {
 	var configPath string
 	userConfig, err := os.UserConfigDir()
 	if err != nil {
-		fmt.Println("Unable to access user configuration directory")
+		fmt.Fprintln(os.Stderr, "Unable to access user configuration directory")
 	} else {
 		configDirPath := filepath.Join(userConfig, configDir)
 		_, err := os.ReadDir(configDirPath)
 		if err != nil {
 			err := os.Mkdir(configDirPath, 0666)
 			if err != nil {
-				fmt.Println("Unable to create configuration directory")
+				fmt.Fprintln(os.Stderr, "Unable to create configuration directory")
 			}
 		}
 		configPath = filepath.Join(userConfig, configDir, configFile)
