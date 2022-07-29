@@ -45,29 +45,8 @@ func main() {
 		fmt.Println("Configuration file at", configPath)
 	}
 
-	// Set working directory.
-	// Store the new current working directory path in a configuration file.
-	if *dir != "" {
-		workDir, err := filepath.Abs(*dir)
-		if err != nil {
-			fmt.Fprintln(os.Stderr,
-				"Unable to create new working directory path")
-			os.Exit(1)
-		}
-		if os.Chdir(workDir) != nil {
-			fmt.Fprintln(os.Stderr,
-				"Unable to update working directory")
-			os.Exit(1)
-		}
-		config, err := os.Create(configPath)
-		if err != nil {
-			fmt.Fprintln(os.Stderr,
-				"Unable to create configuration file")
-		} else {
-			defer config.Close()
-			fmt.Fprintln(config, workDir)
-		}
-	}
+	// Set a new working directory if needed.
+	qris.SetWorkDir(*dir, configPath)
 
 	// Get current working directory.
 	workDir := qris.GetWorkDir(configPath)

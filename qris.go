@@ -212,6 +212,35 @@ func GetWorkDir(configPath string) string {
 	return workDir
 }
 
+// SetWorkDir stores a new working directory path in the configuration file
+// and sets the current working directory on the users system.
+// If SetWorkDir cannot set the working directory for some reason, the
+// default working directory already established by the system and discovered
+// by GetWorkDir should be available for the user to use.
+func SetWorkDir(dirPath, configPath string) {
+	if dirPath != "" {
+		workDir, err := filepath.Abs(dirPath)
+		if err != nil {
+			fmt.Fprintln(os.Stderr,
+				"Unable to create new working directory path")
+			os.Exit(1)
+		}
+		if os.Chdir(workDir) != nil {
+			fmt.Fprintln(os.Stderr,
+				"Unable to update working directory")
+			os.Exit(1)
+		}
+		config, err := os.Create(configPath)
+		if err != nil {
+			fmt.Fprintln(os.Stderr,
+				"Unable to create configuration file")
+		} else {
+			defer config.Close()
+			fmt.Fprintln(config, workDir)
+		}
+	}
+}
+
 // Creates a list of filenames from the text file specified by `fpath`.
 // This file should have one filename per line.
 func GetFileList(fpath string) []string {
