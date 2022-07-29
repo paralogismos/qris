@@ -41,7 +41,7 @@ func main() {
 	flag.Parse()
 
 	if *filePath != "" && *batchPath != "" {
-		fmt.Println("-f and -b flags may not be used together")
+		fmt.Fprintf(os.Stderr, "-f and -b flags may not be used together\n")
 		flag.Usage()
 		os.Exit(1)
 	}
