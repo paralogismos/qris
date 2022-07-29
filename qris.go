@@ -42,6 +42,12 @@
 //     - Store notes in a slice or dictionary
 //     - Map notes array to numbered tags, e.g., C1, C2, ....
 //     - Need to discuss this with Jack
+// _ - GetConfigPath should perhaps create a config file if none exists.
+//     - This file would contain the default path to a working directory.
+// _ - Move functionality to get the working directory into a function.
+//     - GetWorkingDir
+//     - Once this is established, the part that sets up a default working
+//       directory could be moved into GetConfigPath.
 //
 
 package qris
