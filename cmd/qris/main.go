@@ -51,10 +51,8 @@ func main() {
 	// Get current working directory.
 	workDir := qris.GetWorkDir(configPath)
 
-	// Always show current qris version
+	// Always show current qris version and current working directory
 	fmt.Println("qris version", qris.Version)
-
-	// Always show current working directory.
 	fmt.Println("Working in directory", workDir)
 
 	// `dataList` is a list of files to be processed.
