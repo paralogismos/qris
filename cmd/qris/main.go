@@ -64,9 +64,9 @@ func main() {
 			fmt.Fprintln(os.Stderr,
 				"Unable to create configuration file")
 		} else {
+			defer config.Close()
 			fmt.Fprintln(config, workDir)
 		}
-		config.Close()
 	}
 
 	// Get current working directory.
