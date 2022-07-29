@@ -10,7 +10,7 @@
 package main
 
 import (
-	"bufio"
+	//	"bufio"
 	"flag"
 	"fmt"
 	"log"
@@ -39,44 +39,16 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Configure the system.
 	configPath := qris.GetConfigPath()
 	if *conf {
 		fmt.Println("Configuration file at", configPath)
 	}
 
-	// Get current working directory.
-	// Look in home directory (~/qris/) for a config file that stores
-	// a working directory path. If it exists, set the current working
-	// directory accordingly. Otherwise use `os.Getwd()` to get it from
-	// the system.
-	var workDir string
-	config, err := os.Open(configPath)
-	if err == nil {
-		scanner := bufio.NewScanner(config)
-		if scanner.Scan() {
-			workDir = scanner.Text()
-			if os.Chdir(workDir) != nil {
-				fmt.Println("Unable to use configured working directory")
-				workDir, err = os.Getwd()
-				if err != nil {
-					fmt.Println("Unable to get current working directory")
-					os.Exit(1)
-				}
-			}
-		}
-	} else {
-		workDir, err = os.Getwd()
-		if err != nil {
-			fmt.Println("Unable to get current working directory")
-			os.Exit(1)
-		}
-	}
-	config.Close()
-
 	// Set working directory.
 	// Store the new current working directory path in a configuration file.
 	if *dir != "" {
-		workDir, err = filepath.Abs(*dir)
+		workDir, err := filepath.Abs(*dir)
 		if err != nil {
 			fmt.Println("Unable to create new working directory path")
 			os.Exit(1)
@@ -93,6 +65,9 @@ func main() {
 		}
 		config.Close()
 	}
+
+	// Get current working directory.
+	workDir := qris.GetWorkDir(configPath)
 
 	// Always show current qris version
 	fmt.Println("qris version", qris.Version)
@@ -128,7 +103,7 @@ func main() {
 	} else {
 		// Otherwise add a single file to `dataList` if one was supplied.
 		if *filePath != "" {
-			workPath, err = filepath.Abs(*filePath)
+			workPath, _ := filepath.Abs(*filePath)
 			var workFile string
 			workPath, workFile = filepath.Split(workPath)
 			dataList = append(dataList, workFile)

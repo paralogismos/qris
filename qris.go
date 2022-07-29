@@ -45,9 +45,10 @@
 // _ - GetConfigPath should perhaps create a config file if none exists.
 //     - This file would contain the default path to a working directory.
 // _ - Move functionality to get the working directory into a function.
-//     - GetWorkingDir
+//     - GetWorkDir
 //     - Once this is established, the part that sets up a default working
 //       directory could be moved into GetConfigPath.
+// _ - Make eligible system constants unexported as soon as possible.
 //
 
 package qris
@@ -161,19 +162,54 @@ func GetConfigPath() string {
 	configPath := ""
 	userConfig, err := os.UserConfigDir()
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "Unable to access user configuration directory")
+		fmt.Fprintln(os.Stderr,
+			"Unable to access user configuration directory")
 	} else {
 		configDirPath := filepath.Join(userConfig, ConfigDir)
 		_, err := os.ReadDir(configDirPath)
 		if err != nil {
 			err := os.Mkdir(configDirPath, 0666)
 			if err != nil {
-				fmt.Fprintln(os.Stderr, "Unable to create configuration directory")
+				fmt.Fprintln(os.Stderr,
+					"Unable to create configuration directory")
 			}
 		}
 		configPath = filepath.Join(userConfig, ConfigDir, ConfigFile)
 	}
 	return configPath
+}
+
+// GetWorkDir looks in `configPath` for a configuration file. If one exists,
+// the configured working directory is returned. Otherwise `os.Getwd()` is used
+// to get the current working directory from the system and this path is returned.
+func GetWorkDir(configPath string) string {
+	workDir := ""
+	config, err := os.Open(configPath)
+	if err == nil {
+		defer config.Close()
+		scanner := bufio.NewScanner(config)
+		if scanner.Scan() {
+			workDir = scanner.Text()
+			if os.Chdir(workDir) != nil {
+				fmt.Fprintln(os.Stderr,
+					"Unable to use configured working directory")
+				workDir, err = os.Getwd()
+				if err != nil {
+					fmt.Fprintln(os.Stderr,
+						"Unable to get current working directory")
+					os.Exit(1)
+				}
+			}
+		}
+	} else {
+		workDir, err = os.Getwd()
+		if err != nil {
+			fmt.Fprintln(os.Stderr,
+				"Unable to get current working directory")
+			os.Exit(1)
+		}
+	}
+	return workDir
 }
 
 // Creates a list of filenames from the text file specified by `fpath`.
