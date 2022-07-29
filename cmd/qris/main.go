@@ -21,13 +21,6 @@ import (
 	"qris"
 )
 
-// Definitions of system constants.
-const qrisVersion = "v0.5.6-alpha"
-const parsedSuffix = "_PARSED.ris"
-const discardSuffix = "_DISCARDS.log"
-const configDir = "qris"
-const configFile = "qris.conf"
-
 func main() {
 	// Parse command line flags
 	conf := flag.Bool("config", false, "Show path to configuration file.")
@@ -46,23 +39,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Check for config directory and create if missing.
-	var configPath string
-	userConfig, err := os.UserConfigDir()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "Unable to access user configuration directory")
-	} else {
-		configDirPath := filepath.Join(userConfig, configDir)
-		_, err := os.ReadDir(configDirPath)
-		if err != nil {
-			err := os.Mkdir(configDirPath, 0666)
-			if err != nil {
-				fmt.Fprintln(os.Stderr, "Unable to create configuration directory")
-			}
-		}
-		configPath = filepath.Join(userConfig, configDir, configFile)
-	}
-
+	configPath := qris.GetConfigPath()
 	if *conf {
 		fmt.Println("Configuration file at", configPath)
 	}
@@ -118,7 +95,7 @@ func main() {
 	}
 
 	// Always show current qris version
-	fmt.Println("qris version", qrisVersion)
+	fmt.Println("qris version", qris.Version)
 
 	// Always show current working directory.
 	fmt.Println("Working in directory", workDir)
@@ -180,10 +157,10 @@ func main() {
 
 		// File to store parsed quotes
 		base := strings.TrimSuffix(pFile, filepath.Ext(pFile))
-		pQuotes := base + parsedSuffix
+		pQuotes := base + qris.ParsedSuffix
 
 		// File to store discarded lines
-		pDiscard := base + discardSuffix
+		pDiscard := base + qris.DiscardSuffix
 
 		pf := qris.ParseFile(pFile)
 		qris.WriteDiscards(pf.Discards, pDiscard)

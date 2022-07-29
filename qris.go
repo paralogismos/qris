@@ -57,6 +57,13 @@ import (
 	"unicode/utf8"
 )
 
+// Definitions of system constants.
+const Version = "v0.5.6-alpha"
+const ParsedSuffix = "_PARSED.ris"
+const DiscardSuffix = "_DISCARDS.log"
+const ConfigDir = "qris"
+const ConfigFile = "qris.conf"
+
 // A `Line` is a string of content coupled with a line number reference to the
 // original file; 1-indexed.
 type Line struct {
@@ -140,6 +147,27 @@ func newParsedFile(fn, tit string, cit Citation, qs Quotes, ds Lines) ParsedFile
 		Quotes:   qs,
 		Discards: ds,
 	}
+}
+
+// GetConfigPath checks for a configuration directory and
+// creates one if none exists.
+func GetConfigPath() string {
+	configPath := ""
+	userConfig, err := os.UserConfigDir()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Unable to access user configuration directory")
+	} else {
+		configDirPath := filepath.Join(userConfig, ConfigDir)
+		_, err := os.ReadDir(configDirPath)
+		if err != nil {
+			err := os.Mkdir(configDirPath, 0666)
+			if err != nil {
+				fmt.Fprintln(os.Stderr, "Unable to create configuration directory")
+			}
+		}
+		configPath = filepath.Join(userConfig, ConfigDir, ConfigFile)
+	}
+	return configPath
 }
 
 // Creates a list of filenames from the text file specified by `fpath`.
