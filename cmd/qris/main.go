@@ -21,9 +21,12 @@ import (
 	"qris"
 )
 
+// Definitions of system constants.
 const qrisVersion = "v0.5.4-alpha"
 const parsedSuffix = "_PARSED.ris"
 const discardSuffix = "_DISCARDS.log"
+const configDir = "qris"
+const configFile = "qris.conf"
 
 func main() {
 	// Parse command line flags
@@ -44,8 +47,6 @@ func main() {
 	}
 
 	// Check for config directory and create if missing.
-	const configDir = "qris"
-	const configFile = "qris.conf"
 	var configPath string
 	userConfig, err := os.UserConfigDir()
 	if err != nil {
