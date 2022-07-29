@@ -50,16 +50,19 @@ func main() {
 	if *dir != "" {
 		workDir, err := filepath.Abs(*dir)
 		if err != nil {
-			fmt.Println("Unable to create new working directory path")
+			fmt.Fprintln(os.Stderr,
+				"Unable to create new working directory path")
 			os.Exit(1)
 		}
 		if os.Chdir(workDir) != nil {
-			fmt.Println("Unable to update working directory")
+			fmt.Fprintln(os.Stderr,
+				"Unable to update working directory")
 			os.Exit(1)
 		}
 		config, err := os.Create(configPath)
 		if err != nil {
-			fmt.Println("Unable to create configuration file")
+			fmt.Fprintln(os.Stderr,
+				"Unable to create configuration file")
 		} else {
 			fmt.Fprintln(config, workDir)
 		}
