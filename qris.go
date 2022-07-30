@@ -420,3 +420,24 @@ func WriteResults(workPath string, dataList []string, validate bool) bool {
 
 	return allPassed
 }
+
+// `GetBatchList` takes a path argument and returns a list of all files found
+// in the directory specified by the path. Directories found in the specified
+// directory are not included in the list. It is an error if the path does not
+// lead to a directory.
+func GetBatchList(path string) []string {
+	var dataList []string
+	dirEnts, err := os.ReadDir(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	// Create list of files in specified directory.
+	for _, dirEnt := range dirEnts {
+		if dirEnt.IsDir() {
+			continue
+		}
+		dataList = append(dataList, dirEnt.Name())
+	}
+
+	return dataList
+}

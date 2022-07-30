@@ -13,7 +13,7 @@ import (
 	//	"bufio"
 	"flag"
 	"fmt"
-	"log"
+	//	"log"
 	"os"
 	"path/filepath"
 	//	"strings"
@@ -64,33 +64,28 @@ func main() {
 	// included in `workPath`.
 	var workPath string
 
-	// First populate `dataList` with any batch files.
-	if *batchPath != "" {
+	if *batchPath == "" {
+		if *filePath == "" {
+			// Process a single file.
+			fmt.Fprintln(os.Stderr,
+				"Must supply a filepath or batch directory.")
+			flag.Usage()
+			os.Exit(1)
+		} else {
+			// Add a single file to `dataList` if one was supplied.
+			var workFile string
+			workPath, workFile = filepath.Split(workPath)
+			dataList = append(dataList, workFile)
+		}
+	} else {
+		// Batch process files.
 		// Allow dot argument to indicate batch files found in working directory.
 		if *batchPath == "." {
 			workPath = workDir
 		} else {
 			workPath, _ = filepath.Abs(*batchPath)
 		}
-		files, err := os.ReadDir(workPath)
-		if err != nil {
-			log.Fatal(err)
-		}
-		// create list of files in working directory
-		for _, file := range files {
-			if file.IsDir() {
-				continue
-			}
-			dataList = append(dataList, file.Name())
-		}
-	} else {
-		// Otherwise add a single file to `dataList` if one was supplied.
-		if *filePath != "" {
-			workPath, _ := filepath.Abs(*filePath)
-			var workFile string
-			workPath, workFile = filepath.Split(workPath)
-			dataList = append(dataList, workFile)
-		}
+		dataList = qris.GetBatchList(workPath)
 	}
 
 	// Parse all files and write results to output.
