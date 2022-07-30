@@ -18,6 +18,18 @@ var quotePage = regexp.MustCompile(
 	`[pP]{1,2}\.\s*[\pNiIvVxXlL]+\s*[,-]*\s*[\pNiIvVxXlL]*`)
 var pageNumber = regexp.MustCompile(
 	`[\pNiIvVxXlL]+\s*[,-]*\s*[\pNiIvVxXlL]*`)
+var parsedFile = regexp.MustCompile(ParsedSuffix + `$`)
+var discardFile = regexp.MustCompile(DiscardSuffix + `$`)
+
+// `isParsedFile` returns true if `f` ends with `ParsedSuffix`.
+func isParsedFile(f string) bool {
+	return parsedFile.FindStringIndex(f) != nil
+}
+
+// `isDiscardFile` returns true if `f` ends with `DiscardSuffix`.
+func isDiscardFile(f string) bool {
+	return discardFile.FindStringIndex(f) != nil
+}
 
 func ParseFile(fpath string) ParsedFile {
 	rls := cleanLines(getLines(fpath))

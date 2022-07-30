@@ -16,7 +16,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"strings"
+	//	"strings"
 
 	"qris"
 )
@@ -90,37 +90,9 @@ func main() {
 		}
 	}
 
-	// Parse all files.
-	allPassed := true // For UTF8 validation option
-	for _, file := range dataList {
-		// Skip any file not ending with .txt extension.
-		// Note that directories ending with .txt WILL be
-		// processed, and this will cause a panic.
-		if filepath.Ext(file) != ".txt" {
-			continue
-		}
+	// Parse all files and write results to output.
+	allPassed := qris.WriteResults(workPath, dataList, *validate)
 
-		// Display file name as it is processed
-		fmt.Println(file)
-
-		// File path to process
-		pFile := filepath.Join(workPath, file)
-
-		if *validate {
-			allPassed = allPassed && qris.ValidateUTF8(pFile)
-		}
-
-		// File to store parsed quotes
-		base := strings.TrimSuffix(pFile, filepath.Ext(pFile))
-		pQuotes := base + qris.ParsedSuffix
-
-		// File to store discarded lines
-		pDiscard := base + qris.DiscardSuffix
-
-		pf := qris.ParseFile(pFile)
-		qris.WriteDiscards(pf.Discards, pDiscard)
-		qris.WriteQuotes(&pf, pQuotes)
-	}
 	if *validate && allPassed {
 		fmt.Println("All files were valid UTF8.")
 	}

@@ -382,3 +382,38 @@ func ValidateUTF8(fpath string) bool {
 	}
 	return isValid
 }
+
+func WriteResults(workPath string, dataList []string, validate bool) bool {
+	allPassed := true // For UTF8 validation option
+	for _, file := range dataList {
+		// Skip any file not ending with .txt extension.
+		// Note that directories ending with .txt WILL be
+		// processed, and this will cause a panic.
+		if isParsedFile(file) || isDiscardFile(file) {
+			continue
+		}
+
+		// Display file name as it is processed
+		fmt.Println(file)
+
+		// File path to process
+		pFile := filepath.Join(workPath, file)
+
+		if validate {
+			allPassed = allPassed && ValidateUTF8(pFile)
+		}
+
+		// File to store parsed quotes
+		base := strings.TrimSuffix(pFile, filepath.Ext(pFile))
+		pQuotes := base + ParsedSuffix
+
+		// File to store discarded lines
+		pDiscard := base + DiscardSuffix
+
+		pf := ParseFile(pFile)
+		WriteDiscards(pf.Discards, pDiscard)
+		WriteQuotes(&pf, pQuotes)
+	}
+
+	return allPassed
+}
