@@ -383,6 +383,9 @@ func ValidateUTF8(fpath string) bool {
 	return isValid
 }
 
+// `WriteResults` iterates over a list of files, ensures that none are
+// directories, parses each file, validates each file if `validate` is true,
+// and writes the results to output files.
 func WriteResults(workPath string, dataList []string, validate bool) bool {
 	allPassed := true // For UTF8 validation option
 	for _, file := range dataList {
