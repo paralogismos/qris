@@ -67,7 +67,7 @@ import (
 // Definitions of system constants.
 const Version = "v0.5.6-alpha"
 const ParsedSuffix = "_PARSED.ris"
-const DiscardSuffix = "_DISCARDS.log"
+const DiscardSuffix = "_DISCARDS.txt"
 const ConfigDir = "qris"
 const ConfigFile = "qris.conf"
 
