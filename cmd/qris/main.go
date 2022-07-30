@@ -78,6 +78,9 @@ func main() {
 		}
 		// create list of files in working directory
 		for _, file := range files {
+			if file.IsDir() {
+				continue
+			}
 			dataList = append(dataList, file.Name())
 		}
 	} else {
