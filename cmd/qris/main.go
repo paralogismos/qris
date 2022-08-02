@@ -10,13 +10,10 @@
 package main
 
 import (
-	//	"bufio"
 	"flag"
 	"fmt"
-	//	"log"
 	"os"
 	"path/filepath"
-	//	"strings"
 
 	"qris"
 )
