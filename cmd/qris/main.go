@@ -62,14 +62,9 @@ func main() {
 	var workPath string
 
 	if *batchPath == "" {
-		if *filePath == "" {
-			// Process a single file.
-			fmt.Fprintln(os.Stderr,
-				"Must supply a filepath or batch directory.")
-			flag.Usage()
-			os.Exit(1)
-		} else {
+		if *filePath != "" {
 			// Add a single file to `dataList` if one was supplied.
+			workPath, _ = filepath.Abs(*filePath)
 			var workFile string
 			workPath, workFile = filepath.Split(workPath)
 			dataList = append(dataList, workFile)
