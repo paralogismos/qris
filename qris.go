@@ -161,16 +161,14 @@ func GetConfigPath() string {
 	configPath := ""
 	userConfig, err := os.UserConfigDir()
 	if err != nil {
-		fmt.Fprintln(os.Stderr,
-			"Unable to access user configuration directory")
+		fmt.Fprintln(os.Stderr, err)
 	} else {
 		configDirPath := filepath.Join(userConfig, ConfigDir)
 		_, err := os.ReadDir(configDirPath)
 		if err != nil {
 			err := os.Mkdir(configDirPath, 0666)
 			if err != nil {
-				fmt.Fprintln(os.Stderr,
-					"Unable to create configuration directory")
+				fmt.Fprintln(os.Stderr, err)
 			}
 		}
 		configPath = filepath.Join(userConfig, ConfigDir, ConfigFile)
@@ -189,13 +187,11 @@ func GetWorkDir(configPath string) string {
 		scanner := bufio.NewScanner(config)
 		if scanner.Scan() {
 			workDir = scanner.Text()
-			if os.Chdir(workDir) != nil {
-				fmt.Fprintln(os.Stderr,
-					"Unable to use configured working directory")
+			if err := os.Chdir(workDir); err != nil {
+				fmt.Fprintln(os.Stderr, err)
 				workDir, err = os.Getwd()
 				if err != nil {
-					fmt.Fprintln(os.Stderr,
-						"Unable to get current working directory")
+					fmt.Fprintln(os.Stderr, err)
 					os.Exit(1)
 				}
 			}
@@ -203,8 +199,7 @@ func GetWorkDir(configPath string) string {
 	} else {
 		workDir, err = os.Getwd()
 		if err != nil {
-			fmt.Fprintln(os.Stderr,
-				"Unable to get current working directory")
+			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
 	}
@@ -220,19 +215,16 @@ func SetWorkDir(dirPath, configPath string) {
 	if dirPath != "" {
 		workDir, err := filepath.Abs(dirPath)
 		if err != nil {
-			fmt.Fprintln(os.Stderr,
-				"Unable to create new working directory path")
+			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
-		if os.Chdir(workDir) != nil {
-			fmt.Fprintln(os.Stderr,
-				"Unable to update working directory")
+		if err := os.Chdir(workDir); err != nil {
+			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
 		config, err := os.Create(configPath)
 		if err != nil {
-			fmt.Fprintln(os.Stderr,
-				"Unable to create configuration file")
+			fmt.Fprintln(os.Stderr, err)
 		} else {
 			defer config.Close()
 			fmt.Fprintln(config, workDir)
