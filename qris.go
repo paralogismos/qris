@@ -333,19 +333,6 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 	citNote := pf.Citation.Note
 
 	for _, q := range pf.Quotes {
-
-		// Abstract to hold first characters of quote body.
-		// Removed functionality; will remove completely as soon as verified.
-		/*
-			const abstSize = 100
-			var abst string
-			if len(q.Body) < abstSize {
-				abst = q.Body
-			} else {
-				abst = q.Body[:abstSize]
-			}
-		*/
-
 		fmt.Fprintln(file, "TY  - Generic")
 		fmt.Fprintln(file, "VL  -", bid)
 		fmt.Fprintln(file, "UR  -", fid)
