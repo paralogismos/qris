@@ -56,7 +56,6 @@ package qris
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -246,7 +245,8 @@ func SetWorkDir(dirPath, configPath string) {
 func GetFileList(fpath string) []string {
 	file, err := os.Open(fpath)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 	defer file.Close()
 
@@ -265,7 +265,8 @@ func GetFileList(fpath string) []string {
 func getLines(fpath string) Lines {
 	file, err := os.Open(fpath)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 	defer file.Close()
 
@@ -301,7 +302,8 @@ func cleanLines(lines Lines) Lines {
 func WriteDiscards(ds Lines, fname string) {
 	file, err := os.Create(fname)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 	defer file.Close()
 
@@ -314,7 +316,8 @@ func WriteDiscards(ds Lines, fname string) {
 func WriteQuotes(pf *ParsedFile, fname string) {
 	file, err := os.Create(fname)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 	defer file.Close()
 
@@ -352,7 +355,8 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 func ValidateUTF8(fpath string) bool {
 	file, err := os.Open(fpath)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 	defer file.Close()
 
@@ -416,7 +420,8 @@ func GetBatchList(path string) []string {
 	var dataList []string
 	dirEnts, err := os.ReadDir(path)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 	// Create list of files in specified directory.
 	for _, dirEnt := range dirEnts {
