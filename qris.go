@@ -425,3 +425,32 @@ func GetBatchList(path string) []string {
 
 	return dataList
 }
+
+// `GetWorkPath` takes as arguments an absolute path to the current working
+// directory, a path to a batch directory to be processed (`bFlag`), and a path
+// to a file to be processed (`fFlag`). The second two paths are relative to
+// the current working directory. This information is used to create a list
+// of files for processing which is returned to the caller.
+func GetWorkPath(workDir, bFlag, fFlag string) ([]string, string) {
+	var dList []string
+	var wPath string
+	if bFlag == "" {
+		if fFlag != "" {
+			// Add a single file to `dataList` if one was supplied.
+			wPath, _ = filepath.Abs(fFlag)
+			var wFile string
+			wPath, wFile = filepath.Split(wPath)
+			dList = append(dList, wFile)
+		}
+	} else {
+		// Batch process files.
+		// Allow dot argument to indicate batch files found in working directory.
+		if bFlag == "." {
+			wPath = workDir
+		} else {
+			wPath, _ = filepath.Abs(bFlag)
+		}
+		dList = GetBatchList(wPath)
+	}
+	return dList, wPath
+}

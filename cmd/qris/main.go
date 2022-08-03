@@ -13,7 +13,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"path/filepath"
 
 	"qris"
 )
@@ -53,32 +52,13 @@ func main() {
 	fmt.Println("Working in directory", workDir)
 
 	// `dataList` is a list of files to be processed.
-	var dataList []string
+	//	var dataList []string
 
 	// `workPath` is the absolute path to files to be processed.
 	// `batchPath` may include directory structure relative to the
 	// working directory, and this additional directory structure is
 	// included in `workPath`.
-	var workPath string
-
-	if *batchPath == "" {
-		if *filePath != "" {
-			// Add a single file to `dataList` if one was supplied.
-			workPath, _ = filepath.Abs(*filePath)
-			var workFile string
-			workPath, workFile = filepath.Split(workPath)
-			dataList = append(dataList, workFile)
-		}
-	} else {
-		// Batch process files.
-		// Allow dot argument to indicate batch files found in working directory.
-		if *batchPath == "." {
-			workPath = workDir
-		} else {
-			workPath, _ = filepath.Abs(*batchPath)
-		}
-		dataList = qris.GetBatchList(workPath)
-	}
+	dataList, workPath := qris.GetWorkPath(workDir, *batchPath, *filePath)
 
 	// Parse all files and write results to output.
 	allPassed := qris.WriteResults(workPath, dataList, *validate)
