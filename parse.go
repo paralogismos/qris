@@ -12,13 +12,20 @@ import (
 // Regular Expressions
 var citationName = regexp.MustCompile(`^\pL+,\pZs*\pL+`)
 var citationYear = regexp.MustCompile(`\pN{4}\pL*`)
+
 var noteEnd = regexp.MustCompile(`jmr$`)
 var noteEndAlt = regexp.MustCompile(`jmr.*`)
+
+// A quote end is either tab-delimited pp., or space-delimited pp. with
+// at least three spaces as the delimiter.
 var quoteEnd = regexp.MustCompile(`\t\s*[pP]+\..*`)
+var quoteEndAlt = regexp.MustCompile(`\s{3,}?[pP]+\..*`) //
+
 var quotePage = regexp.MustCompile(
 	`[pP]{1,2}\.\s*[\pNiIvVxXlL]+\s*[,-]*\s*[\pNiIvVxXlL]*`)
 var pageNumber = regexp.MustCompile(
 	`[\pNiIvVxXlL]+\s*[,-]*\s*[\pNiIvVxXlL]*`)
+
 var parsedFile = regexp.MustCompile(ParsedSuffix + `$`)
 var discardFile = regexp.MustCompile(DiscardSuffix + `$`)
 
@@ -97,6 +104,12 @@ func parseQuote(q Line) (Quote, bool) {
 
 	// Predominant Case: tab-delimited quote ends
 	endMatchIndices := quoteEnd.FindStringIndex(q.Body)
+
+	// Alternate Case: space-delimited quote ends
+	if endMatchIndices == nil {
+		endMatchIndices = quoteEndAlt.FindStringIndex(q.Body)
+	}
+
 	isQuote := endMatchIndices != nil
 
 	if isQuote {
@@ -120,8 +133,9 @@ func parseQuote(q Line) (Quote, bool) {
 			supp = strings.TrimSpace(endMatch[pageMatchIndices[1]:])
 		}
 
-		// Special Case: simple page # at end of quote, no tabs
-	} else if bodyEnd := len(q.Body) - 13; bodyEnd > 0 {
+		// Special Case: page # at end of quote with no tabs and
+		// only one or two spaces delimiting
+	} else if bodyEnd := len(q.Body) - 30; bodyEnd > 0 {
 		simpleEnd := q.Body[bodyEnd:]
 		pageMatchIndices := quotePage.FindStringIndex(simpleEnd)
 		isQuote = pageMatchIndices != nil
