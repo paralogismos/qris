@@ -13,6 +13,7 @@ import (
 var citationName = regexp.MustCompile(`^\pL+,\pZs*\pL+`)
 var citationYear = regexp.MustCompile(`\pN{4}\pL*`)
 var noteEnd = regexp.MustCompile(`jmr$`)
+var noteEndAlt = regexp.MustCompile(`jmr.*`)
 var quoteEnd = regexp.MustCompile(`\t\s*[pP]+\..*`)
 var quotePage = regexp.MustCompile(
 	`[pP]{1,2}\.\s*[\pNiIvVxXlL]+\s*[,-]*\s*[\pNiIvVxXlL]*`)
@@ -81,6 +82,8 @@ func parseNote(l Line) (string, bool) {
 	isNote := false
 	body := strings.TrimSpace(l.Body)
 	if noteEnd.FindStringIndex(body) != nil {
+		isNote = true
+	} else if noteEndAlt.FindStringIndex(body) != nil {
 		isNote = true
 	}
 	return body, isNote
