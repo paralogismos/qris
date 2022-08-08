@@ -65,10 +65,10 @@ import (
 
 // Definitions of system constants.
 const Version = "v0.5.10-alpha"
-const ParsedSuffix = "_PARSED.ris"
-const DiscardSuffix = "_DISCARDS.txt"
-const ConfigDir = "qris"
-const ConfigFile = "qris.conf"
+const parsedSuffix = "_PARSED.ris"
+const discardSuffix = "_DISCARDS.txt"
+const configDir = "qris"
+const configFile = "qris.conf"
 
 // A `Line` is a string of content coupled with a line number reference to the
 // original file; 1-indexed.
@@ -163,7 +163,7 @@ func GetConfigPath() string {
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 	} else {
-		configDirPath := filepath.Join(userConfig, ConfigDir)
+		configDirPath := filepath.Join(userConfig, configDir)
 		_, err := os.ReadDir(configDirPath)
 		if err != nil {
 			err := os.Mkdir(configDirPath, 0666)
@@ -171,7 +171,7 @@ func GetConfigPath() string {
 				fmt.Fprintln(os.Stderr, err)
 			}
 		}
-		configPath = filepath.Join(userConfig, ConfigDir, ConfigFile)
+		configPath = filepath.Join(userConfig, configDir, configFile)
 	}
 	return configPath
 }
@@ -391,10 +391,10 @@ func WriteResults(workPath string, dataList []string, validate bool) bool {
 
 		// File to store parsed quotes
 		base := strings.TrimSuffix(pFile, filepath.Ext(pFile))
-		pQuotes := base + ParsedSuffix
+		pQuotes := base + parsedSuffix
 
 		// File to store discarded lines
-		pDiscard := base + DiscardSuffix
+		pDiscard := base + discardSuffix
 
 		pf := ParseFile(pFile)
 		WriteDiscards(pf.Discards, pDiscard)

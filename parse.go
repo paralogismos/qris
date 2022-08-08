@@ -26,15 +26,15 @@ var quotePage = regexp.MustCompile(
 var pageNumber = regexp.MustCompile(
 	`[\pNiIvVxXlL]+\s*[,-]*\s*[\pNiIvVxXlL]*`)
 
-var parsedFile = regexp.MustCompile(ParsedSuffix + `$`)
-var discardFile = regexp.MustCompile(DiscardSuffix + `$`)
+var parsedFile = regexp.MustCompile(parsedSuffix + `$`)
+var discardFile = regexp.MustCompile(discardSuffix + `$`)
 
-// `isParsedFile` returns true if `f` ends with `ParsedSuffix`.
+// `isParsedFile` returns true if `f` ends with `parsedSuffix`.
 func isParsedFile(f string) bool {
 	return parsedFile.FindStringIndex(f) != nil
 }
 
-// `isDiscardFile` returns true if `f` ends with `DiscardSuffix`.
+// `isDiscardFile` returns true if `f` ends with `discardSuffix`.
 func isDiscardFile(f string) bool {
 	return discardFile.FindStringIndex(f) != nil
 }
