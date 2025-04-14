@@ -7,11 +7,14 @@ import (
 )
 
 func TestParseCitation(t *testing.T) {
-	ex_citation := newLine(0, `Brown, Jason W. "Neuropsychology and the self-concept." The Journal of Nervous and Mental Disease. 187 no.3 (1999e): 131-41.`)
+	ex_citation := newLine(0,
+		`Brown, Jason W. "Neuropsychology and the self-concept." `+
+			`The Journal of Nervous and Mental Disease. 187 no.3 (1999e): 131-41.`)
 	cit := parseCitation(ex_citation)
 	want_name := "Brown, Jason"
 	want_year := "1999e"
-	want_body := `Brown, Jason W. "Neuropsychology and the self-concept." The Journal of Nervous and Mental Disease. 187 no.3 (1999e): 131-41.`
+	want_body := `Brown, Jason W. "Neuropsychology and the self-concept." ` +
+		`The Journal of Nervous and Mental Disease. 187 no.3 (1999e): 131-41.`
 	if cit.Name != want_name ||
 		cit.Year != want_year ||
 		cit.Body != want_body {
@@ -29,10 +32,13 @@ func TestParseNote(t *testing.T) {
 }
 
 func TestParseQuote(t *testing.T) {
-	exQuote := newLine(0, `Focal attention is focal perception, not perception focused by attention. 		p. 3`)
+	exQuote := newLine(0,
+		`Focal attention is focal perception, `+
+			`not perception focused by attention. 		p. 3`)
 	quote, isQuote := parseQuote(exQuote)
 	want_line_no := 0
-	want_body := `Focal attention is focal perception, not perception focused by attention.`
+	want_body := `Focal attention is focal perception, ` +
+		`not perception focused by attention.`
 	want_page := "3"
 	want_supp := ``
 	want_note := ``
