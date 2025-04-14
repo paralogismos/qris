@@ -30,14 +30,15 @@
 //
 // TODO:
 //
-// x - Omit quote teaser
-// x - Tag quote body with T1 instead of T3
-// x - Preserve contiguous letter suffixes in citation dates
-// x - Substitute "?" for "UNKNOWN" in malformed page number cases
-// x - Capture page numbers in roman numerals
-// x - Strip page number indicators from page numbers
-// x - Fix bug in parsing supplementary fields ending in note marker ("jmr")
-//
+//   - Add functionality to parse files containing multiple sources.
+//     - Jack has selected "<$>" as a provisional delimiter to indicate
+//       the start of a new source
+//     - Related comments below beginning: // ***
+//     - Strategy:
+//       - first change some function names and data types to match
+//         the idea of storing parsed sources in a slice for each file
+//       - get the slice representation working for a single source only
+//       - develop functionality to handle multiple sources
 // _ - Add functionality to store up to N notes following a quote.
 //     - Store notes in a slice or dictionary
 //     - Map notes array to numbered tags, e.g., C1, C2, ....
@@ -137,6 +138,8 @@ type Quotes []Quote
 // `Discards` is a slice of `Line`s which aren't quotes, to be reviewed manually
 // by the user.
 
+// *** Change this to `ParsedSource`.
+// *** A `ParsedFile` should be a slice of `ParsedSource`s.
 type ParsedFile struct {
 	Filename string
 	Title    string // first line of parsed file
@@ -145,6 +148,7 @@ type ParsedFile struct {
 	Discards Lines
 }
 
+// *** Change this to `newParsedSource`.
 func newParsedFile(fn, tit string, cit Citation, qs Quotes, ds Lines) ParsedFile {
 	return ParsedFile{
 		Filename: fn,
@@ -305,6 +309,13 @@ func WriteDiscards(ds Lines, fname string) {
 	}
 }
 
+// *** Either:
+// *** 1) Change this function to `WriteSources` and loop over the
+//        `ParsedSource`s in the `ParsedFile`, or
+// *** 2) Create a new `WriteSources` function that loops over `ParsedSource`s
+//        calling `WriteQuotes` for each one. Favoring this right now....
+//        If I do this, I should do file creation and initialization of
+//        `bid`, `fid`, and `tstamp` into the `WriteSources` function.
 func WriteQuotes(pf *ParsedFile, fname string) {
 	file, err := os.Create(fname)
 	if err != nil {
@@ -322,13 +333,14 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 	// timestamp: when file was processed
 	tstamp := time.Now().Format("2006/01/02")
 
+	// *** Loop over `ParsedFile` slice of `ParsedSource`s.
 	citBody := pf.Citation.Body
 	citName := pf.Citation.Name
 	citYear := pf.Citation.Year
 	citNote := pf.Citation.Note
 
 	for _, q := range pf.Quotes {
-		fmt.Fprintln(file, "TY  - Generic")
+		fmt.Fprintln(file, "TY  - Generic") // *** Update record type.
 		fmt.Fprintln(file, "VL  -", bid)
 		fmt.Fprintln(file, "UR  -", fid)
 		fmt.Fprintln(file, "AD  -", tstamp)
