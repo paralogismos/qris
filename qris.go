@@ -150,16 +150,16 @@ func newSource(cit Citation, qs []Quote) Source {
 type ParsedFile struct {
 	Filename string
 	Title    string // first line of parsed file
-	Source   Source
+	Sources  []Source
 	Discards []Line
 }
 
 // *** Change this to `newParsedSource`.
-func newParsedFile(fn, tit string, src Source, ds []Line) ParsedFile {
+func newParsedFile(fn, tit string, srcs []Source, ds []Line) ParsedFile {
 	return ParsedFile{
 		Filename: fn,
 		Title:    tit,
-		Source:   src,
+		Sources:  srcs,
 		Discards: ds,
 	}
 }
@@ -339,25 +339,27 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 	tstamp := time.Now().Format("2006/01/02")
 
 	// *** Loop over `ParsedFile` slice of `ParsedSource`s.
-	citBody := pf.Source.Citation.Body
-	citName := pf.Source.Citation.Name
-	citYear := pf.Source.Citation.Year
-	citNote := pf.Source.Citation.Note
+	for _, s := range pf.Sources {
+		citBody := s.Citation.Body
+		citName := s.Citation.Name
+		citYear := s.Citation.Year
+		citNote := s.Citation.Note
 
-	for _, q := range pf.Source.Quotes {
-		fmt.Fprintln(file, "TY  - Generic") // *** Update record type.
-		fmt.Fprintln(file, "VL  -", bid)
-		fmt.Fprintln(file, "UR  -", fid)
-		fmt.Fprintln(file, "AD  -", tstamp)
-		fmt.Fprintln(file, "AB  -", citBody)
-		fmt.Fprintln(file, "A1  -", citName)
-		fmt.Fprintln(file, "Y1  -", citYear)
-		fmt.Fprintln(file, "T2  -", citNote)
-		fmt.Fprintln(file, "T1  -", q.Body)
-		fmt.Fprintln(file, "SP  -", q.Page)
-		fmt.Fprintln(file, "PB  -", q.Supp)
-		fmt.Fprintln(file, "CY  -", q.Note)
-		fmt.Fprintln(file, "ER  -")
+		for _, q := range s.Quotes {
+			fmt.Fprintln(file, "TY  - Generic") // *** Update record type.
+			fmt.Fprintln(file, "VL  -", bid)
+			fmt.Fprintln(file, "UR  -", fid)
+			fmt.Fprintln(file, "AD  -", tstamp)
+			fmt.Fprintln(file, "AB  -", citBody)
+			fmt.Fprintln(file, "A1  -", citName)
+			fmt.Fprintln(file, "Y1  -", citYear)
+			fmt.Fprintln(file, "T2  -", citNote)
+			fmt.Fprintln(file, "T1  -", q.Body)
+			fmt.Fprintln(file, "SP  -", q.Page)
+			fmt.Fprintln(file, "PB  -", q.Supp)
+			fmt.Fprintln(file, "CY  -", q.Note)
+			fmt.Fprintln(file, "ER  -")
+		}
 	}
 }
 
