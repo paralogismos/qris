@@ -65,7 +65,8 @@ func ParseFile(fpath string) ParsedFile {
 		}
 	}
 
-	return newParsedFile(fn, tit, cit, qs, ds)
+	src := newSource(cit, qs)
+	return newParsedFile(fn, tit, src, ds)
 }
 
 // `parseCitation` parses a line into a `Citation` struct.

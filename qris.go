@@ -128,6 +128,19 @@ func newQuote(lineNo int, body, page, supp, note string) Quote {
 	}
 }
 
+// A file may include multiple sources.
+type Source struct {
+	Citation Citation
+	Quotes   []Quote
+}
+
+func newSource(cit Citation, qs []Quote) Source {
+	return Source{
+		Citation: cit,
+		Quotes:   qs,
+	}
+}
+
 // Results of parsing one file.
 // `Discards` is a slice of `Line`s which aren't quotes, to be reviewed manually
 // by the user.
@@ -137,18 +150,16 @@ func newQuote(lineNo int, body, page, supp, note string) Quote {
 type ParsedFile struct {
 	Filename string
 	Title    string // first line of parsed file
-	Citation Citation
-	Quotes   []Quote
+	Source   Source
 	Discards []Line
 }
 
 // *** Change this to `newParsedSource`.
-func newParsedFile(fn, tit string, cit Citation, qs []Quote, ds []Line) ParsedFile {
+func newParsedFile(fn, tit string, src Source, ds []Line) ParsedFile {
 	return ParsedFile{
 		Filename: fn,
 		Title:    tit,
-		Citation: cit,
-		Quotes:   qs,
+		Source:   src,
 		Discards: ds,
 	}
 }
@@ -328,12 +339,12 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 	tstamp := time.Now().Format("2006/01/02")
 
 	// *** Loop over `ParsedFile` slice of `ParsedSource`s.
-	citBody := pf.Citation.Body
-	citName := pf.Citation.Name
-	citYear := pf.Citation.Year
-	citNote := pf.Citation.Note
+	citBody := pf.Source.Citation.Body
+	citName := pf.Source.Citation.Name
+	citYear := pf.Source.Citation.Year
+	citNote := pf.Source.Citation.Note
 
-	for _, q := range pf.Quotes {
+	for _, q := range pf.Source.Quotes {
 		fmt.Fprintln(file, "TY  - Generic") // *** Update record type.
 		fmt.Fprintln(file, "VL  -", bid)
 		fmt.Fprintln(file, "UR  -", fid)
