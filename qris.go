@@ -129,7 +129,7 @@ func newQuote(lineNo int, body, page, supp, note string) Quote {
 }
 
 // `Quotes` is a slice of `Quote`s.
-type Quotes []Quote
+//type Quotes []Quote
 
 // Results of parsing one file.
 // `Discards` is a slice of `Line`s which aren't quotes, to be reviewed manually
@@ -141,12 +141,12 @@ type ParsedFile struct {
 	Filename string
 	Title    string // first line of parsed file
 	Citation Citation
-	Quotes   Quotes
+	Quotes   []Quote
 	Discards []Line
 }
 
 // *** Change this to `newParsedSource`.
-func newParsedFile(fn, tit string, cit Citation, qs Quotes, ds []Line) ParsedFile {
+func newParsedFile(fn, tit string, cit Citation, qs []Quote, ds []Line) ParsedFile {
 	return ParsedFile{
 		Filename: fn,
 		Title:    tit,

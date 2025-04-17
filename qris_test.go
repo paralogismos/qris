@@ -43,7 +43,7 @@ func TestParseQuote(t *testing.T) {
 		`The relation of succession in a nontemporal (vertical) becoming transforms to one of precedence in the serialization of the (horizontal) present by events. The nontemporal actualization precipitates cotemporal entities. The concurrence of these entities in the specious present is consciousness, i.e., the conscious state. The self forms the past boundary, the surface images and objects form the actual boundary, of this duration. 	p. 9  space precipitates simultaneous objects which equals consciousness -jmr `,
 		`Finally, to sum up what this signifies for the biological basis of the self, the neuropsychological material demonstrates that the self is deposited in the process of object realization, that it distributes into images and objects, and that a truncation of this process results in an erosion of the self that is similar across the different perceptual modalities. The self is categorical and relational, achieving autonomy in the context of a complete derivation. The autonomy depends on the completeness. The preliminary locus of the self in the mental state entails a holistic or multimodal phase of potential prior to perceptual individuation. This, together with a relation to feeling, to the personal history and the immediate past, point to a limbic transition in the outward development of the mental state. 	p. 14  penultimate paragraph`}
 
-	wantQuotes := Quotes{
+	wantQuotes := []Quote{
 		Quote{
 			LineNo: 0,
 			Body:   `Focal attention is focal perception, not perception focused by attention.`,
