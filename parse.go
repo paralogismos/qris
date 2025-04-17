@@ -10,6 +10,8 @@ import (
 )
 
 // Regular Expressions
+var sourceBegin = regexp.MustCompile(`^<$>`)
+
 var citationName = regexp.MustCompile(`^\pL+,\pZs*\pL+`)
 var citationYear = regexp.MustCompile(`\pN{4}\pL*`)
 
@@ -47,7 +49,24 @@ func ParseFile(fpath string) ParsedFile {
 	qs := []Quote{}
 	ds := []Line{}
 
+	// sources := []Source{}
+	// firstSource := true
 	for _, l := range rls[2:] {
+		// if sourceBegin.MATCHES(l) {
+		//   if firstSource {
+		//     cit := parseCitation(l) // ignore initial "<$>"
+		//     qs := []Quote{}
+		//     ds := []Line{}
+		//   } else {
+		//     firstSource = false
+		//     src := newSource(cit, qs)
+		//     sources = append(sources, src) // save the source
+		//     // begin new source
+		//     cit := parseCitation(l) // ignore initial "<$>"
+		//     qs := []Quote{}  //
+		//   }
+		//   continue
+		// }
 		q, isQuote := parseQuote(l)
 		if n, isNote := parseNote(l); !isQuote && isNote {
 			lastQuoteIdx := len(qs) - 1
@@ -65,8 +84,12 @@ func ParseFile(fpath string) ParsedFile {
 		}
 	}
 
+	// if !firstSource {
+	//     src := newSource(cit, qs)
+	//     sources = append(sources, src) // save the source
+	// }
 	src := newSource(cit, qs)
-	return newParsedFile(fn, tit, []Source{src}, ds)
+	return newParsedFile(fn, tit, []Source{src}, ds) // return `sources` here
 }
 
 // `parseCitation` parses a line into a `Citation` struct.
