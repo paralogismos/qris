@@ -45,7 +45,7 @@ func ParseFile(fpath string) ParsedFile {
 	tit := rls[0].Body
 	cit := parseCitation(rls[1])
 	qs := Quotes{}
-	ds := Lines{}
+	ds := []Line{}
 
 	for _, l := range rls[2:] {
 		q, isQuote := parseQuote(l)

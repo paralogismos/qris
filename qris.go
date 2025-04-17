@@ -85,9 +85,6 @@ func newLine(lineNo int, body string) Line {
 	}
 }
 
-// `Lines` is a slice of `Line`s.
-type Lines []Line
-
 // The first line of the file is assumed to be the source title.
 
 // Parsed from the second line of the file  into family-name, year,
@@ -145,11 +142,11 @@ type ParsedFile struct {
 	Title    string // first line of parsed file
 	Citation Citation
 	Quotes   Quotes
-	Discards Lines
+	Discards []Line
 }
 
 // *** Change this to `newParsedSource`.
-func newParsedFile(fn, tit string, cit Citation, qs Quotes, ds Lines) ParsedFile {
+func newParsedFile(fn, tit string, cit Citation, qs Quotes, ds []Line) ParsedFile {
 	return ParsedFile{
 		Filename: fn,
 		Title:    tit,
@@ -258,7 +255,7 @@ func GetFileList(fpath string) []string {
 // Takes a file specified by `fpath` and returns a map containing
 // raw lines from the file keyed by the original line number on which
 // each line occurred.
-func getLines(fpath string) Lines {
+func getLines(fpath string) []Line {
 	file, err := os.Open(fpath)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -278,11 +275,11 @@ func getLines(fpath string) Lines {
 }
 
 // Removes all empty lines, including whitespace lines,
-// from a `Lines` instance.
+// from a slice of `Line`s.
 //
 // Strip leading and trailing whitespace from each `Line`?
-func cleanLines(lines Lines) Lines {
-	cls := Lines{}
+func cleanLines(lines []Line) []Line {
+	cls := []Line{}
 
 	for _, l := range lines {
 		if l.Body == "" {
@@ -295,7 +292,7 @@ func cleanLines(lines Lines) Lines {
 	return cls
 }
 
-func WriteDiscards(ds Lines, fname string) {
+func WriteDiscards(ds []Line, fname string) {
 	file, err := os.Create(fname)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)

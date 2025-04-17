@@ -100,7 +100,7 @@ func TestParseQuote(t *testing.T) {
 			Note:   ""},
 	}
 
-	var exQuoteLines Lines
+	var exQuoteLines []Line
 	for n, l := range exTestLines {
 		exQuoteLines = append(exQuoteLines, newLine(n, l))
 	}
