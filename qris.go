@@ -128,9 +128,6 @@ func newQuote(lineNo int, body, page, supp, note string) Quote {
 	}
 }
 
-// `Quotes` is a slice of `Quote`s.
-//type Quotes []Quote
-
 // Results of parsing one file.
 // `Discards` is a slice of `Line`s which aren't quotes, to be reviewed manually
 // by the user.
