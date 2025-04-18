@@ -21,7 +21,7 @@ var noteEndAlt = regexp.MustCompile(`jmr.*`)
 // A quote end is either tab-delimited pp., or space-delimited pp. with
 // at least three spaces as the delimiter.
 var quoteEnd = regexp.MustCompile(`\t\s*[pP]+\..*`)
-var quoteEndAlt = regexp.MustCompile(`\s{3,}?[pP]+\..*`) //
+var quoteEndAlt = regexp.MustCompile(`\s{3,}?[pP]+\..*`)
 
 var quotePage = regexp.MustCompile(
 	`[pP]{1,2}\.\s*[\pNiIvVxXlL]+\s*[,-]*\s*[\pNiIvVxXlL]*`)
@@ -90,7 +90,7 @@ func ParseFile(fpath string) ParsedFile {
 
 // `parseCitation` parses a line into a `Citation` struct.
 func parseCitation(rl Line) Citation {
-	tl := sourceBegin.ReplaceAllString(rl.Body, "") // trim sourceBegin token
+	tl := sourceBegin.ReplaceAllString(rl.Body, "") // trim `sourceBegin` token
 	tl = strings.TrimSpace(tl)
 	name := citationName.FindString(tl)
 

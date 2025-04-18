@@ -1,17 +1,22 @@
 // qris.go
 //
-// experiments in parsing ris files
+// Parse quote .txt files into .ris format.
 //
 // Assumptions:
 //
 //   The first line is the title of the source
+//     - for use of the user in the quote file
+//     - not used in creating the .ris file
 //
 //   The second line is a citation
 //     - the citation should be parsed into name, year, raw-citation,
 //       and a note-field
 //       - notes preceding any quotes are assumed to be attached to the citation
+//     - the citation line may optionally begin with "<$>" indicating a new source
 //
-//   The remaining lines are quotes IF they end in a page number, followed
+//   Any line beginning with "<$>" is the citation line for a new source
+//
+//   Lines following a citation are quotes IF they end in a page number, followed
 //   by an optional supplementary field.
 //     - predicate to determine quoteness
 //     - parse raw quotes into quote, page-number, supplementary-field,
@@ -22,7 +27,7 @@
 //     - these should be identified and added to the Note field of a Quote
 //       of the most recent quote, if one exists.
 //
-//   Blank lines are discarded
+//   Blank lines are ignored
 //
 //   Other lines are written to a review file in the format:
 //     - >[line #]
@@ -30,15 +35,7 @@
 //
 // TODO:
 //
-//   - Add functionality to parse files containing multiple sources.
-//     - Jack has selected "<$>" as a provisional delimiter to indicate
-//       the start of a new source
-//     - Related comments below beginning: // ***
-//     - Strategy:
-//       - first change some function names and data types to match
-//         the idea of storing parsed sources in a slice for each file
-//       - get the slice representation working for a single source only
-//       - develop functionality to handle multiple sources
+// _ - Update record type in WriteQuotes: "TY  - Generic" -> ?
 // _ - Add functionality to store up to N notes following a quote.
 //     - Store notes in a slice or dictionary
 //     - Map notes array to numbered tags, e.g., C1, C2, ....
@@ -86,12 +83,14 @@ func newLine(lineNo int, body string) Line {
 }
 
 // The first line of the file is assumed to be the source title.
+// The first citation line may begin with the `sourceBegin` token.
+// All subsequent citations must begin with the `sourceBegin` token.
 
 // Parsed from the second line of the file  into family-name, year,
 // and raw-citation.
 type Citation struct {
 	Name string
-	Year string // type doesn't matter since we are writing to a file
+	Year string
 	Body string
 	Note string
 }
@@ -144,9 +143,6 @@ func newSource(cit Citation, qs []Quote) Source {
 // Results of parsing one file.
 // `Discards` is a slice of `Line`s which aren't quotes, to be reviewed manually
 // by the user.
-
-// *** Change this to `ParsedSource`.
-// *** A `ParsedFile` should be a slice of `ParsedSource`s.
 type ParsedFile struct {
 	Filename string
 	Title    string // first line of parsed file
@@ -154,7 +150,6 @@ type ParsedFile struct {
 	Discards []Line
 }
 
-// *** Change this to `newParsedSource`.
 func newParsedFile(fn, tit string, srcs []Source, ds []Line) ParsedFile {
 	return ParsedFile{
 		Filename: fn,
@@ -164,7 +159,7 @@ func newParsedFile(fn, tit string, srcs []Source, ds []Line) ParsedFile {
 	}
 }
 
-// GetConfigPath checks for a configuration directory and
+// `GetConfigPath` checks for a configuration directory and
 // creates one if none exists.
 func GetConfigPath() string {
 	configPath := ""
@@ -185,7 +180,7 @@ func GetConfigPath() string {
 	return configPath
 }
 
-// GetWorkDir looks in `configPath` for a configuration file. If one exists,
+// `GetWorkDir` looks in `configPath` for a configuration file. If one exists,
 // the configured working directory is returned. Otherwise `os.Getwd()` is used
 // to get the current working directory from the system and this path is returned.
 func GetWorkDir(configPath string) string {
@@ -215,11 +210,11 @@ func GetWorkDir(configPath string) string {
 	return workDir
 }
 
-// SetWorkDir stores a new working directory path in the configuration file
+// `SetWorkDir` stores a new working directory path in the configuration file
 // and sets the current working directory on the users system.
-// If SetWorkDir cannot set the working directory for some reason, the
+// If `SetWorkDir` cannot set the working directory for some reason, the
 // default working directory already established by the system and discovered
-// by GetWorkDir should be available for the user to use.
+// by `GetWorkDir` should be available for the user to use.
 func SetWorkDir(dirPath, configPath string) {
 	if dirPath != "" {
 		workDir, err := filepath.Abs(dirPath)
@@ -241,7 +236,9 @@ func SetWorkDir(dirPath, configPath string) {
 	}
 }
 
-// Creates a list of filenames from the text file specified by `fpath`.
+// *** I don't think that this function is being used anymore....
+// *** Maybe this should be removed.
+// `GetFileList` creates a list of filenames from the text file specified by `fpath`.
 // This file should have one filename per line.
 func GetFileList(fpath string) []string {
 	file, err := os.Open(fpath)
@@ -260,7 +257,7 @@ func GetFileList(fpath string) []string {
 	return files
 }
 
-// Takes a file specified by `fpath` and returns a map containing
+// `getLines` takes a file specified by `fpath` and returns a map containing
 // raw lines from the file keyed by the original line number on which
 // each line occurred.
 func getLines(fpath string) []Line {
@@ -282,10 +279,10 @@ func getLines(fpath string) []Line {
 	return rawLines
 }
 
-// Removes all empty lines, including whitespace lines,
+// `cleanLines` removes all empty lines, including whitespace lines,
 // from a slice of `Line`s.
 //
-// Strip leading and trailing whitespace from each `Line`?
+// ??? Strip leading and trailing whitespace from each `Line`?
 func cleanLines(lines []Line) []Line {
 	cls := []Line{}
 
@@ -314,13 +311,6 @@ func WriteDiscards(ds []Line, fname string) {
 	}
 }
 
-// *** Either:
-// *** 1) Change this function to `WriteSources` and loop over the
-//        `ParsedSource`s in the `ParsedFile`, or
-// *** 2) Create a new `WriteSources` function that loops over `ParsedSource`s
-//        calling `WriteQuotes` for each one. Favoring this right now....
-//        If I do this, I should do file creation and initialization of
-//        `bid`, `fid`, and `tstamp` into the `WriteSources` function.
 func WriteQuotes(pf *ParsedFile, fname string) {
 	file, err := os.Create(fname)
 	if err != nil {
@@ -338,14 +328,13 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 	// timestamp: when file was processed
 	tstamp := time.Now().Format("2006/01/02")
 
-	// *** Loop over `ParsedFile` slice of `ParsedSource`s.
-	for _, s := range pf.Sources {
+	for _, s := range pf.Sources { // loop over sources of the parsed file
 		citBody := s.Citation.Body
 		citName := s.Citation.Name
 		citYear := s.Citation.Year
 		citNote := s.Citation.Note
 
-		for _, q := range s.Quotes {
+		for _, q := range s.Quotes { // loop over quotes of each source
 			fmt.Fprintln(file, "TY  - Generic") // *** Update record type.
 			fmt.Fprintln(file, "VL  -", bid)
 			fmt.Fprintln(file, "UR  -", fid)
