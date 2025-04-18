@@ -10,7 +10,7 @@ import (
 )
 
 // Regular Expressions
-var sourceBegin = regexp.MustCompile(`^<$>`)
+var sourceBegin = regexp.MustCompile(`^<\$>`)
 
 var citationName = regexp.MustCompile(`^\pL+,\pZs*\pL+`)
 var citationYear = regexp.MustCompile(`\pN{4}\pL*`)
@@ -45,28 +45,28 @@ func ParseFile(fpath string) ParsedFile {
 	rls := cleanLines(getLines(fpath))
 	fn := filepath.Base(fpath)
 	tit := rls[0].Body
-	cit := parseCitation(rls[1])
+	var cit Citation
+	var src Source
 	qs := []Quote{}
 	ds := []Line{}
+	sources := []Source{}
+	firstSource := true
 
-	// sources := []Source{}
-	// firstSource := true
-	for _, l := range rls[2:] {
-		// if sourceBegin.MATCHES(l) {
-		//   if firstSource {
-		//     cit := parseCitation(l) // ignore initial "<$>"
-		//     qs := []Quote{}
-		//     ds := []Line{}
-		//   } else {
-		//     firstSource = false
-		//     src := newSource(cit, qs)
-		//     sources = append(sources, src) // save the source
-		//     // begin new source
-		//     cit := parseCitation(l) // ignore initial "<$>"
-		//     qs := []Quote{}  //
-		//   }
-		//   continue
-		// }
+	for _, l := range rls[1:] {
+		if firstSource { // first source in the file
+			firstSource = false
+			cit = parseCitation(l)
+			qs = []Quote{}
+			ds = []Line{}
+			continue
+		}
+		if sourceBegin.MatchString(l.Body) { // new source encountered
+			src = newSource(cit, qs)
+			sources = append(sources, src) // save the last source
+			cit = parseCitation(l)
+			qs = []Quote{} // start new slice of quotes
+			continue
+		}
 		q, isQuote := parseQuote(l)
 		if n, isNote := parseNote(l); !isQuote && isNote {
 			lastQuoteIdx := len(qs) - 1
@@ -83,27 +83,24 @@ func ParseFile(fpath string) ParsedFile {
 			}
 		}
 	}
-
-	// if !firstSource {
-	//     src := newSource(cit, qs)
-	//     sources = append(sources, src) // save the source
-	// }
-	src := newSource(cit, qs)
-	return newParsedFile(fn, tit, []Source{src}, ds) // return `sources` here
+	src = newSource(cit, qs)
+	sources = append(sources, src) // save the last parsed source
+	return newParsedFile(fn, tit, sources, ds)
 }
 
 // `parseCitation` parses a line into a `Citation` struct.
 func parseCitation(rl Line) Citation {
-	name := citationName.FindString(rl.Body)
+	tl := sourceBegin.ReplaceAllString(rl.Body, "") // trim sourceBegin token
+	name := citationName.FindString(tl)
 
 	year := ""
-	yearMatches := citationYear.FindAllStringSubmatch(rl.Body, -1)
+	yearMatches := citationYear.FindAllStringSubmatch(tl, -1)
 	countMatches := len(yearMatches)
 	if countMatches > 0 {
 		year = yearMatches[countMatches-1][0]
 	}
 
-	body := rl.Body
+	body := tl
 	note := ""
 
 	return newCitation(name, year, body, note)

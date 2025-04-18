@@ -359,6 +359,7 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 			fmt.Fprintln(file, "PB  -", q.Supp)
 			fmt.Fprintln(file, "CY  -", q.Note)
 			fmt.Fprintln(file, "ER  -")
+			fmt.Fprintln(file, "")
 		}
 	}
 }
