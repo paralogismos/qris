@@ -91,6 +91,7 @@ func ParseFile(fpath string) ParsedFile {
 // `parseCitation` parses a line into a `Citation` struct.
 func parseCitation(rl Line) Citation {
 	tl := sourceBegin.ReplaceAllString(rl.Body, "") // trim sourceBegin token
+	tl = strings.TrimSpace(tl)
 	name := citationName.FindString(tl)
 
 	year := ""
