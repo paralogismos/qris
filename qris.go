@@ -257,9 +257,9 @@ func GetFileList(fpath string) []string {
 	return files
 }
 
-// `getLines` takes a file specified by `fpath` and returns a map containing
-// raw lines from the file keyed by the original line number on which
-// each line occurred.
+// `getLines` takes a file specified by `fpath` and returns a slice
+// containing raw lines from the file keyed by the original line number
+// on which each line occurred.
 func getLines(fpath string) []Line {
 	file, err := os.Open(fpath)
 	if err != nil {
