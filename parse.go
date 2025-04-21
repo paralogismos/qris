@@ -13,6 +13,7 @@ import (
 var sourceBegin = regexp.MustCompile(`^<\$>`)
 
 var authorLine = regexp.MustCompile(`^>>>`)
+var keywordLine = regexp.MustCompile(`^\^s:`)
 
 var citationName = regexp.MustCompile(`^\pL+,\pZs*\pL+`)
 var citationYear = regexp.MustCompile(`\pN{4}\pL*`)
@@ -79,6 +80,8 @@ func ParseFile(fpath string) ParsedFile {
 			}
 		} else if a, isAuth := parseAuth(l); !isQuote && isAuth {
 			qs[lastQuoteIdx].Auth = a
+		} else if k, isKeyword := parseKeyword(l); !isQuote && isKeyword {
+			qs[lastQuoteIdx].Keyword = k
 		} else {
 			if isQuote {
 				qs = append(qs, q)
@@ -133,8 +136,19 @@ func parseAuth(l Line) (string, bool) {
 	return author, isAuth
 }
 
+func parseKeyword(l Line) (string, bool) {
+	isKeyword := false
+	keyword := ""
+	body := strings.TrimSpace(l.Body)
+	if keywordLine.MatchString(body) {
+		isKeyword = true
+		keyword = strings.TrimSpace(keywordLine.ReplaceAllString(body, ""))
+	}
+	return keyword, isKeyword
+}
+
 func parseQuote(q Line) (Quote, bool) {
-	lineNo, body, page, supp := 0, "", "", ""
+	lineNo, auth, kw, body, page, supp, note := 0, "", "", "", "", "", ""
 
 	// Malformed page numbers are recoreded using `pageUnknown`.
 	const pageUnknown = "?"
@@ -188,7 +202,5 @@ func parseQuote(q Line) (Quote, bool) {
 		}
 	}
 
-	note := ""
-	auth := ""
-	return newQuote(lineNo, auth, body, page, supp, note), isQuote
+	return newQuote(lineNo, auth, kw, body, page, supp, note), isQuote
 }

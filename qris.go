@@ -110,22 +110,24 @@ func newCitation(name, year, body, note string) Citation {
 // possibly a supplementary entry, associated with it. These have been extracted
 // in a `Quote` and placed in their own fields.
 type Quote struct {
-	LineNo int
-	Auth   string
-	Body   string
-	Page   string
-	Supp   string
-	Note   string
+	LineNo  int
+	Auth    string
+	Keyword string
+	Body    string
+	Page    string
+	Supp    string
+	Note    string
 }
 
-func newQuote(lineNo int, auth, body, page, supp, note string) Quote {
+func newQuote(lineNo int, auth, kw, body, page, supp, note string) Quote {
 	return Quote{
-		LineNo: lineNo,
-		Auth:   auth,
-		Body:   body,
-		Page:   page,
-		Supp:   supp,
-		Note:   note,
+		LineNo:  lineNo,
+		Auth:    auth,
+		Keyword: kw,
+		Body:    body,
+		Page:    page,
+		Supp:    supp,
+		Note:    note,
 	}
 }
 
@@ -349,10 +351,12 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 				fmt.Fprintln(file, "A2  -", citName)
 			} else {
 				fmt.Fprintln(file, "A1  -", citName)
+				fmt.Fprintln(file, "A2  -") // Is this needed?
 			}
 
 			fmt.Fprintln(file, "Y1  -", citYear)
 			fmt.Fprintln(file, "T2  -", citNote)
+			fmt.Fprintln(file, "KW  -", q.Keyword)
 			fmt.Fprintln(file, "T1  -", q.Body)
 			fmt.Fprintln(file, "SP  -", q.Page)
 			fmt.Fprintln(file, "PB  -", q.Supp)
