@@ -12,6 +12,8 @@ import (
 // Regular Expressions
 var sourceBegin = regexp.MustCompile(`^<\$>`)
 
+var authorLine = regexp.MustCompile(`^>>>`)
+
 var citationName = regexp.MustCompile(`^\pL+,\pZs*\pL+`)
 var citationYear = regexp.MustCompile(`\pN{4}\pL*`)
 
@@ -68,13 +70,15 @@ func ParseFile(fpath string) ParsedFile {
 			continue
 		}
 		q, isQuote := parseQuote(l)
+		lastQuoteIdx := len(qs) - 1
 		if n, isNote := parseNote(l); !isQuote && isNote {
-			lastQuoteIdx := len(qs) - 1
 			if lastQuoteIdx >= 0 {
 				qs[lastQuoteIdx].Note = n
 			} else {
 				cit.Note = n
 			}
+		} else if a, isAuth := parseAuth(l); !isQuote && isAuth {
+			qs[lastQuoteIdx].Auth = a
 		} else {
 			if isQuote {
 				qs = append(qs, q)
@@ -116,6 +120,17 @@ func parseNote(l Line) (string, bool) {
 		isNote = true
 	}
 	return body, isNote
+}
+
+func parseAuth(l Line) (string, bool) {
+	isAuth := false
+	author := ""
+	body := strings.TrimSpace(l.Body)
+	if authorLine.MatchString(body) {
+		isAuth = true
+		author = strings.TrimSpace(authorLine.ReplaceAllString(body, ""))
+	}
+	return author, isAuth
 }
 
 func parseQuote(q Line) (Quote, bool) {
@@ -174,5 +189,6 @@ func parseQuote(q Line) (Quote, bool) {
 	}
 
 	note := ""
-	return newQuote(lineNo, body, page, supp, note), isQuote
+	auth := ""
+	return newQuote(lineNo, auth, body, page, supp, note), isQuote
 }

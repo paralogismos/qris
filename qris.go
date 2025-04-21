@@ -111,15 +111,17 @@ func newCitation(name, year, body, note string) Citation {
 // in a `Quote` and placed in their own fields.
 type Quote struct {
 	LineNo int
+	Auth   string
 	Body   string
 	Page   string
 	Supp   string
 	Note   string
 }
 
-func newQuote(lineNo int, body, page, supp, note string) Quote {
+func newQuote(lineNo int, auth, body, page, supp, note string) Quote {
 	return Quote{
 		LineNo: lineNo,
+		Auth:   auth,
 		Body:   body,
 		Page:   page,
 		Supp:   supp,
@@ -340,7 +342,15 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 			fmt.Fprintln(file, "UR  -", fid)
 			fmt.Fprintln(file, "AD  -", tstamp)
 			fmt.Fprintln(file, "AB  -", citBody)
-			fmt.Fprintln(file, "A1  -", citName)
+
+			// A1 gets citation name unless a primary quote author was specified
+			if q.Auth != "" {
+				fmt.Fprintln(file, "A1  -", q.Auth)
+				fmt.Fprintln(file, "A2  -", citName)
+			} else {
+				fmt.Fprintln(file, "A1  -", citName)
+			}
+
 			fmt.Fprintln(file, "Y1  -", citYear)
 			fmt.Fprintln(file, "T2  -", citNote)
 			fmt.Fprintln(file, "T1  -", q.Body)
