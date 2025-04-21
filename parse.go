@@ -24,9 +24,9 @@ var quoteEnd = regexp.MustCompile(`\t\s*[pP]+\..*`)
 var quoteEndAlt = regexp.MustCompile(`\s{3,}?[pP]+\..*`)
 
 var quotePage = regexp.MustCompile(
-	`[pP]{1,2}\.\s*[\pNiIvVxXlL]+\s*[,-]*\s*[\pNiIvVxXlL]*`)
+	`[pP]{1,2}\.\s*[\pNiIvVxXlL\?]+\s*[,-]*\s*[\pNiIvVxXlL\?]*`)
 var pageNumber = regexp.MustCompile(
-	`[\pNiIvVxXlL]+\s*[,-]*\s*[\pNiIvVxXlL]*`)
+	`[\pNiIvVxXlL\?]+\s*[,-]*\s*[\pNiIvVxXlL\?]*`)
 
 var parsedFile = regexp.MustCompile(parsedSuffix + `$`)
 var discardFile = regexp.MustCompile(discardSuffix + `$`)
@@ -153,6 +153,10 @@ func parseQuote(q Line) (Quote, bool) {
 				strings.TrimSpace(endMatch[:pageMatchIndices[1]]))
 
 			supp = strings.TrimSpace(endMatch[pageMatchIndices[1]:])
+
+			// Temporarily removed `supp` support to fix page detection bug.
+			// Bug fixed by allowing "?" as unknown page number.
+			// page = pageNumber.FindString(strings.TrimSpace(endMatch))
 		}
 
 		// Special Case: page # at end of quote with no tabs and
