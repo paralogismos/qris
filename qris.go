@@ -326,7 +326,7 @@ func WriteDiscards(ds []Line, fname string) {
 	}
 }
 
-func WriteQuotes(pf *ParsedFile, fname string) {
+func WriteQuotes(pf *ParsedFile, fname string, volume bool) {
 	file, err := os.Create(fname)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -351,7 +351,9 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 
 		for _, q := range s.Quotes { // loop over quotes of each source
 			fmt.Fprintln(file, "TY  - ")
-			fmt.Fprintln(file, "VL  -", bid)
+			if volume {
+				fmt.Fprintln(file, "VL  -", bid)
+			}
 			fmt.Fprintln(file, "UR  -", fid)
 			fmt.Fprintln(file, "AD  -", tstamp)
 			fmt.Fprintln(file, "AB  -", citBody)
@@ -359,19 +361,34 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 			// A1 gets citation name unless a primary quote author was specified
 			if q.Auth != "" {
 				fmt.Fprintln(file, "A1  -", q.Auth)
-				fmt.Fprintln(file, "A2  -", citName)
+				familyName := citationFamilyName.FindString(citName)
+				familyName = strings.TrimSpace(familyName)
+				fmt.Fprintln(file, "A2  -", familyName)
 			} else {
 				fmt.Fprintln(file, "A1  -", citName)
-				fmt.Fprintln(file, "A2  -") // Is this needed?
 			}
 
-			fmt.Fprintln(file, "Y1  -", citYear)
-			fmt.Fprintln(file, "T2  -", citNote)
-			fmt.Fprintln(file, "KW  -", q.Keyword)
-			fmt.Fprintln(file, "T1  -", q.Body)
-			fmt.Fprintln(file, "SP  -", q.Page)
-			fmt.Fprintln(file, "PB  -", q.Supp)
-			fmt.Fprintln(file, "CY  -", q.Note)
+			if citYear != "" {
+				fmt.Fprintln(file, "Y1  -", citYear)
+			}
+			if citNote != "" {
+				fmt.Fprintln(file, "T2  -", citNote)
+			}
+			if q.Keyword != "" {
+				fmt.Fprintln(file, "KW  -", q.Keyword)
+			}
+			if q.Body != "" {
+				fmt.Fprintln(file, "T1  -", q.Body)
+			}
+			if q.Page != "" {
+				fmt.Fprintln(file, "SP  -", q.Page)
+			}
+			if q.Supp != "" {
+				fmt.Fprintln(file, "PB  -", q.Supp)
+			}
+			if q.Note != "" {
+				fmt.Fprintln(file, "CY  -", q.Note)
+			}
 			fmt.Fprintln(file, "ER  -")
 			fmt.Fprintln(file, "")
 		}
@@ -404,7 +421,7 @@ func ValidateUTF8(fpath string) bool {
 // directories, parses each file, validates each file if `validate` is true,
 // and writes the results to output files.
 //func WriteResults(workPath string, dataList []string, validate bool) bool {
-func WriteResults(workPath string, dataList []string) bool {
+func WriteResults(workPath string, dataList []string, volume bool) bool {
 	allPassed := true // For UTF8 validation option
 	for _, file := range dataList {
 		// Skip any file not ending with .txt extension.
@@ -433,7 +450,7 @@ func WriteResults(workPath string, dataList []string) bool {
 
 		pf := ParseFile(pFile)
 		WriteDiscards(pf.Discards, pDiscard)
-		WriteQuotes(&pf, pQuotes)
+		WriteQuotes(&pf, pQuotes, volume)
 	}
 
 	return allPassed

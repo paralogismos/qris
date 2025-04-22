@@ -17,6 +17,7 @@ var keywordLine = regexp.MustCompile(`^\^[sS]:`)
 var supplementalLine = regexp.MustCompile(`%%$`)
 
 var citationName = regexp.MustCompile(`^\pL+,\pZs*\pL+`)
+var citationFamilyName = regexp.MustCompile(`^[^,]*`)
 var citationYear = regexp.MustCompile(`\pN{4}\pL*`)
 
 var noteEnd = regexp.MustCompile(`jmr$`)

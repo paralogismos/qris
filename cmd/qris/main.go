@@ -27,6 +27,7 @@ func main() {
 	batchPath := flag.String("b", "",
 		"Path to a directory containing files to be parsed, absolute or relative.")
 	//validate := flag.Bool("v", false, "Validate UTF8 files.")
+	volume := flag.Bool("v", false, "Include VL volume field.")
 	flag.Parse()
 
 	if *filePath != "" && *batchPath != "" {
@@ -62,7 +63,7 @@ func main() {
 
 	// Parse all files and write results to output.
 	//allPassed := qris.WriteResults(workPath, dataList, *validate)
-	_ = qris.WriteResults(workPath, dataList)
+	_ = qris.WriteResults(workPath, dataList, *volume)
 	// if *validate && allPassed {
 	// 	fmt.Println("All files were valid UTF8.")
 	// }
