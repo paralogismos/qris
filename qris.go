@@ -284,6 +284,23 @@ func cleanLines(lines []Line) []Line {
 	return cls
 }
 
+// Converts problematic unicode characters to reliable characters.
+func tidyString(l string) string {
+	conversions := map[rune]rune{
+		'“': '"', '”': '"', '‘': '\'', '’': '\'',
+		'à': 'a', 'á': 'a', 'â': 'a', 'é': 'e', 'ú': 'u',
+	}
+	rs := []rune(l)
+	for n, r := range rs {
+		// check map
+		newRune, replace := conversions[r]
+		if replace {
+			rs[n] = newRune
+		}
+	}
+	return string(rs)
+}
+
 func WriteDiscards(ds []Line, fname string) {
 	file, err := os.Create(fname)
 	if err != nil {
