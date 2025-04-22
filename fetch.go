@@ -52,7 +52,7 @@ func TxtToLines(fpath string) ([]Line, error) {
 	scanner := bufio.NewScanner(file)
 	lineNo := 1
 	for scanner.Scan() {
-		rawLines = append(rawLines, newLine(lineNo, scanner.Text()))
+		rawLines = append(rawLines, newLine(lineNo, tidyString(scanner.Text())))
 		lineNo++
 	}
 
