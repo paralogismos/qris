@@ -403,7 +403,8 @@ func ValidateUTF8(fpath string) bool {
 // `WriteResults` iterates over a list of files, ensures that none are
 // directories, parses each file, validates each file if `validate` is true,
 // and writes the results to output files.
-func WriteResults(workPath string, dataList []string, validate bool) bool {
+//func WriteResults(workPath string, dataList []string, validate bool) bool {
+func WriteResults(workPath string, dataList []string) bool {
 	allPassed := true // For UTF8 validation option
 	for _, file := range dataList {
 		// Skip any file not ending with .txt extension.
@@ -419,9 +420,9 @@ func WriteResults(workPath string, dataList []string, validate bool) bool {
 		// File path to process
 		pFile := filepath.Join(workPath, file)
 
-		if validate {
-			allPassed = allPassed && ValidateUTF8(pFile)
-		}
+		// if validate {
+		// 	allPassed = allPassed && ValidateUTF8(pFile)
+		// }
 
 		// File to store parsed quotes
 		base := strings.TrimSuffix(pFile, filepath.Ext(pFile))
