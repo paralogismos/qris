@@ -70,17 +70,17 @@ const configFile = "qris.conf"
 
 // A `Line` is a string of content coupled with a line number reference to the
 // original file; 1-indexed.
-type Line struct {
-	LineNo int
-	Body   string
-}
+// type Line struct {
+// 	LineNo int
+// 	Body   string
+// }
 
-func newLine(lineNo int, body string) Line {
-	return Line{
-		LineNo: lineNo,
-		Body:   body,
-	}
-}
+// func newLine(lineNo int, body string) Line {
+// 	return Line{
+// 		LineNo: lineNo,
+// 		Body:   body,
+// 	}
+// }
 
 // The first line of the file is assumed to be the source title.
 // The first citation line may begin with the `sourceBegin` token.
@@ -265,20 +265,31 @@ func GetFileList(fpath string) []string {
 // containing raw lines from the file keyed by the original line number
 // on which each line occurred.
 func getLines(fpath string) []Line {
-	file, err := os.Open(fpath)
+	// file, err := os.Open(fpath)
+	// if err != nil {
+	// 	fmt.Fprintln(os.Stderr, err)
+	// 	os.Exit(1)
+	// }
+	// defer file.Close()
+
+	rawLines := []Line{}
+	var err error
+	if IsDocFile(fpath) {
+		rawLines, err = DocxToLines(fpath)
+	} else { // Assume that `fpath` leads to a .txt file.
+		rawLines, err = TxtToLines(fpath)
+	}
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-	defer file.Close()
 
-	rawLines := []Line{}
-	scanner := bufio.NewScanner(file)
-	lineNo := 1
-	for scanner.Scan() {
-		rawLines = append(rawLines, newLine(lineNo, scanner.Text()))
-		lineNo++
-	}
+	// scanner := bufio.NewScanner(file)
+	// lineNo := 1
+	// for scanner.Scan() {
+	// 	rawLines = append(rawLines, newLine(lineNo, scanner.Text()))
+	// 	lineNo++
+	// }
 
 	return rawLines
 }
