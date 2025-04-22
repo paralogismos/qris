@@ -13,13 +13,16 @@ import (
 var sourceBegin = regexp.MustCompile(`^<\$>`)
 
 var authorLine = regexp.MustCompile(`^>>>`)
-var keywordLine = regexp.MustCompile(`^\^s:`)
+var keywordLine = regexp.MustCompile(`^\^[sS]:`)
+var supplementalLine = regexp.MustCompile(`%%$`)
 
 var citationName = regexp.MustCompile(`^\pL+,\pZs*\pL+`)
 var citationYear = regexp.MustCompile(`\pN{4}\pL*`)
 
 var noteEnd = regexp.MustCompile(`jmr$`)
-var noteEndAlt = regexp.MustCompile(`jmr.*`)
+
+//var noteEndAlt = regexp.MustCompile(`jmr.*`) // Was this a mistake?
+var noteEndAlt = regexp.MustCompile(`jmr.$`)
 
 // A quote end is either tab-delimited pp., or space-delimited pp. with
 // at least three spaces as the delimiter.
@@ -82,6 +85,8 @@ func ParseFile(fpath string) ParsedFile {
 			qs[lastQuoteIdx].Auth = a
 		} else if k, isKeyword := parseKeyword(l); !isQuote && isKeyword {
 			qs[lastQuoteIdx].Keyword = k
+		} else if s, isSupp := parseSupplementary(l); !isQuote && isSupp {
+			qs[lastQuoteIdx].Supp = s
 		} else {
 			if isQuote {
 				qs = append(qs, q)
@@ -147,6 +152,17 @@ func parseKeyword(l Line) (string, bool) {
 	return keyword, isKeyword
 }
 
+func parseSupplementary(l Line) (string, bool) {
+	isSupp := false
+	supp := ""
+	body := strings.TrimSpace(l.Body)
+	if supplementalLine.MatchString(body) {
+		isSupp = true
+		supp = strings.TrimSpace(supplementalLine.ReplaceAllString(body, ""))
+	}
+	return supp, isSupp
+}
+
 func parseQuote(q Line) (Quote, bool) {
 	lineNo, auth, kw, body, page, supp, note := 0, "", "", "", "", "", ""
 
@@ -178,14 +194,14 @@ func parseQuote(q Line) (Quote, bool) {
 			// Unable to parse page number
 			page = pageUnknown
 		} else {
-			page = pageNumber.FindString(
-				strings.TrimSpace(endMatch[:pageMatchIndices[1]]))
+			// page = pageNumber.FindString(
+			// 	strings.TrimSpace(endMatch[:pageMatchIndices[1]]))
 
-			supp = strings.TrimSpace(endMatch[pageMatchIndices[1]:])
+			// supp = strings.TrimSpace(endMatch[pageMatchIndices[1]:])
 
 			// Temporarily removed `supp` support to fix page detection bug.
 			// Bug fixed by allowing "?" as unknown page number.
-			// page = pageNumber.FindString(strings.TrimSpace(endMatch))
+			page = pageNumber.FindString(strings.TrimSpace(endMatch))
 		}
 
 		// Special Case: page # at end of quote with no tabs and
