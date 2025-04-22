@@ -68,20 +68,6 @@ const discardSuffix = "_DISCARDS.txt"
 const configDir = "qris"
 const configFile = "qris.conf"
 
-// A `Line` is a string of content coupled with a line number reference to the
-// original file; 1-indexed.
-// type Line struct {
-// 	LineNo int
-// 	Body   string
-// }
-
-// func newLine(lineNo int, body string) Line {
-// 	return Line{
-// 		LineNo: lineNo,
-// 		Body:   body,
-// 	}
-// }
-
 // The first line of the file is assumed to be the source title.
 // The first citation line may begin with the `sourceBegin` token.
 // All subsequent citations must begin with the `sourceBegin` token.
@@ -265,13 +251,6 @@ func GetFileList(fpath string) []string {
 // containing raw lines from the file keyed by the original line number
 // on which each line occurred.
 func getLines(fpath string) []Line {
-	// file, err := os.Open(fpath)
-	// if err != nil {
-	// 	fmt.Fprintln(os.Stderr, err)
-	// 	os.Exit(1)
-	// }
-	// defer file.Close()
-
 	rawLines := []Line{}
 	var err error
 	if IsDocFile(fpath) {
@@ -283,13 +262,6 @@ func getLines(fpath string) []Line {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-
-	// scanner := bufio.NewScanner(file)
-	// lineNo := 1
-	// for scanner.Scan() {
-	// 	rawLines = append(rawLines, newLine(lineNo, scanner.Text()))
-	// 	lineNo++
-	// }
 
 	return rawLines
 }
@@ -418,15 +390,11 @@ func ValidateUTF8(fpath string) bool {
 }
 
 // `WriteResults` iterates over a list of files, ensures that none are
-// directories, parses each file, validates each file if `validate` is true,
-// and writes the results to output files.
-//func WriteResults(workPath string, dataList []string, validate bool) bool {
+// directories, parses each file,  and writes the results to output files.
 func WriteResults(workPath string, dataList []string, volume bool) bool {
 	allPassed := true // For UTF8 validation option
 	for _, file := range dataList {
-		// Skip any file not ending with .txt extension.
-		// Note that directories ending with .txt WILL be
-		// processed, and this will cause a panic.
+		// Don't process parsed file artifacts.
 		if isParsedFile(file) || isDiscardFile(file) {
 			continue
 		}
@@ -436,10 +404,6 @@ func WriteResults(workPath string, dataList []string, volume bool) bool {
 
 		// File path to process
 		pFile := filepath.Join(workPath, file)
-
-		// if validate {
-		// 	allPassed = allPassed && ValidateUTF8(pFile)
-		// }
 
 		// File to store parsed quotes
 		base := strings.TrimSuffix(pFile, filepath.Ext(pFile))

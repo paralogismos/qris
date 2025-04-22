@@ -195,13 +195,6 @@ func parseQuote(q Line) (Quote, bool) {
 			// Unable to parse page number
 			page = pageUnknown
 		} else {
-			// page = pageNumber.FindString(
-			// 	strings.TrimSpace(endMatch[:pageMatchIndices[1]]))
-
-			// supp = strings.TrimSpace(endMatch[pageMatchIndices[1]:])
-
-			// Temporarily removed `supp` support to fix page detection bug.
-			// Bug fixed by allowing "?" as unknown page number.
 			page = pageNumber.FindString(strings.TrimSpace(endMatch))
 		}
 

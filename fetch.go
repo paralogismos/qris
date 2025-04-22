@@ -18,8 +18,6 @@ var isDoc = regexp.MustCompile(`\.doc$`)
 var isDocx = regexp.MustCompile(`\.docx$`)
 var tabTag = regexp.MustCompile(`<w:tab/>`)
 
-//var xmlExt = ".xml"
-//var txtExt = ".txt"
 var tabElement = "<w:t>\t</w:t>"
 
 // A `Line` is a string of content coupled with a line number reference to the
