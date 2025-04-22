@@ -85,7 +85,7 @@ func ParseFile(fpath string) ParsedFile {
 			qs[lastQuoteIdx].Auth = a
 		} else if k, isKeyword := parseKeyword(l); !isQuote && isKeyword {
 			qs[lastQuoteIdx].Keyword = k
-		} else if s, isSupp := parseSupplementary(l); !isQuote && isSupp {
+		} else if s, isSupp := parseSupplemental(l); !isQuote && isSupp {
 			qs[lastQuoteIdx].Supp = s
 		} else {
 			if isQuote {
@@ -152,7 +152,7 @@ func parseKeyword(l Line) (string, bool) {
 	return keyword, isKeyword
 }
 
-func parseSupplementary(l Line) (string, bool) {
+func parseSupplemental(l Line) (string, bool) {
 	isSupp := false
 	supp := ""
 	body := strings.TrimSpace(l.Body)
