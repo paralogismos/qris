@@ -350,7 +350,7 @@ func WriteQuotes(pf *ParsedFile, fname string) {
 		citNote := s.Citation.Note
 
 		for _, q := range s.Quotes { // loop over quotes of each source
-			fmt.Fprintln(file, "TY  - Generic") // *** Update record type.
+			fmt.Fprintln(file, "TY  - ")
 			fmt.Fprintln(file, "VL  -", bid)
 			fmt.Fprintln(file, "UR  -", fid)
 			fmt.Fprintln(file, "AD  -", tstamp)
