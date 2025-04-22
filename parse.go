@@ -16,7 +16,8 @@ var authorLine = regexp.MustCompile(`^>>>`)
 var keywordLine = regexp.MustCompile(`^\^[sS]:`)
 var supplementalLine = regexp.MustCompile(`%%$`)
 
-var citationName = regexp.MustCompile(`^\pL+,\pZs*\pL+`)
+//var citationName = regexp.MustCompile(`^\pL+,\pZs*\pL+`)
+var citationName = regexp.MustCompile(`^[^“"{]*`)
 var citationFamilyName = regexp.MustCompile(`^[^,]*`)
 var citationYear = regexp.MustCompile(`\pN{4}\pL*`)
 
