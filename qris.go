@@ -292,7 +292,7 @@ func cleanLines(lines []Line) []Line {
 func tidyString(l string) string {
 	conversions := map[rune]string{
 		'“': `"`, '”': `"`, '‘': `'`, '’': `'`,
-		'–': `-`, '—': `--`,
+		'–': `-`, '—': `--`, '…': `...`,
 		'«': `<<`, '»': `>>`,
 		'À': `A`, 'È': `E`, 'Ì': `I`, 'Ò': `O`, 'Ù': `U`,
 		'à': `a`, 'è': `e`, 'ì': `i`, 'ò': `o`, 'ù': `u`,
