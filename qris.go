@@ -90,6 +90,10 @@ func newCitation(name, year, body, note string) Citation {
 	}
 }
 
+// UPDATE THESE COMMENTS:
+// - NOW HAVE MULTILINE QUOTES
+// - REMOVE `LineNo` FIELD: THIS IS NOT BEING USED
+//
 // Parsed from a `Line` for which `IsQuote` is true.
 // Includes line number from original file.
 // Note that the original `Line` body should have at least a page number, and

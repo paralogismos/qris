@@ -26,6 +26,8 @@ var noteEnd = regexp.MustCompile(`jmr$`)
 //var noteEndAlt = regexp.MustCompile(`jmr.*`) // Was this a mistake?
 var noteEndAlt = regexp.MustCompile(`jmr.$`)
 
+var multiLineQuote = regexp.MustCompile(`^///`)
+
 // A quote end is either tab-delimited pp., or space-delimited pp. with
 // at least three spaces as the delimiter.
 var quoteEnd = regexp.MustCompile(`\t\s*[pP]+\..*`)
@@ -49,6 +51,7 @@ func isDiscardFile(f string) bool {
 	return discardFile.FindStringIndex(f) != nil
 }
 
+// THIS FUNCTION SHOULD BE REFACTORED TO STREAMLINE THE LOGIC
 func ParseFile(fpath string) ParsedFile {
 	rls := cleanLines(getLines(fpath))
 	fn := filepath.Base(fpath)
@@ -60,6 +63,8 @@ func ParseFile(fpath string) ParsedFile {
 	sources := []Source{}
 	firstSource := true
 
+	inMultiLineQuote := false
+	fullQuote := ""
 	for _, l := range rls[1:] {
 		if firstSource { // first source in the file
 			firstSource = false
@@ -75,26 +80,40 @@ func ParseFile(fpath string) ParsedFile {
 			qs = []Quote{} // start new slice of quotes
 			continue
 		}
+		if multiLineQuote.MatchString(l.Body) { // begin multi-line quote
+			inMultiLineQuote = true
+			fullQuote = multiLineQuote.ReplaceAllString(l.Body, "")
+			// fullQuote = strings.TrimSpace(fullQuote)
+			continue
+		}
 		q, isQuote := parseQuote(l)
+		if isQuote { // quote line may end a multi-line quote
+			q.Body = fullQuote + q.Body
+			qs = append(qs, q)
+			inMultiLineQuote = false // reset multi-line quote parameters
+			fullQuote = ""
+			continue
+		}
+		if inMultiLineQuote { // any line in multi-line quote is saved
+			fullQuote += l.Body
+			//fullQuote += strings.TrimSpace(l.Body)
+			continue
+		}
 		lastQuoteIdx := len(qs) - 1
-		if n, isNote := parseNote(l); !isQuote && isNote {
+		if n, isNote := parseNote(l); isNote {
 			if lastQuoteIdx >= 0 {
 				qs[lastQuoteIdx].Note = n
 			} else {
 				cit.Note = n
 			}
-		} else if a, isAuth := parseAuth(l); !isQuote && isAuth {
+		} else if a, isAuth := parseAuth(l); isAuth {
 			qs[lastQuoteIdx].Auth = a
-		} else if k, isKeyword := parseKeyword(l); !isQuote && isKeyword {
+		} else if k, isKeyword := parseKeyword(l); isKeyword {
 			qs[lastQuoteIdx].Keyword = k
-		} else if s, isSupp := parseSupplemental(l); !isQuote && isSupp {
+		} else if s, isSupp := parseSupplemental(l); isSupp {
 			qs[lastQuoteIdx].Supp = s
 		} else {
-			if isQuote {
-				qs = append(qs, q)
-			} else {
-				ds = append(ds, l)
-			}
+			ds = append(ds, l)
 		}
 	}
 	src = newSource(cit, qs)
