@@ -290,19 +290,37 @@ func cleanLines(lines []Line) []Line {
 
 // Converts problematic unicode characters to reliable characters.
 func tidyString(l string) string {
-	conversions := map[rune]rune{
-		'“': '"', '”': '"', '‘': '\'', '’': '\'',
-		'à': 'a', 'á': 'a', 'â': 'a', 'é': 'e', 'ú': 'u',
+	conversions := map[rune]string{
+		'“': `"`, '”': `"`, '‘': `'`, '’': `'`,
+		'–': `-`, '—': `--`,
+		'«': `<<`, '»': `>>`,
+		'À': `A`, 'È': `E`, 'Ì': `I`, 'Ò': `O`, 'Ù': `U`,
+		'à': `a`, 'è': `e`, 'ì': `i`, 'ò': `o`, 'ù': `u`,
+		'Á': `A`, 'É': `E`, 'Í': `I`, 'Ó': `O`, 'Ú': `U`, 'Ý': `Y`,
+		'á': `a`, 'é': `e`, 'í': `i`, 'ó': `o`, 'ú': `u`, 'ý': `y`,
+		'Â': `A`, 'Ê': `E`, 'Î': `I`, 'Ô': `O`, 'Û': `U`,
+		'â': `a`, 'ê': `e`, 'î': `i`, 'ô': `o`, 'û': `u`,
+		'Ã': `A`, 'Ñ': `N`, 'Õ': `O`,
+		'ã': `a`, 'ñ': `n`, 'õ': `o`,
+		'Ä': `A`, 'Ë': `E`, 'Ï': `I`, 'Ö': `O`, 'Ü': `U`, 'Ÿ': `Y`,
+		'ä': `a`, 'ë': `e`, 'ï': `i`, 'ö': `o`, 'ü': `u`, 'ÿ': `y`,
+		'Æ': `ae`, 'Œ': `OE`,
+		'æ': `ae`, 'œ': `oe`,
+		'Ç': `C`,
+		'ç': `c`,
 	}
+
+	tidyResult := ""
 	rs := []rune(l)
-	for n, r := range rs {
-		// check map
-		newRune, replace := conversions[r]
-		if replace {
-			rs[n] = newRune
+	for _, r := range rs { // check for runes to be replaced by a single rune
+		if newRunes, replace := conversions[r]; replace {
+			tidyResult += newRunes
+		} else {
+			tidyResult += string(r)
 		}
 	}
-	return string(rs)
+
+	return tidyResult
 }
 
 func WriteDiscards(ds []Line, fname string) {
