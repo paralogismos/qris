@@ -15,6 +15,7 @@ var sourceBegin = regexp.MustCompile(`^<\$>`)
 var authorLine = regexp.MustCompile(`^>>>`)
 var keywordLine = regexp.MustCompile(`^\^[sS]:`)
 var supplementalLine = regexp.MustCompile(`%%$`)
+var URLLine = regexp.MustCompile(`^https?://`)
 
 //var citationName = regexp.MustCompile(`^\pL+,\pZs*\pL+`)
 var citationName = regexp.MustCompile(`^[^“"{]*`)
@@ -114,6 +115,8 @@ func ParseFile(fpath string) ParsedFile {
 			qs[lastQuoteIdx].Keyword = k
 		} else if s, isSupp := parseSupplemental(l); isSupp {
 			qs[lastQuoteIdx].Supp = s
+		} else if u, isURL := parseURL(l); isURL {
+			qs[lastQuoteIdx].URL = u
 		} else {
 			ds = append(ds, l)
 		}
@@ -155,6 +158,18 @@ func parseNote(l Line) (string, bool) {
 	return body, isNote
 }
 
+func parseURL(l Line) (string, bool) {
+	isURL := false
+	url := ""
+	body := strings.TrimSpace(l.Body)
+	if URLLine.MatchString(body) {
+		isURL = true
+		// Don't remove http prefix from url.
+		url = strings.TrimSpace(body)
+	}
+	return url, isURL
+}
+
 func parseAuth(l Line) (string, bool) {
 	isAuth := false
 	author := ""
@@ -189,7 +204,7 @@ func parseSupplemental(l Line) (string, bool) {
 }
 
 func parseQuote(q Line) (Quote, bool) {
-	lineNo, auth, kw, body, page, supp, note := 0, "", "", "", "", "", ""
+	lineNo, auth, kw, body, page, supp, note, url := 0, "", "", "", "", "", "", ""
 
 	// Malformed page numbers are recoreded using `pageUnknown`.
 	const pageUnknown = "?"
@@ -236,5 +251,5 @@ func parseQuote(q Line) (Quote, bool) {
 		}
 	}
 
-	return newQuote(lineNo, auth, kw, body, page, supp, note), isQuote
+	return newQuote(lineNo, auth, kw, body, page, supp, note, url), isQuote
 }

@@ -107,9 +107,10 @@ type Quote struct {
 	Page    string
 	Supp    string
 	Note    string
+	URL     string
 }
 
-func newQuote(lineNo int, auth, kw, body, page, supp, note string) Quote {
+func newQuote(lineNo int, auth, kw, body, page, supp, note, url string) Quote {
 	return Quote{
 		LineNo:  lineNo,
 		Auth:    auth,
@@ -118,6 +119,7 @@ func newQuote(lineNo int, auth, kw, body, page, supp, note string) Quote {
 		Page:    page,
 		Supp:    supp,
 		Note:    note,
+		URL:     url,
 	}
 }
 
@@ -399,6 +401,9 @@ func WriteQuotes(pf *ParsedFile, fname string, volume bool) {
 			}
 			if q.Note != "" {
 				fmt.Fprintln(file, "CY  -", q.Note)
+			}
+			if q.URL != "" {
+				fmt.Fprintln(file, "UR  -", q.URL)
 			}
 			fmt.Fprintln(file, "ER  -")
 			fmt.Fprintln(file, "")
