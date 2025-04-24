@@ -48,6 +48,8 @@
 //
 //   - Explore better TUI interface:
 //     - ability to work on files directly in the shell working directory
+//       - note that the `-b` flag accepts the `.` argument to process all files
+//         in the current directory: this should be enough....
 //     - `qris [path]` should do something reasonable
 //       - currently this prints version information, but that is confusing:
 //         - `qris -f [path]` processes a file
@@ -55,14 +57,17 @@
 //         - `qris [path]` seems like it ought to process a file
 //         - or at least print a message so that the user knows that nothing was processed
 //         - need to think about these issues more....
-//   - try .doc file vs .docx file inputs
-//   - update unit tests
-//   - write integration tests
-//   - review DISCARDS file:
+//     - `-b .` is not working quite correctly.
+//       - I ran `qris -b .` in a directory containing one .docx file and the qris.exe
+//         file, and both files were processed!
+//   - Try .doc file vs .docx file inputs.
+//   - Update unit tests.
+//   - Write integration tests.
+//   - Review DISCARDS file:
 //     - .docx -> .ris file lines have newlines between each line
 //     - .txt  -> .ris file lines do not have the extra lines
 //     - should DISCARDS output be optional?
-//
+//   - Should I move `Line` from `fetch.go` back into this file?
 // _ - Add functionality to store up to N notes following a quote.
 //     - Store notes in a slice or dictionary
 //     - Map notes array to numbered tags, e.g., C1, C2, ....
@@ -117,16 +122,11 @@ func newCitation(name, year, body, note string) Citation {
 	}
 }
 
-// UPDATE THESE COMMENTS:
-// - NOW HAVE MULTILINE QUOTES
-// - REMOVE `LineNo` FIELD: THIS IS NOT BEING USED
-//
 // Parsed from a `Line` for which `IsQuote` is true, or from the `Line`s of a
 // multi-line quote. Includes line number from original file.
 // Body and page are parsed from the lines of a quote. Other fields are supplied
 // as lines are processed.
 type Quote struct {
-	LineNo  int
 	Auth    string
 	Keyword string
 	Body    string
@@ -136,9 +136,8 @@ type Quote struct {
 	URL     string
 }
 
-func newQuote(lineNo int, auth, kw, body, page, supp, note, url string) Quote {
+func newQuote(auth, kw, body, page, supp, note, url string) Quote {
 	return Quote{
-		LineNo:  lineNo,
 		Auth:    auth,
 		Keyword: kw,
 		Body:    body,

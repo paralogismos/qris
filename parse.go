@@ -202,7 +202,7 @@ func parseSupplemental(l Line) (string, bool) {
 }
 
 func parseQuote(q Line) (Quote, bool) {
-	lineNo, auth, kw, body, page, supp, note, url := 0, "", "", "", "", "", "", ""
+	auth, kw, body, page, supp, note, url := "", "", "", "", "", "", ""
 
 	// Malformed page numbers are recorded using `pageUnknown`.
 	const pageUnknown = "?"
@@ -249,5 +249,5 @@ func parseQuote(q Line) (Quote, bool) {
 		}
 	}
 
-	return newQuote(lineNo, auth, kw, body, page, supp, note, url), isQuote
+	return newQuote(auth, kw, body, page, supp, note, url), isQuote
 }
