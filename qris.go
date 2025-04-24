@@ -60,7 +60,9 @@
 //     - `-b .` is not working quite correctly.
 //       - I ran `qris -b .` in a directory containing one .docx file and the qris.exe
 //         file, and both files were processed!
-//   - Try .doc file vs .docx file inputs.
+//   - Try to handle .doc files:
+//     - currently have "zip: not a valid zip file" failing error
+//     - do .doc files have the same format as .docx, but without zip compression?
 //   - Update unit tests.
 //   - Write integration tests.
 //   - Review DISCARDS file:
