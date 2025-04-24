@@ -26,7 +26,6 @@ func main() {
 		"Path to a file to be parsed, absolute or relative.")
 	batchPath := flag.String("b", "",
 		"Path to a directory containing files to be parsed, absolute or relative.")
-	//validate := flag.Bool("v", false, "Validate UTF8 files.")
 	volume := flag.Bool("v", false, "Include VL volume field.")
 	flag.Parse()
 
@@ -52,9 +51,6 @@ func main() {
 	fmt.Println("qris version", qris.Version)
 	fmt.Println("Working in directory", workDir)
 
-	// `dataList` is a list of files to be processed.
-	//	var dataList []string
-
 	// `workPath` is the absolute path to files to be processed.
 	// `batchPath` may include directory structure relative to the
 	// working directory, and this additional directory structure is
@@ -62,9 +58,5 @@ func main() {
 	dataList, workPath := qris.GetWorkPath(workDir, *batchPath, *filePath)
 
 	// Parse all files and write results to output.
-	//allPassed := qris.WriteResults(workPath, dataList, *validate)
 	_ = qris.WriteResults(workPath, dataList, *volume)
-	// if *validate && allPassed {
-	// 	fmt.Println("All files were valid UTF8.")
-	// }
 }

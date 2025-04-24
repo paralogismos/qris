@@ -4,28 +4,37 @@
 //
 // Assumptions:
 //
-//   The first line is the title of the source
+//   The first line is the title of the source.
 //     - for use of the user in the quote file
 //     - not used in creating the .ris file
 //
-//   The second line is a citation
-//     - the citation should be parsed into name, year, raw-citation,
-//       and a note-field
-//       - notes preceding any quotes are assumed to be attached to the citation
-//     - the citation line may optionally begin with "<$>" indicating a new source
+//   The second line is a citation.
+//     - the citation line should be parsed into citation author, year, raw-citation
+//     - a line following the citation is a citation note if it ends with
+//       "jmr" or "jmr."; the citation note is added to the citation information
+//       that is written for each quote from a source
+//     - the first citation line may optionally begin with "<$>" indicating a new source
 //
-//   Any line beginning with "<$>" is the citation line for a new source
+//   Any line beginning with "<$>" is the citation line for a new source.
 //
-//   Lines following a citation are quotes IF they end in a page number, followed
-//   by an optional supplementary field.
-//     - predicate to determine quoteness
-//     - parse raw quotes into quote, page-number, supplementary-field,
-//       and note-field
-//       - supplementary field starts with "^w" delimiter to be discarded
+//   Lines following a citation are quotes IF they end in a page number.
+//     - quote lines are parsed into quote body and page number
 //
-//   Some quotes are followed by a note ending with "-jmr"
-//     - these should be identified and added to the Note field of a Quote
-//       of the most recent quote, if one exists.
+//  A line following a citation that begins with "///" starts a multi-line quote
+//  which ends with a page number.
+//
+//  A line following a quote that ends with "%%" attches a supplementary note.
+//
+//  A line following a quote that ends with "jmr" or "jmr." attaches a quote note.
+//
+//  A line following a quote that begins with "^S:" or "^s:" attaches a keyword
+//  or a keyword list.
+//
+//  A line following a quote that begins with "https://" or "http://" attaches a URL.
+//
+//  A line following a quote that begins with ">>>" specifies a quote author.
+//    - if a quote author is specified, this name is attached as the primary author
+//      of the quote and the citation author is attached as the secondary author
 //
 //   Blank lines are ignored
 //
@@ -35,7 +44,25 @@
 //
 // TODO:
 //
-// _ - Update record type in WriteQuotes: "TY  - Generic" -> ?
+//   - Resolve multi-line quotes that are also single-line quotes.
+//
+//   - Explore better TUI interface:
+//     - ability to work on files directly in the shell working directory
+//     - `qris [path]` should do something reasonable
+//       - currently this prints version information, but that is confusing:
+//         - `qris -f [path]` processes a file
+//         - `qris` prints version information
+//         - `qris [path]` seems like it ought to process a file
+//         - or at least print a message so that the user knows that nothing was processed
+//         - need to think about these issues more....
+//   - try .doc file vs .docx file inputs
+//   - update unit tests
+//   - write integration tests
+//   - review DISCARDS file:
+//     - .docx -> .ris file lines have newlines between each line
+//     - .txt  -> .ris file lines do not have the extra lines
+//     - should DISCARDS output be optional?
+//
 // _ - Add functionality to store up to N notes following a quote.
 //     - Store notes in a slice or dictionary
 //     - Map notes array to numbered tags, e.g., C1, C2, ....
@@ -72,8 +99,8 @@ const configFile = "qris.conf"
 // The first citation line may begin with the `sourceBegin` token.
 // All subsequent citations must begin with the `sourceBegin` token.
 
-// Parsed from the second line of the file  into family-name, year,
-// and raw-citation.
+// Parsed from the second line of the file into name, year, body. The note
+// field me be supplied when subsequent file lines are parsed.
 type Citation struct {
 	Name string
 	Year string
@@ -94,11 +121,10 @@ func newCitation(name, year, body, note string) Citation {
 // - NOW HAVE MULTILINE QUOTES
 // - REMOVE `LineNo` FIELD: THIS IS NOT BEING USED
 //
-// Parsed from a `Line` for which `IsQuote` is true.
-// Includes line number from original file.
-// Note that the original `Line` body should have at least a page number, and
-// possibly a supplementary entry, associated with it. These have been extracted
-// in a `Quote` and placed in their own fields.
+// Parsed from a `Line` for which `IsQuote` is true, or from the `Line`s of a
+// multi-line quote. Includes line number from original file.
+// Body and page are parsed from the lines of a quote. Other fields are supplied
+// as lines are processed.
 type Quote struct {
 	LineNo  int
 	Auth    string

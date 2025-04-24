@@ -17,7 +17,6 @@ var keywordLine = regexp.MustCompile(`^\^[sS]:`)
 var supplementalLine = regexp.MustCompile(`%%$`)
 var URLLine = regexp.MustCompile(`^https?://`)
 
-//var citationName = regexp.MustCompile(`^\pL+,\pZs*\pL+`)
 var citationName = regexp.MustCompile(`^[^“"{]*`)
 var finalPeriod = regexp.MustCompile(`\.$`)
 var nameInitialPeriod = regexp.MustCompile(`[\p{Zs}.]{1}[\pL]{1}\.$`)
@@ -26,7 +25,6 @@ var citationYear = regexp.MustCompile(`\pN{4}\pL*`)
 
 var noteEnd = regexp.MustCompile(`jmr$`)
 
-//var noteEndAlt = regexp.MustCompile(`jmr.*`) // Was this a mistake?
 var noteEndAlt = regexp.MustCompile(`jmr.$`)
 
 var multiLineQuote = regexp.MustCompile(`^///`)
@@ -206,7 +204,7 @@ func parseSupplemental(l Line) (string, bool) {
 func parseQuote(q Line) (Quote, bool) {
 	lineNo, auth, kw, body, page, supp, note, url := 0, "", "", "", "", "", "", ""
 
-	// Malformed page numbers are recoreded using `pageUnknown`.
+	// Malformed page numbers are recorded using `pageUnknown`.
 	const pageUnknown = "?"
 
 	// Predominant Case: tab-delimited quote ends
