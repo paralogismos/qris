@@ -13,9 +13,20 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
+	"regexp"
 
 	"qris"
 )
+
+// Returns a string representing the name of the executable command.
+func command(args_0 string) string {
+	cmd := filepath.Base(args_0)
+	ext := filepath.Ext(args_0)
+	commandExt := regexp.MustCompile(ext + `$`)
+	cmd = commandExt.ReplaceAllLiteralString(cmd, "")
+	return cmd
+}
 
 func main() {
 
@@ -32,7 +43,7 @@ func main() {
 	// Custom usage message.
 	flag.Usage = func() {
 		fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s:\n",
-			qris.Command(os.Args[0]))
+			command(os.Args[0]))
 		flag.PrintDefaults()
 	}
 

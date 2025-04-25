@@ -42,15 +42,6 @@ var pageNumber = regexp.MustCompile(
 var parsedFile = regexp.MustCompile(parsedSuffix + `$`)
 var discardFile = regexp.MustCompile(discardSuffix + `$`)
 
-// Returns a string representing the name of the executable command.
-func Command(args_0 string) string {
-	cmd := filepath.Base(args_0)
-	ext := filepath.Ext(args_0)
-	commandExt := regexp.MustCompile(ext + `$`)
-	cmd = commandExt.ReplaceAllLiteralString(cmd, "")
-	return cmd
-}
-
 // `isParsedFile` returns true if `f` ends with `parsedSuffix`.
 func isParsedFile(f string) bool {
 	return parsedFile.FindStringIndex(f) != nil
