@@ -71,6 +71,9 @@
 //     - .docx -> .ris file lines have newlines between each line
 //     - .txt  -> .ris file lines do not have the extra lines
 //     - should DISCARDS output be optional?
+//   - I think that many of the calls to `ReplaceAllString` could be replaced
+//     by `ReplaceAllLiteralString`.
+//
 //   - Should I move `Line` from `fetch.go` back into this file?
 // _ - Add functionality to store up to N notes following a quote.
 //     - Store notes in a slice or dictionary
