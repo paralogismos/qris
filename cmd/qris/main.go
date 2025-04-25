@@ -18,7 +18,8 @@ import (
 )
 
 func main() {
-	// Parse command line flags
+
+	// Parse command line flags.
 	conf := flag.Bool("config", false, "Show path to configuration file.")
 	dir := flag.String("d", "",
 		"Set the current working directory.")
@@ -27,6 +28,14 @@ func main() {
 	batchPath := flag.String("b", "",
 		"Path to a directory containing files to be parsed, absolute or relative.")
 	volume := flag.Bool("v", false, "Include VL volume field.")
+
+	// Custom usage message.
+	flag.Usage = func() {
+		fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s:\n",
+			qris.Command(os.Args[0]))
+		flag.PrintDefaults()
+	}
+
 	flag.Parse()
 
 	if *filePath != "" && *batchPath != "" {
