@@ -1,16 +1,20 @@
 # qris
-A Simple Tool for Parsing Quotations
+A Simple Tool for Creating RIS Files
+
+Qris is designed to process annotated quotations into RIS format. The tool can accept either `.txt` or `.docx` files as input. The input files may contain any number of source citations, and each source may be associated with any number of quotes. Each quote is processed into a RIS citation record; the RIS records are collected into `.ris` output files.
+
+The input annotation format is specific to a particular use case. Feel free to fork this project if it would be a useful beginning for another use case.
 
 ## Simple Installation
 Drop the `qris.exe` binary into the `/Windows/System32/` folder.
 
 ## Using the Tool
-Open a terminal box.
+Open a terminal window.
 
 You can type `qris` , `qris -h`, or `qris -help` to see the following help menu:
 
 ```
-$ qris -help
+$ ./qris.exe -help
 Usage of qris:
   -b string
         Path to a directory containing files to be parsed, absolute or relative.
@@ -20,7 +24,7 @@ Usage of qris:
         Set the current working directory.
   -f string
         Path to a file to be parsed, absolute or relative.
-  -v    Validate UTF8 files.
+  -v    Include VL volume field.
 ```
 
 ### Setting a Working Directory
@@ -53,6 +57,3 @@ The `-b` flag also accepts a dot argument, `.`, which indicates that the files i
 All files found in `<directory path>` will be parsed. Two output files, one `PARSED.ris` file and one `DISCARD.txt` file, will be created for each input file and placed in the workspace folder.
 
 For example, `qris -b workspace/batch` would parse all files found in the `batch` subdirectory of the `workspace` folder found in your home directory.
-
-### Validating UTF8 Files
-To verify that a file is valid UTF8, use the `-v` flag combined with either `-f` or `-b`. For example, `qris -v -b batch` would verify and parse all files found in the `batch` directory under the working directory. The file or files will be verified before parsing, and the number of the first failing line will be displayed for any failing files. Even failing files will be parsed.
