@@ -57,9 +57,11 @@
 //         - `qris [path]` seems like it ought to process a file
 //         - or at least print a message so that the user knows that nothing was processed
 //         - need to think about these issues more....
-//     - `-b .` is not working quite correctly.
-//       - I ran `qris -b .` in a directory containing one .docx file and the qris.exe
-//         file, and both files were processed!
+//     - Can the `-b` flag be modified so that `-b` is used instead of `-b .`
+//       to process all files in the qris working directory?
+//       - then `-b .` could indicate processing all files in the current working
+//         directory
+//       - or: maybe the entire working directory idea should be scrapped...?
 //   - Try to handle .doc files:
 //     - currently have "zip: not a valid zip file" failing error
 //     - do .doc files have the same format as .docx, but without zip compression?
