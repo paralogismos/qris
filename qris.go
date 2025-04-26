@@ -70,9 +70,17 @@
 //   - Review DISCARDS file:
 //     - .docx -> .ris file lines have newlines between each line
 //     - .txt  -> .ris file lines do not have the extra lines
-//     - should DISCARDS output be optional?
 //   - I think that many of the calls to `ReplaceAllString` could be replaced
 //     by `ReplaceAllLiteralString`.
+//
+//   - Can I modify so that _all_ citations must begin with "<$>"?
+//     - thus, the first line after the title line would no longer be
+//       automatically considered a citation
+//     - this would allow the user to include any number of descriptive lines
+//       before source information in the input file
+//     - this preliminary descriptive information could be collected
+//       in the DISCARDS file
+//   - Should DISCARDS output be optional?
 //
 //   - Should I move `Line` from `fetch.go` back into this file?
 // _ - Add functionality to store up to N notes following a quote.
