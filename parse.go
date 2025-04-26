@@ -27,7 +27,7 @@ var noteEnd = regexp.MustCompile(`jmr$`)
 
 var noteEndAlt = regexp.MustCompile(`jmr.$`)
 
-var multiLineQuote = regexp.MustCompile(`^///`)
+var multiLineQuote = regexp.MustCompile(`^///[\p{Zs}]*`)
 
 // A quote end is either tab-delimited pp., or space-delimited pp. with
 // at least three spaces as the delimiter.
@@ -83,8 +83,7 @@ func ParseFile(fpath string) ParsedFile {
 		}
 		if multiLineQuote.MatchString(l.Body) { // begin multi-line quote
 			inMultiLineQuote = true
-			fullQuote = multiLineQuote.ReplaceAllString(l.Body, "")
-			// fullQuote = strings.TrimSpace(fullQuote)
+			fullQuote = multiLineQuote.ReplaceAllLiteralString(l.Body, "")
 			continue
 		}
 		q, isQuote := parseQuote(l)
