@@ -81,6 +81,7 @@
 //     - this preliminary descriptive information could be collected
 //       in the DISCARDS file
 //   - Should DISCARDS output be optional?
+//   - Would the user like to preserve leading whitespace in multi-line quotes?
 //
 //   - Should I move `Line` from `fetch.go` back into this file?
 // _ - Add functionality to store up to N notes following a quote.
