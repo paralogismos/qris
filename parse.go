@@ -10,6 +10,7 @@ import (
 )
 
 // Regular Expressions
+var leadingSpace = regexp.MustCompile(`^[\p{Zs}]*`)
 var sourceBegin = regexp.MustCompile(`^<\$>`)
 
 var authorLine = regexp.MustCompile(`^>>>`)
@@ -24,7 +25,6 @@ var citationFamilyName = regexp.MustCompile(`^[^,]*`)
 var citationYear = regexp.MustCompile(`\pN{4}\pL*`)
 
 var noteEnd = regexp.MustCompile(`jmr$`)
-
 var noteEndAlt = regexp.MustCompile(`jmr.$`)
 
 var multiLineQuote = regexp.MustCompile(`^///[\p{Zs}]*`)
@@ -83,6 +83,7 @@ func ParseFile(fpath string) ParsedFile {
 		}
 		if multiLineQuote.MatchString(l.Body) { // begin multi-line quote
 			inMultiLineQuote = true
+			// Remove multi-line quote token.
 			fullQuote = multiLineQuote.ReplaceAllLiteralString(l.Body, "")
 			continue
 		}
@@ -95,8 +96,8 @@ func ParseFile(fpath string) ParsedFile {
 			continue
 		}
 		if inMultiLineQuote { // any line in multi-line quote is saved
-			fullQuote += l.Body
-			//fullQuote += strings.TrimSpace(l.Body)
+			// Remove leading whitespace.
+			fullQuote += leadingSpace.ReplaceAllLiteralString(l.Body, "")
 			continue
 		}
 		lastQuoteIdx := len(qs) - 1
