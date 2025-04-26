@@ -82,6 +82,10 @@
 //       in the DISCARDS file
 //   - Should DISCARDS output be optional?
 //   - Would the user like to preserve leading whitespace in multi-line quotes?
+//     - note that this would require preserving whitespace for both the
+//       intermediate lines of the multi-line quote, and for the final line
+//       which is a simple quote line ending with a page number; this could
+//       be accomplished by checking the `inMultiLineQuote` boolean
 //
 //   - Should I move `Line` from `fetch.go` back into this file?
 // _ - Add functionality to store up to N notes following a quote.
