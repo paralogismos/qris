@@ -82,9 +82,17 @@ func ParseFile(fpath string) ParsedFile {
 			continue
 		}
 		if multiLineQuote.MatchString(l.Body) { // begin multi-line quote
-			inMultiLineQuote = true
-			// Remove multi-line quote token.
-			fullQuote = multiLineQuote.ReplaceAllLiteralString(l.Body, "")
+			if q, isQuote := parseQuote(l); isQuote { // really a single-line quote?
+				// Cleanup front and back of the actual quote body and save it.
+				singleQuote := multiLineQuote.ReplaceAllLiteralString(q.Body, "")
+				singleQuote = strings.TrimSpace(singleQuote)
+				q.Body = singleQuote
+				qs = append(qs, q)
+			} else { // otherwise, actually a multi-line quote
+				inMultiLineQuote = true
+				// Remove multi-line quote token and leading space.
+				fullQuote = multiLineQuote.ReplaceAllLiteralString(l.Body, "")
+			}
 			continue
 		}
 		q, isQuote := parseQuote(l)

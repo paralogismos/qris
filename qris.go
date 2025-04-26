@@ -44,8 +44,6 @@
 //
 // TODO:
 //
-//   - Resolve multi-line quotes that are also single-line quotes.
-//
 //   - Explore better TUI interface:
 //     - ability to work on files directly in the shell working directory
 //       - note that the `-b` flag accepts the `.` argument to process all files
