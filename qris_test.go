@@ -3,6 +3,9 @@
 package qris
 
 import (
+	"bytes"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -109,4 +112,42 @@ func TestParseQuote(t *testing.T) {
 				n, q.Page, want.Page)
 		}
 	}
+}
+
+func TestWriteResults_single_file(t *testing.T) {
+	workDir := GetWorkDir("")
+	batchPath := "" // not testing batch mode
+	testDir := "test_files"
+	testFile := "bib22e_FUNKY.docx"
+	// TODO: testDir := "test_files"
+	// test files := []string{ "bib22e_FUNKY.docx", ...,}
+	// join to create file paths in testing loop
+
+	t.Chdir(testDir) //
+	dataList, workPath := GetWorkPath(workDir, batchPath, testFile)
+
+	// Write results to test directory.
+	_ = WriteResults(workPath, dataList, false) // no volume information written
+
+	// Compare with expected results.
+	resultPath := strings.TrimSuffix(testFile, filepath.Ext(testFile)) + "_PARSED.ris"
+	discardPath := strings.TrimSuffix(testFile, filepath.Ext(testFile)) + "_DISCARDS.txt"
+
+	result, err := os.ReadFile(resultPath)
+	if err != nil {
+		t.Fatalf("%v: unable to open %s", err, resultPath)
+	}
+
+	wantPath := strings.TrimSuffix(testFile, filepath.Ext(testFile)) + "_EXPECT.ris"
+	want, err := os.ReadFile(wantPath)
+	if err != nil {
+		t.Fatalf("%v: unable to open %s", err, wantPath)
+	}
+
+	if !bytes.Equal(result, want) {
+		t.Errorf("%s does not match %s\n", resultPath, wantPath)
+	}
+
+	_ = os.Remove(resultPath)
+	_ = os.Remove(discardPath)
 }
