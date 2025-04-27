@@ -138,7 +138,7 @@ func TestWriteResults_single_file(t *testing.T) {
 
 	// Compare with expected results.
 	resultPath := strings.TrimSuffix(testFile, filepath.Ext(testFile)) + "_PARSED.ris"
-	discardPath := strings.TrimSuffix(testFile, filepath.Ext(testFile)) + "_DISCARDS.txt"
+	discardPath := strings.TrimSuffix(testFile, filepath.Ext(testFile)) + "_DISCARD.txt"
 
 	result, err := os.ReadFile(resultPath)
 	if err != nil {
