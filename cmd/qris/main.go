@@ -31,7 +31,7 @@ func command(args_0 string) string {
 func main() {
 
 	// Parse command line flags.
-	conf := flag.Bool("config", false, "Show path to configuration file.")
+	conf := flag.String("config", "", "p, path: Show path to configuration file.\nr, rm, remove: Remove configuration file.")
 	dir := flag.String("d", "",
 		"Set the current working directory.")
 	filePath := flag.String("f", "",
@@ -57,8 +57,19 @@ func main() {
 
 	// Configure the system.
 	configPath := qris.GetConfigPath()
-	if *conf {
+	if *conf == "p" || *conf == "path" {
 		fmt.Println("Configuration file at", configPath)
+	} else if *conf == "r" || *conf == "rm" || *conf == "remove" {
+		err := os.Remove(configPath)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		fmt.Fprintf(flag.CommandLine.Output(), "Removed %s\n", configPath)
+	} else if *conf != "" {
+		fmt.Fprintf(os.Stderr, "-config: unrecognized argument '%s'\n", *conf)
+		flag.Usage()
+		os.Exit(1)
 	}
 
 	// Set a new working directory if needed.
