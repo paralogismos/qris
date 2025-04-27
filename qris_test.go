@@ -90,7 +90,7 @@ func TestParseQuote(t *testing.T) {
 
 	for n, ql := range exQuoteLines {
 		q, isQuote := parseQuote(ql)
-		q.Body = strings.TrimSpace(q.Body)
+		//q.Body = strings.TrimSpace(q.Body)
 		q.Page = strings.TrimSpace(q.Page)
 		want := wantQuotes[n]
 		if !isQuote {
