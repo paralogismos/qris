@@ -84,6 +84,11 @@
 //       intermediate lines of the multi-line quote, and for the final line
 //       which is a simple quote line ending with a page number; this could
 //       be accomplished by checking the `inMultiLineQuote` boolean
+//   - Review trimming of whitespace:
+//     - when and where does it occur?
+//     - when and where should it occur?
+//     - make this more methodical and consistent
+//     - whitespace should not have to be trimmed in tests (as it is now)
 //
 //   - Should I move `Line` from `fetch.go` back into this file?
 // _ - Add functionality to store up to N notes following a quote.
