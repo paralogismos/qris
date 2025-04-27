@@ -14,7 +14,6 @@ import (
 	"strings"
 )
 
-var isDoc = regexp.MustCompile(`\.doc$`)
 var isDocx = regexp.MustCompile(`\.docx$`)
 var tabTag = regexp.MustCompile(`<w:tab/>`)
 
@@ -34,8 +33,8 @@ func newLine(lineNo int, body string) Line {
 	}
 }
 
-func IsDocFile(s string) bool {
-	return isDoc.MatchString(s) || isDocx.MatchString(s)
+func IsDocxFile(s string) bool {
+	return isDocx.MatchString(s)
 }
 
 // Takes a `fpath` argument which leads to a .txt file and

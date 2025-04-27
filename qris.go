@@ -307,7 +307,7 @@ func GetFileList(fpath string) []string {
 func getLines(fpath string) []Line {
 	rawLines := []Line{}
 	var err error
-	if IsDocFile(fpath) {
+	if IsDocxFile(fpath) {
 		rawLines, err = DocxToLines(fpath)
 	} else { // Assume that `fpath` leads to a .txt file.
 		rawLines, err = TxtToLines(fpath)
