@@ -11,15 +11,16 @@ Drop the `qris.exe` binary into the `/Windows/System32/` folder.
 ## Using the Tool
 Open a terminal window.
 
-You can type `qris` , `qris -h`, or `qris -help` to see the following help menu:
+You can type `qris -h`, or `qris -help` to see the following help menu:
 
 ```
-$ ./qris.exe -help
+$ qris -help
 Usage of qris:
   -b string
         Path to a directory containing files to be parsed, absolute or relative.
-  -config
-        Show path to configuration file.
+  -config string
+        p, path: Show path to configuration file.
+        r, rm, remove: Remove configuration file.
   -d string
         Set the current working directory.
   -f string
@@ -32,7 +33,7 @@ Whenever the `qris` command is invoked, the `qris` version number and current wo
 
 Type `qris -d` to set a working directory. The argument to the `-d` flag can be either an absolute path or a path relative to the current working directory. If no working directory is set, `qris` uses whatever working directory the system has assigned to your terminal window.
 
-Once you set a working directory, the path to the directory is saved in a configuration file stored at a system-specific location. You can use `qris -config` to see this location displayed.
+Once you set a working directory, the path to the directory is saved in a configuration file stored at a system-specific location. You can use `qris -config path` (or `-config p`) to see this location displayed. The configuration file can be removed with `qris -config remove` (or `-config r`, or `-config rm`).
 
 Place a workspace folder in your working directory. This folder should contain any files to be parsed. Below, `<directory path>` is the path to a workspace folder which is assumed to be under your working directory.
 
