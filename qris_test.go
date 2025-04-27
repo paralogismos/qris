@@ -114,6 +114,13 @@ func TestParseQuote(t *testing.T) {
 	}
 }
 
+// I may make some changes here:
+// - handle multiple single test files
+// - handle testing of batch processing files
+// - I'm not sure that the cleanup process is ideal
+//   - maybe results should not be deleted in the
+//     case of a failing test
+//   - would Cleanup be beneficial here?
 func TestWriteResults_single_file(t *testing.T) {
 	workDir := GetWorkDir("")
 	batchPath := "" // not testing batch mode
