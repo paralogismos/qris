@@ -23,6 +23,8 @@ Usage of qris:
         r, rm, remove: Remove configuration file.
   -d string
         Set the current working directory.
+  -datestamp
+        Include AD datestamp field. (default true)
   -f string
         Path to a file to be parsed, absolute or relative.
   -v    Include VL volume field.
