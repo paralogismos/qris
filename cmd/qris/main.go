@@ -38,6 +38,7 @@ func main() {
 		"Path to a file to be parsed, absolute or relative.")
 	batchPath := flag.String("b", "",
 		"Path to a directory containing files to be parsed, absolute or relative.")
+	dateStamp := flag.Bool("datestamp", true, "Include AD datestamp field.")
 	volume := flag.Bool("v", false, "Include VL volume field.")
 
 	// Custom usage message.
@@ -89,5 +90,5 @@ func main() {
 	dataList, workPath := qris.GetWorkPath(workDir, *batchPath, *filePath)
 
 	// Parse all files and write results to output.
-	_ = qris.WriteResults(workPath, dataList, *volume)
+	_ = qris.WriteResults(workPath, dataList, *volume, *dateStamp)
 }

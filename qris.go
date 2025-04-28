@@ -392,7 +392,7 @@ func WriteDiscards(ds []Line, fname string) {
 	}
 }
 
-func WriteQuotes(pf *ParsedFile, fname string, volume bool) {
+func WriteQuotes(pf *ParsedFile, fname string, volume bool, dateStamp bool) {
 	file, err := os.Create(fname)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -407,7 +407,7 @@ func WriteQuotes(pf *ParsedFile, fname string, volume bool) {
 	fid := strings.TrimSuffix(pf.Filename, filepath.Ext(pf.Filename))
 
 	// timestamp: when file was processed
-	tstamp := time.Now().Format("2006/01/02")
+	dStamp := time.Now().Format("2006/01/02")
 
 	for _, s := range pf.Sources { // loop over sources of the parsed file
 		citBody := s.Citation.Body
@@ -421,7 +421,9 @@ func WriteQuotes(pf *ParsedFile, fname string, volume bool) {
 				fmt.Fprintln(file, "VL  -", bid)
 			}
 			fmt.Fprintln(file, "UR  -", fid)
-			fmt.Fprintln(file, "AD  -", tstamp)
+			if dateStamp {
+				fmt.Fprintln(file, "AD  -", dStamp)
+			}
 			fmt.Fprintln(file, "AB  -", citBody)
 
 			// A1 gets citation name unless a primary quote author was specified
@@ -488,7 +490,7 @@ func ValidateUTF8(fpath string) bool {
 
 // `WriteResults` iterates over a list of files, ensures that none are
 // directories, parses each file,  and writes the results to output files.
-func WriteResults(workPath string, dataList []string, volume bool) bool {
+func WriteResults(workPath string, dataList []string, volume bool, dateStamp bool) bool {
 	allPassed := true // For UTF8 validation option
 	for _, file := range dataList {
 		// Don't process parsed file artifacts.
@@ -511,7 +513,7 @@ func WriteResults(workPath string, dataList []string, volume bool) bool {
 
 		pf := ParseFile(pFile)
 		WriteDiscards(pf.Discards, pDiscard)
-		WriteQuotes(&pf, pQuotes, volume)
+		WriteQuotes(&pf, pQuotes, volume, dateStamp)
 	}
 
 	return allPassed
