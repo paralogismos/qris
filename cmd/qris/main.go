@@ -90,5 +90,5 @@ func main() {
 	dataList, workPath := qris.GetWorkPath(workDir, *batchPath, *filePath)
 
 	// Parse all files and write results to output.
-	_ = qris.WriteResults(workPath, dataList, *volume, *dateStamp)
+	qris.WriteResults(workPath, dataList, *volume, *dateStamp)
 }

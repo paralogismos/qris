@@ -118,7 +118,6 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
-	"unicode/utf8"
 )
 
 // Definitions of system constants.
@@ -466,32 +465,9 @@ func WriteQuotes(pf *ParsedFile, fname string, volume bool, dateStamp bool) {
 	}
 }
 
-func ValidateUTF8(fpath string) bool {
-	file, err := os.Open(fpath)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	lineNo := 1
-	isValid := true
-	for scanner.Scan() {
-		if !utf8.ValidString(scanner.Text()) {
-			fmt.Printf("  + First invalid UTF8 in line %d\n", lineNo)
-			isValid = false
-			break
-		}
-		lineNo++
-	}
-	return isValid
-}
-
 // `WriteResults` iterates over a list of files, ensures that none are
 // directories, parses each file,  and writes the results to output files.
-func WriteResults(workPath string, dataList []string, volume bool, dateStamp bool) bool {
-	allPassed := true // For UTF8 validation option
+func WriteResults(workPath string, dataList []string, volume bool, dateStamp bool) {
 	for _, file := range dataList {
 		// Don't process parsed file artifacts.
 		if isParsedFile(file) || isDiscardFile(file) {
@@ -515,8 +491,6 @@ func WriteResults(workPath string, dataList []string, volume bool, dateStamp boo
 		WriteDiscards(pf.Discards, pDiscard)
 		WriteQuotes(&pf, pQuotes, volume, dateStamp)
 	}
-
-	return allPassed
 }
 
 // `GetBatchList` takes a path argument and returns a list of all files found

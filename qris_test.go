@@ -136,7 +136,7 @@ func TestWriteResults_single_file(t *testing.T) {
 	// Write results to test directory.
 	volume := false    // no volume information written
 	dateStamp := false // no datestamp information written
-	_ = WriteResults(workPath, dataList, volume, dateStamp)
+	WriteResults(workPath, dataList, volume, dateStamp)
 
 	// Compare with expected results.
 	resultPath := strings.TrimSuffix(testFile, filepath.Ext(testFile)) + "_PARSED.ris"
