@@ -84,6 +84,11 @@
 //       intermediate lines of the multi-line quote, and for the final line
 //       which is a simple quote line ending with a page number; this could
 //       be accomplished by checking the `inMultiLineQuote` boolean
+//   - It makes more sense to me that %% should _precede_ a supplementary note
+//     - then all markup comes at the beginning of a line
+//     - except quote notes which end in jmr
+//     - and quotes which end in page numbers
+//       - note that multi-line quotes can end with the page on a separate line
 //   - Review trimming of whitespace:
 //     - when and where does it occur?
 //     - when and where should it occur?
