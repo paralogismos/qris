@@ -116,7 +116,6 @@ func DocxToLines(path string) ([]Line, error) {
 	for n, rl := range document.Lines {
 		line := strings.Join(rl.Runs, "")
 		line = tidyString(line)
-		line += "\n"
 		lines = append(lines, newLine(n, line))
 	}
 	return lines, err

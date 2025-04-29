@@ -78,9 +78,6 @@
 //     - do .doc files have the same format as .docx, but without zip compression?
 //   - Update unit tests.
 //   - Write integration tests.
-//   - Review DISCARDS file:
-//     - .docx -> .ris file lines have newlines between each line
-//     - .txt  -> .ris file lines do not have the extra lines
 //   - I think that many of the calls to `ReplaceAllString` could be replaced
 //     by `ReplaceAllLiteralString`.
 //
@@ -110,6 +107,7 @@
 //   - The input file title field `tit` is not being used.
 //     - Can I remove this?
 //     - The title line could be sent to the _DISCARDS.ris file.
+//   - calling `tidyString` on the input should be optional.
 //
 //   - Should I move `Line` from `fetch.go` back into this file?
 // _ - Add functionality to store up to N notes following a quote.
