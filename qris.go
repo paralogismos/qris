@@ -19,6 +19,19 @@
 //
 //   Lines following a citation are quotes IF they end in a page number.
 //     - quote lines are parsed into quote body and page number
+//     - a page number must be tab-delimited
+//     - a page number must follow one of the formats:
+//       - \t p. N
+//       - \t pp. N
+//       - the "p" indicator is case-insensitive
+//       - the . is optional
+//       - there MUST BE at least one space following p. or p
+//       - N is the page number group:
+//         - n : a number in [0-9,i, I, v, V, x, X, l, L, or ?]
+//         - n,n
+//         - n-n
+//         - n--n (for em dash transliteration)
+//         - commas and dashes may be surrounded by spaces, e.g., n -- n
 //
 //  A line following a citation that begins with "///" starts a multi-line quote
 //  which ends with a page number.
@@ -97,11 +110,6 @@
 //   - The input file title field `tit` is not being used.
 //     - Can I remove this?
 //     - The title line could be sent to the _DISCARDS.ris file.
-//   - BUG: page number indicators which do not end with periods
-//     cause the program to panic.
-//     - e.g., p. 42 and pp. 42 are fine, but p 42 and pp 42
-//       cause a panic
-//     - FIX THIS!
 //
 //   - Should I move `Line` from `fetch.go` back into this file?
 // _ - Add functionality to store up to N notes following a quote.
@@ -129,7 +137,7 @@ import (
 )
 
 // Definitions of system constants.
-const Version = "v0.12.0"
+const Version = "v0.12.1"
 const parsedSuffix = "_PARSED.ris"
 const discardSuffix = "_DISCARD.txt"
 const configDir = "qris"

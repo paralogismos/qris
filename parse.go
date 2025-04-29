@@ -32,13 +32,13 @@ var multiLineQuote = regexp.MustCompile(`^[\p{Zs}\t]*///`)
 
 // A quote end is either tab-delimited pp., or space-delimited pp. with
 // at least three spaces as the delimiter.
-var quoteEnd = regexp.MustCompile(`\t\s*[pP]+\..*`)
-var quoteEndAlt = regexp.MustCompile(`\s{3,}?[pP]+\..*`)
+var quoteEnd = regexp.MustCompile(`\t\p{Zs}*[pP]{1,2}\.?\p{Zs}+[\pNiIvVxXlL\?]*.*`)
+var quoteEndAlt = regexp.MustCompile(`\p{Zs}{3,}?[pP]{1,2}\.?\p{Zs}+[\pNiIvVxXlL\?]*.*`)
 
 var quotePage = regexp.MustCompile(
-	`[pP]{1,2}\.?\s*[\pNiIvVxXlL\?]+\s*[,-]*\s*[\pNiIvVxXlL\?]*`)
+	`[pP]{1,2}\.?\p{Zs}*[\pNiIvVxXlL\?]+\p{Zs}*[,-]*\p{Zs}*[\pNiIvVxXlL\?]*`)
 var pageNumber = regexp.MustCompile(
-	`[\pNiIvVxXlL\?]+\s*[,-]*\s*[\pNiIvVxXlL\?]*`)
+	`[\pNiIvVxXlL\?]+\p{Zs}*[,-]*\p{Zs}*[\pNiIvVxXlL\?]*`)
 
 var parsedFile = regexp.MustCompile(parsedSuffix + `$`)
 var discardFile = regexp.MustCompile(discardSuffix + `$`)

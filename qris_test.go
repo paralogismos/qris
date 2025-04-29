@@ -45,10 +45,11 @@ func TestParseQuote(t *testing.T) {
 		"Quote body followed by two page numbers. \t pp. 10,11",
 		"Quote body followed by two page numbers or page range. \t\t pp. 100 101",
 		"Quote body followed by page range. \t pp. 240-42",
+		"Quote body followed by page range. \t pp. 240 - 42",
 		"Quote body followed by page range. \t pp. 240--42",
-		"Quote body followed by p 42. \t p. 42",
-		"Quote body followed by pp 42, 43. \t pp. 42, 43",
-		"Quote body followed by pp 42-43. \t pp. 42-43",
+		"Quote body followed by p 42. \t p 42",
+		"Quote body followed by pp 42, 43. \t p 42, 43",
+		"Quote body followed by pp 42-43. \t pp  42-43",
 	}
 
 	wantQuotes := []Quote{
@@ -85,6 +86,11 @@ func TestParseQuote(t *testing.T) {
 			Body: `Quote body followed by page range.`,
 			Page: `240-42`,
 		},
+		Quote{
+			Body: `Quote body followed by page range.`,
+			Page: `240 - 42`,
+		},
+
 		Quote{
 			Body: `Quote body followed by page range.`,
 			Page: `240--42`,
