@@ -36,100 +36,118 @@ func TestParseNote(t *testing.T) {
 }
 
 func TestParseQuote(t *testing.T) {
-	exTestLines := []string{
-		"Quote body followed by a single tab.\tp. 1 ",
-		"Quote body followed by 3 spaces.   p. 2",
-		"Quote body followed by 1 space and 1 tab. \tp. 3 ",
-		"Quote body followed by page number and extra junk. \tp. 4  EXTRA JUNK HERE  ",
-		"Quote body followed by two page numbers.\tpp. 5, 6",
-		"Quote body followed by two page numbers. \t pp. 10,11",
-		"Quote body followed by two page numbers or page range. \t\t pp. 100 101",
-		"Quote body followed by page range. \t pp. 240-42",
-		"Quote body followed by page range. \t pp. 240 - 42",
-		"Quote body followed by page range. \t pp. 240--42",
-		"Quote body followed by p 42. \t p 42",
-		"Quote body followed by pp 42, 43. \t p 42, 43",
-		"Quote body followed by pp 42-43. \t pp  42-43",
+	type testCase struct {
+		input string
+		want  Quote
+	}
+	testCases := []testCase{
+		testCase{
+			input: "Quote body followed by a single tab.\tp. 1 ",
+			want: Quote{
+				Body: `Quote body followed by a single tab.`,
+				Page: `1`,
+			},
+		},
+		testCase{
+			input: "Quote body followed by 3 spaces.   p. 2",
+			want: Quote{
+				Body: `Quote body followed by 3 spaces.`,
+				Page: `2`,
+			},
+		},
+		testCase{
+			input: "Quote body followed by 1 space and 1 tab. \tp. 3 ",
+			want: Quote{
+				Body: `Quote body followed by 1 space and 1 tab.`,
+				Page: `3`,
+			},
+		},
+		testCase{
+			input: "Quote body followed by page number and extra junk. \tp. 4  EXTRA JUNK HERE  ",
+			want: Quote{
+				Body: `Quote body followed by page number and extra junk.`,
+				Page: `4`,
+			},
+		},
+		testCase{
+			input: "Quote body followed by two page numbers.\tpp. 5, 6",
+			want: Quote{
+				Body: `Quote body followed by two page numbers.`,
+				Page: `5, 6`,
+			},
+		},
+		testCase{
+			input: "Quote body followed by two page numbers. \t pp. 10,11",
+			want: Quote{
+				Body: `Quote body followed by two page numbers.`,
+				Page: `10,11`,
+			},
+		},
+		testCase{
+			input: "Quote body followed by two page numbers or page range. \t\t pp. 100 101",
+			want: Quote{
+				Body: `Quote body followed by two page numbers or page range.`,
+				Page: `100 101`,
+			},
+		},
+		testCase{
+			input: "Quote body followed by page range. \t pp. 240-42",
+			want: Quote{
+				Body: `Quote body followed by page range.`,
+				Page: `240-42`,
+			},
+		},
+		testCase{
+			input: "Quote body followed by page range. \t pp. 240 - 42",
+			want: Quote{
+				Body: `Quote body followed by page range.`,
+				Page: `240 - 42`,
+			},
+		},
+		testCase{
+			input: "Quote body followed by page range. \t pp. 240--42",
+			want: Quote{
+				Body: `Quote body followed by page range.`,
+				Page: `240--42`,
+			},
+		},
+		testCase{
+			input: "Quote body followed by p 42. \t p 42",
+			want: Quote{
+				Body: `Quote body followed by p 42.`,
+				Page: `42`,
+			},
+		},
+		testCase{
+			input: "Quote body followed by pp 42, 43. \t p 42, 43",
+			want: Quote{
+				Body: `Quote body followed by pp 42, 43.`,
+				Page: `42, 43`,
+			},
+		},
+		testCase{
+			input: "Quote body followed by pp 42-43. \t pp  42-43",
+			want: Quote{
+				Body: `Quote body followed by pp 42-43.`,
+				Page: `42-43`,
+			},
+		},
 	}
 
-	wantQuotes := []Quote{
-		Quote{
-			Body: `Quote body followed by a single tab.`,
-			Page: `1`,
-		},
-		Quote{
-
-			Body: `Quote body followed by 3 spaces.`,
-			Page: `2`,
-		},
-		Quote{
-			Body: `Quote body followed by 1 space and 1 tab.`,
-			Page: `3`,
-		},
-		Quote{
-			Body: `Quote body followed by page number and extra junk.`,
-			Page: `4`,
-		},
-		Quote{
-			Body: `Quote body followed by two page numbers.`,
-			Page: `5, 6`,
-		},
-		Quote{
-			Body: `Quote body followed by two page numbers.`,
-			Page: `10,11`,
-		},
-		Quote{
-			Body: `Quote body followed by two page numbers or page range.`,
-			Page: `100 101`,
-		},
-		Quote{
-			Body: `Quote body followed by page range.`,
-			Page: `240-42`,
-		},
-		Quote{
-			Body: `Quote body followed by page range.`,
-			Page: `240 - 42`,
-		},
-
-		Quote{
-			Body: `Quote body followed by page range.`,
-			Page: `240--42`,
-		},
-		Quote{
-			Body: `Quote body followed by p 42.`,
-			Page: `42`,
-		},
-		Quote{
-			Body: `Quote body followed by pp 42, 43.`,
-			Page: `42, 43`,
-		},
-
-		Quote{
-			Body: `Quote body followed by pp 42-43.`,
-			Page: `42-43`,
-		},
-	}
-
-	var exQuoteLines []Line
-	for n, l := range exTestLines {
-		exQuoteLines = append(exQuoteLines, newLine(n, l))
-	}
-
-	for n, ql := range exQuoteLines {
-		q, isQuote := parseQuote(ql)
-		//q.Body = strings.TrimSpace(q.Body)
-		q.Page = strings.TrimSpace(q.Page)
-		want := wantQuotes[n]
+	for n, tc := range testCases {
+		q, isQuote := parseQuote(newLine(0, tc.input))
 		if !isQuote {
-			t.Logf("unable to parse <exTestLines[%d]\n", n)
+			t.Logf("unable to parse testCases[%d]\n", n)
 			t.FailNow()
 		}
+		want := tc.want
 		if q.Body != want.Body {
 			t.Errorf("failure in Body of <exTestLines[%d]>\n"+
 				"Body = %s\n\n"+
 				" want: %s",
 				n, q.Body, want.Body)
 		}
+		q.Page = strings.TrimSpace(q.Page)
 		if q.Page != want.Page {
 			t.Errorf("failure in Page of <exTestLines[%d]>\n"+
 				"Page = %s\n want: %s\n",
