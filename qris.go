@@ -97,6 +97,11 @@
 //   - The input file title field `tit` is not being used.
 //     - Can I remove this?
 //     - The title line could be sent to the _DISCARDS.ris file.
+//   - BUG: page number indicators which do not end with periods
+//     cause the program to panic.
+//     - e.g., p. 42 and pp. 42 are fine, but p 42 and pp 42
+//       cause a panic
+//     - FIX THIS!
 //
 //   - Should I move `Line` from `fetch.go` back into this file?
 // _ - Add functionality to store up to N notes following a quote.
@@ -326,24 +331,6 @@ func getLines(fpath string) []Line {
 
 	return rawLines
 }
-
-// `cleanLines` removes all empty lines, including whitespace lines,
-// from a slice of `Line`s.
-//
-// ??? Strip leading and trailing whitespace from each `Line`?
-// func cleanLines(lines []Line) []Line {
-// 	cls := []Line{}
-
-// 	for _, l := range lines {
-// 		if l.Body == "" {
-// 			continue
-// 		} else {
-// 			cls = append(cls, l)
-// 		}
-// 	}
-
-// 	return cls
-// }
 
 // Converts problematic unicode characters to reliable characters.
 func tidyString(l string) string {
