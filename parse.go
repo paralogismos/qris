@@ -10,13 +10,14 @@ import (
 )
 
 // Regular Expressions
-var leadingSpace = regexp.MustCompile(`^[\p{Zs}]*`)
-var sourceBegin = regexp.MustCompile(`^<\$>`)
+var leadingSpace = regexp.MustCompile(`^[\p{Zs}\t]*`)
+var trailingSpace = regexp.MustCompile(`[\p{Zs}\t\n]*$`)
+var sourceBegin = regexp.MustCompile(`^[\p{Zs}\t]*<\$>`)
 
 var authorLine = regexp.MustCompile(`^>>>`)
 var keywordLine = regexp.MustCompile(`^\^[sS]:`)
 var supplementalLine = regexp.MustCompile(`%%$`)
-var URLLine = regexp.MustCompile(`^https?://`)
+var URLLine = regexp.MustCompile(`^[\p{Zs}\t]*https?://`)
 
 var citationName = regexp.MustCompile(`^[^“"{]*`)
 var finalPeriod = regexp.MustCompile(`\.$`)
@@ -27,7 +28,7 @@ var citationYear = regexp.MustCompile(`\pN{4}\pL*`)
 var noteEnd = regexp.MustCompile(`jmr$`)
 var noteEndAlt = regexp.MustCompile(`jmr.$`)
 
-var multiLineQuote = regexp.MustCompile(`^///[\p{Zs}]*`)
+var multiLineQuote = regexp.MustCompile(`^[\p{Zs}\t]*///`)
 
 // A quote end is either tab-delimited pp., or space-delimited pp. with
 // at least three spaces as the delimiter.
@@ -35,7 +36,7 @@ var quoteEnd = regexp.MustCompile(`\t\s*[pP]+\..*`)
 var quoteEndAlt = regexp.MustCompile(`\s{3,}?[pP]+\..*`)
 
 var quotePage = regexp.MustCompile(
-	`[pP]{1,2}\.\s*[\pNiIvVxXlL\?]+\s*[,-]*\s*[\pNiIvVxXlL\?]*`)
+	`[pP]{1,2}\.?\s*[\pNiIvVxXlL\?]+\s*[,-]*\s*[\pNiIvVxXlL\?]*`)
 var pageNumber = regexp.MustCompile(
 	`[\pNiIvVxXlL\?]+\s*[,-]*\s*[\pNiIvVxXlL\?]*`)
 
@@ -54,7 +55,8 @@ func isDiscardFile(f string) bool {
 
 // THIS FUNCTION SHOULD BE REFACTORED TO STREAMLINE THE LOGIC
 func ParseFile(fpath string) ParsedFile {
-	rls := cleanLines(getLines(fpath))
+	// rls := cleanLines(getLines(fpath))
+	rls := getLines(fpath)
 	fn := filepath.Base(fpath)
 	tit := rls[0].Body
 	var cit Citation
@@ -92,20 +94,27 @@ func ParseFile(fpath string) ParsedFile {
 				inMultiLineQuote = true
 				// Remove multi-line quote token and leading space.
 				fullQuote = multiLineQuote.ReplaceAllLiteralString(l.Body, "")
+				// Trim whitespace and attach a newline.
+				fullQuote = strings.TrimSpace(fullQuote) + "\n"
 			}
 			continue
 		}
 		q, isQuote := parseQuote(l)
 		if isQuote { // quote line may end a multi-line quote
-			q.Body = fullQuote + q.Body
+			if inMultiLineQuote {
+				q.Body = fullQuote +
+					trailingSpace.ReplaceAllLiteralString(q.Body, "")
+			} else {
+				q.Body = strings.TrimSpace(q.Body)
+			}
 			qs = append(qs, q)
 			inMultiLineQuote = false // reset multi-line quote parameters
 			fullQuote = ""
 			continue
 		}
 		if inMultiLineQuote { // any line in multi-line quote is saved
-			// Remove leading whitespace.
-			fullQuote += leadingSpace.ReplaceAllLiteralString(l.Body, "")
+			// Remove trailing whitespace.
+			fullQuote += trailingSpace.ReplaceAllLiteralString(l.Body, "") + "\n"
 			continue
 		}
 		lastQuoteIdx := len(qs) - 1
@@ -231,8 +240,9 @@ func parseQuote(q Line) (Quote, bool) {
 		endMatch := q.Body[endMatchIndices[0]:]
 
 		// Get quote body
-		body = strings.TrimSpace(bodyMatch)
-
+		//body = strings.TrimSpace(bodyMatch)
+		body = trailingSpace.ReplaceAllLiteralString(bodyMatch, "")
+		// body = bodyMatch // Why doesn't this work?
 		// Split end into page and supplementary field
 		pageMatchIndices := quotePage.FindStringIndex(endMatch)
 
@@ -243,19 +253,24 @@ func parseQuote(q Line) (Quote, bool) {
 			page = pageNumber.FindString(strings.TrimSpace(endMatch))
 		}
 
+		// REMOVE THIS SPECIAL CASE: IT INTERFERES WITH OTHER MARKUPS THAT
+		// INCLUDE PAGE NUMBERS!
 		// Special Case: page # at end of quote with no tabs and
 		// only one or two spaces delimiting
-	} else if bodyEnd := len(q.Body) - 30; bodyEnd > 0 {
-		simpleEnd := q.Body[bodyEnd:]
-		pageMatchIndices := quotePage.FindStringIndex(simpleEnd)
-		isQuote = pageMatchIndices != nil
+	} //  else if bodyEnd := len(q.Body) - 30; bodyEnd > 0 {
+	// 	simpleEnd := q.Body[bodyEnd:]
+	// 	pageMatchIndices := quotePage.FindStringIndex(simpleEnd)
+	// 	isQuote = pageMatchIndices != nil
 
-		if isQuote {
-			body = strings.TrimSpace(q.Body[:pageMatchIndices[0]+bodyEnd])
-			page = pageNumber.FindString(
-				strings.TrimSpace(simpleEnd[pageMatchIndices[0]:]))
-		}
-	}
+	// 	if isQuote {
+	// 		//	body = strings.TrimSpace(q.Body[:pageMatchIndices[0]+bodyEnd])
+	// 		body = trailingSpace.ReplaceAllLiteralString(q.Body[:pageMatchIndices[0]+bodyEnd], "")
+	// 		// I thought I could use this and trim in the calling function....
+	// 		//			body = q.Body[:pageMatchIndices[0]+bodyEnd]
+	// 		page = pageNumber.FindString(
+	// 			strings.TrimSpace(simpleEnd[pageMatchIndices[0]:]))
+	// 	}
+	// }
 
 	return newQuote(auth, kw, body, page, supp, note, url), isQuote
 }

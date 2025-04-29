@@ -4,7 +4,7 @@ AB  - Wortham, B. D. "The way we think about the way we think: Architecture is a
 A1  - Wortham, B. D.
 Y1  - 2007
 KW  - Architectural design ; Architectural models ; Architecture ; Enlightenment ; Modernism (Art)
-T1  - Here is an em dash-- it is longer than this en dash:-. And here is a funky word:Coelekcaenth. And here is an ellipsis:...! 
+T1  - Here is an em dash-- it is longer than this en dash:-. And here is a funky word:Coelekcaenth. And here is an ellipsis:...!
 Boyer notes that Johns  Hopkins University was the first institution founded upon this conception of research as the primary mission of the university.
 SP  - 9
 PB  - n.5 from Boyer, Ernest L. Scholarship Reconsidered. US Gov: ERIC, 1990.
@@ -144,15 +144,7 @@ A1  - Helmholtz, Hermann von
 Y1  - 1868
 T1  - My investigations on spatial intuitions in the field of vision induced me also to start investigations on the question of the origin and essential nature of our general intuitions of space. The question which then forced itself upon me, and one which also obviously belongs to the domain of the exact sciences, was at first only the following: how much of the propositions of geometry has an objectively valid sense? And how much is on the contrary only definition or the consequence of definitions, or depends on the form of description? In my opinion, this question is not to be answered all that simply. For in geometry we deal constantly with ideal structures, whose corporeal portrayal in the actual world is always only an approximation to what the concept demands, and we only decide whether a body is fixed, its sides flat and its edges straight, by means of the very propositions whose factual correctness the examination is supposed to show.
 SP  - ?
-ER  -
-
-TY  - 
-UR  - bib22e_FUNKY
-AB  - Helmholtz, Hermann von. "On the facts underlying geometry." In {Epistemological Writings. } ed. R. S. Cohen and Yehuda Elkana. Dordrecht: D. Reidel Pub. Co., 1977 (1868) (39-71).
-A1  - Helmholtz, Hermann von
-Y1  - 1868
-T1  - From the Nachrichten von der koniglichen Gesellschaft der Wissenschaften zu Gottingen no. 9, 3 June 1868. Reprinted in Wissenschaftliche Abhandlungen vol. II,
-SP  - 618-639
+PB  - From the Nachrichten von der koniglichen Gesellschaft der Wissenschaften zu Gottingen no. 9, 3 June 1868. Reprinted in Wissenschaftliche Abhandlungen vol. II, pp. 618-639.
 ER  -
 
 TY  - 
@@ -217,13 +209,13 @@ UR  - bib22e_FUNKY
 AB  - Northrop, F.S.C. {The Logic of the Sciences and the Humanities. }New York: MacMillan Company, 1947.
 A1  - Northrop, F.S.C.
 Y1  - 1947
-T1  - It appears that this step by step procedure can be divided into the following explicit stages: 
-(1) the discovery by analysis of the basic theoretical root of the problem; 
-(2) the selection of the simplest phenomenon exhibiting the factors involved in the difficulty; 
-(3) the inductive observation of these relevant factors; 
-(4) the projection of relevant hypotheses suggested by these relevant facts; 
-(5) the deduction of logical consequences from each hypothesis, thereby permitting it to be put to an experimental test; 
-(6) the clarification of one's initial problem in the light of the verified hypothesis; and 
+T1  - It appears that this step by step procedure can be divided into the following explicit stages:
+(1) the discovery by analysis of the basic theoretical root of the problem;
+(2) the selection of the simplest phenomenon exhibiting the factors involved in the difficulty;
+(3) the inductive observation of these relevant factors;
+(4) the projection of relevant hypotheses suggested by these relevant facts;
+(5) the deduction of logical consequences from each hypothesis, thereby permitting it to be put to an experimental test;
+(6) the clarification of one's initial problem in the light of the verified hypothesis; and
 (7) the generalization of one's solution by means of a pursuit of the logical implications of the new concepts and theory with respect to other subject matter and applications.
 SP  - 28
 ER  -

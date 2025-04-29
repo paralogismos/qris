@@ -16,6 +16,8 @@ import (
 
 var isDocx = regexp.MustCompile(`\.docx$`)
 var tabTag = regexp.MustCompile(`<w:tab/>`)
+var htmlOpen = regexp.MustCompile(`<w:hyperlink [^>]*>`)
+var htmlClose = regexp.MustCompile(`</w:hyperlink>`)
 
 var tabElement = "<w:t>\t</w:t>"
 
@@ -90,7 +92,12 @@ func DocxToLines(path string) ([]Line, error) {
 	// Replace special tab elements with tab characters before parsing.
 	sDocBytes := string(docBytes)
 	sDocBytes = tabTag.ReplaceAllString(sDocBytes, tabElement)
+	// Expose hyperlink text before parsing.
+	sDocBytes = htmlOpen.ReplaceAllString(sDocBytes, "")
+	sDocBytes = htmlClose.ReplaceAllString(sDocBytes, "")
 	docBytes = []byte(sDocBytes)
+
+	// Replace html tags with text.
 
 	type Rawline struct {
 		Runs []string `xml:"r>t"`

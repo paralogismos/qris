@@ -1,0 +1,50 @@
+TY  - 
+UR  - test_descriptive_citations
+AB  - Lastname, Firstname {Book Title} Publisher Information, 2000.
+A1  - Lastname, Firstname
+Y1  - 2000
+T2  - Citation Note: any whitespace may precede any line. -jmr.
+T1  - Body of a single-line quote. Page numbers must be tab-delimited.
+SP  - 1
+CY  - Quote Note -jmr
+ER  -
+
+TY  - 
+UR  - test_descriptive_citations
+AB  - Lastname, Firstname {Book Title} Publisher Information, 2000.
+A1  - Quote Author
+A2  - Lastname
+Y1  - 2000
+T2  - Citation Note: any whitespace may precede any line. -jmr.
+T1  - Body of another single-line quote attached to the same source.
+SP  - 31
+PB  - Supplementary Note
+CY  - Quote Note -jmr
+UR  - https://some_url/
+ER  -
+
+TY  - 
+UR  - test_descriptive_citations
+AB  - Lastname, Firstname, M.I. "Article Title" Publisher Information, (2000)
+A1  - Lastname, Firstname, M.I.
+Y1  - 2000
+KW  - keyword ; keyword phrase ; more keywords and keyword phrases
+T1  - Body of a single-line quote
+SP  - 49
+ER  -
+
+TY  - 
+UR  - test_descriptive_citations
+AB  - Lastname, Firstname, M.I. "Article Title" Publisher Information, (2000)
+A1  - Lastname, Firstname, M.I.
+Y1  - 2000
+T1  - Multi-line quote.
+Can consist of only a single line if the starting line ends with a page number.
+Starting and intermediate multi-line quote lines are terminated with newlines.
+Intermediate multi-line quotes preserve leading whitespace.
+
+Ends with a page number on the last line of the quote body.
+SP  - 49-50
+PB  - Any other line type may follow before a new quote line or a new source line.
+ER  -
+

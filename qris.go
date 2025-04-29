@@ -94,6 +94,9 @@
 //     - when and where should it occur?
 //     - make this more methodical and consistent
 //     - whitespace should not have to be trimmed in tests (as it is now)
+//   - The input file title field `tit` is not being used.
+//     - Can I remove this?
+//     - The title line could be sent to the _DISCARDS.ris file.
 //
 //   - Should I move `Line` from `fetch.go` back into this file?
 // _ - Add functionality to store up to N notes following a quote.
@@ -328,19 +331,19 @@ func getLines(fpath string) []Line {
 // from a slice of `Line`s.
 //
 // ??? Strip leading and trailing whitespace from each `Line`?
-func cleanLines(lines []Line) []Line {
-	cls := []Line{}
+// func cleanLines(lines []Line) []Line {
+// 	cls := []Line{}
 
-	for _, l := range lines {
-		if l.Body == "" {
-			continue
-		} else {
-			cls = append(cls, l)
-		}
-	}
+// 	for _, l := range lines {
+// 		if l.Body == "" {
+// 			continue
+// 		} else {
+// 			cls = append(cls, l)
+// 		}
+// 	}
 
-	return cls
-}
+// 	return cls
+// }
 
 // Converts problematic unicode characters to reliable characters.
 func tidyString(l string) string {

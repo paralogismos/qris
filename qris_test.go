@@ -45,10 +45,12 @@ func TestParseQuote(t *testing.T) {
 		`[S]elf, image, and world are a single object in transition. 	p. 8  epigraph `,
 		`The duration of the present creates a theater for experience, but does not fully explain the unity of the self. We need also to explore the nature of categories and the analogy of a duration and its instants to a category and its members. A duration is a "container" of temporal parts; a category is a "container" of spatial parts. A duration is a container of arbitrary length that enfolds a number of instants; a category is a container of an arbitrary set of members. A category is like a duration in that both are enclosures with fuzzy boundaries for virtual parts that are, themselves, potential containers. An instant is like a member of a category in that it can be a category for another member. Duration is the primordial manifestation of categorization. 		p. 8  (notice: according to Brown, time is primordial)  --jmr `,
 		`The relation of succession in a nontemporal (vertical) becoming transforms to one of precedence in the serialization of the (horizontal) present by events. The nontemporal actualization precipitates cotemporal entities. The concurrence of these entities in the specious present is consciousness, i.e., the conscious state. The self forms the past boundary, the surface images and objects form the actual boundary, of this duration. 	p. 9  space precipitates simultaneous objects which equals consciousness -jmr `,
-		`Finally, to sum up what this signifies for the biological basis of the self, the neuropsychological material demonstrates that the self is deposited in the process of object realization, that it distributes into images and objects, and that a truncation of this process results in an erosion of the self that is similar across the different perceptual modalities. The self is categorical and relational, achieving autonomy in the context of a complete derivation. The autonomy depends on the completeness. The preliminary locus of the self in the mental state entails a holistic or multimodal phase of potential prior to perceptual individuation. This, together with a relation to feeling, to the personal history and the immediate past, point to a limbic transition in the outward development of the mental state. 	p. 14  penultimate paragraph`}
+		`Finally, to sum up what this signifies for the biological basis of the self, the neuropsychological material demonstrates that the self is deposited in the process of object realization, that it distributes into images and objects, and that a truncation of this process results in an erosion of the self that is similar across the different perceptual modalities. The self is categorical and relational, achieving autonomy in the context of a complete derivation. The autonomy depends on the completeness. The preliminary locus of the self in the mental state entails a holistic or multimodal phase of potential prior to perceptual individuation. This, together with a relation to feeling, to the personal history and the immediate past, point to a limbic transition in the outward development of the mental state. 	p. 14  penultimate paragraph`,
+	}
 
 	wantQuotes := []Quote{
 		Quote{
+
 			Body: `Focal attention is focal perception, not perception focused by attention.`,
 			Page: `3`,
 		},
@@ -121,42 +123,45 @@ func TestParseQuote(t *testing.T) {
 //   - maybe results should not be deleted in the
 //     case of a failing test
 //   - would Cleanup be beneficial here?
-func TestWriteResults_single_file(t *testing.T) {
+func TestWriteResults(t *testing.T) {
 	workDir := GetWorkDir("")
 	batchPath := "" // not testing batch mode
 	testDir := "test_files"
-	testFile := "bib22e_FUNKY.docx"
-	// TODO: testDir := "test_files"
-	// test files := []string{ "bib22e_FUNKY.docx", ...,}
-	// join to create file paths in testing loop
+	testFiles := []string{
+		"test_descriptive_citations.docx",
+		"test_example_citations.docx",
+		"bib22e_FUNKY.docx",
+	}
 
-	t.Chdir(testDir) //
-	dataList, workPath := GetWorkPath(workDir, batchPath, testFile)
-
-	// Write results to test directory.
 	volume := false    // no volume information written
 	dateStamp := false // no datestamp information written
-	WriteResults(workPath, dataList, volume, dateStamp)
+	t.Chdir(testDir)   //
+	for _, tf := range testFiles {
+		dataList, workPath := GetWorkPath(workDir, batchPath, tf)
 
-	// Compare with expected results.
-	resultPath := strings.TrimSuffix(testFile, filepath.Ext(testFile)) + "_PARSED.ris"
-	discardPath := strings.TrimSuffix(testFile, filepath.Ext(testFile)) + "_DISCARD.txt"
+		// Write results to test directory.
+		WriteResults(workPath, dataList, volume, dateStamp)
 
-	result, err := os.ReadFile(resultPath)
-	if err != nil {
-		t.Fatalf("%v: unable to open %s", err, resultPath)
+		// Compare with expected results.
+		resultPath := strings.TrimSuffix(tf, filepath.Ext(tf)) + "_PARSED.ris"
+		discardPath := strings.TrimSuffix(tf, filepath.Ext(tf)) + "_DISCARD.txt"
+
+		result, err := os.ReadFile(resultPath)
+		if err != nil {
+			t.Fatalf("%v: unable to open %s", err, resultPath)
+		}
+
+		wantPath := strings.TrimSuffix(tf, filepath.Ext(tf)) + "_EXPECT.ris"
+		want, err := os.ReadFile(wantPath)
+		if err != nil {
+			t.Fatalf("%v: unable to open %s", err, wantPath)
+		}
+
+		if !bytes.Equal(result, want) {
+			t.Errorf("%s does not match %s\n", resultPath, wantPath)
+		}
+
+		_ = os.Remove(resultPath)
+		_ = os.Remove(discardPath)
 	}
-
-	wantPath := strings.TrimSuffix(testFile, filepath.Ext(testFile)) + "_EXPECT.ris"
-	want, err := os.ReadFile(wantPath)
-	if err != nil {
-		t.Fatalf("%v: unable to open %s", err, wantPath)
-	}
-
-	if !bytes.Equal(result, want) {
-		t.Errorf("%s does not match %s\n", resultPath, wantPath)
-	}
-
-	_ = os.Remove(resultPath)
-	_ = os.Remove(discardPath)
 }
