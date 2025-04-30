@@ -3,29 +3,39 @@
 
 P =                               # name of package to build provided by user
 MAINDIR = cmd/$(P)                # assume cmd/<package>/main.go structure
-MAIN = cmd/$(P)/main.go
 EXECNAME = $(P).exe               # adds .exe on Windows
 IPATH = ${GOPATH}\bin
-IEXEC = $(GOPATH)\bin\$(EXECNAME)
 
 .PHONY: fmt vet build install
-build: fmt vet
-	go build -o $(EXECNAME) $(MAIN)
+fmt:
+	go fmt ./...
 
 vet: fmt
 	go vet ./...
 
-fmt:
-	go fmt ./...
+build: fmt vet
+	@pushd $(MAINDIR) && \
+	go build         && \
+	popd
+
+# Tried to display the installation location.
+#
+# I couldn't make any version of this approach work:
+# go install -C -n $(MAINDIR) 2>&1 | grep 'mv $$WORK' | cut -d " " -f3
+#
+# This works, but may not always be accurate.
+# @printf '%s installed in %s\n' $(EXECNAME) $(IPATH)
 
 install: fmt vet
 	go install -C $(MAINDIR)
-	@printf '%s installed in %s\n' $(EXECNAME) $(IPATH)
 
 .PHONY: clean uninstall
 clean:
-	rm -f $(EXECNAME)
+	@pushd $(MAINDIR) && \
+	go clean         && \
+	popd
 
 uninstall:
-	rm -f $(IEXEC)
-	@printf '%s removed from %s\n' $(EXECNAME) $(IPATH)
+	@pushd $(MAINDIR) && \
+	go clean -i      && \
+	popd
