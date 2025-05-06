@@ -14,7 +14,7 @@ TY  -
 UR  - test_descriptive_citations
 AB  - Lastname, Firstname {Book Title} Publisher Information, 2000.
 A1  - Quote Author
-A2  - Lastname
+A2  - in Lastname
 Y1  - 2000
 T2  - Citation Note: any whitespace may precede any line. -jmr.
 T1  - Body of another single-line quote attached to the same source.

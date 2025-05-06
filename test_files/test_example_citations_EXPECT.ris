@@ -13,7 +13,7 @@ TY  -
 UR  - test_example_citations
 AB  - Simon, Bennett {Mind and Madness in Ancient Greece} Ithaca, NY: Cornell University Press, 1978.
 A1  - Michel Foucault
-A2  - Simon
+A2  - in Simon
 Y1  - 1978
 T1  - The science of mental disease, as it would develop in the asylum, would always be only of the order of observation and classification. It would not be a dialogue. It could not be that until psychoanalysis had exorcised this phenomenon of observation ... and substituted for its silent magic the powers of language.
 SP  - 31
@@ -26,7 +26,7 @@ TY  -
 UR  - test_example_citations
 AB  - Dodds, E.R. {The Greeks and the Irrational} University of California Press, 1951
 A1  - Maurice Bowra
-A2  - Dodds
+A2  - in Dodds
 Y1  - 1951
 T2  - "An erudite, readable, and uncommonly interesting book" according to Scientific American -jmr.
 T1  - this complete anthropomorphic system has of course no relation to real religion or to morality. These gods are a delightful, gay invention of poets.
@@ -49,7 +49,7 @@ TY  -
 UR  - test_example_citations
 AB  - Dodds, E.R. {The Greeks and the Irrational} University of California Press, 1951
 A1  - Sophocles
-A2  - Dodds
+A2  - in Dodds
 Y1  - 1951
 T2  - "An erudite, readable, and uncommonly interesting book" according to Scientific American -jmr.
 T1  - Blessed is he whose life has not tasted of evil.
