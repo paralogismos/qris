@@ -1,5 +1,7 @@
+
 TY  - 
 UR  - test_example_citations
+AD  - 2025/05/05
 AB  - Simon, Bennett {Mind and Madness in Ancient Greece} Ithaca, NY: Cornell University Press, 1978.
 A1  - Simon, Bennett
 Y1  - 1978
@@ -10,6 +12,7 @@ ER  -
 
 TY  - 
 UR  - test_example_citations
+AD  - 2025/05/05
 AB  - Simon, Bennett {Mind and Madness in Ancient Greece} Ithaca, NY: Cornell University Press, 1978.
 A1  - Michel Foucault
 A2  - Simon
@@ -23,6 +26,7 @@ ER  -
 
 TY  - 
 UR  - test_example_citations
+AD  - 2025/05/05
 AB  - Dodds, E.R. {The Greeks and the Irrational} University of California Press, 1951
 A1  - Maurice Bowra
 A2  - Dodds
@@ -35,6 +39,7 @@ ER  -
 
 TY  - 
 UR  - test_example_citations
+AD  - 2025/05/05
 AB  - Dodds, E.R. {The Greeks and the Irrational} University of California Press, 1951
 A1  - Dodds, E.R.
 Y1  - 1951
@@ -46,45 +51,46 @@ ER  -
 
 TY  - 
 UR  - test_example_citations
+AD  - 2025/05/05
 AB  - Dodds, E.R. {The Greeks and the Irrational} University of California Press, 1951
 A1  - Sophocles
 A2  - Dodds
 Y1  - 1951
 T2  - "An erudite, readable, and uncommonly interesting book" according to Scientific American -jmr.
 T1  - Blessed is he whose life has not tasted of evil.
-When God has shaken a house, the winds of madness
-Lash its breed till the breed is done:
-  Even so the deep-sea swell
-  Raked by wicked Thracian winds
-Scours in its running the subaqueous darkness,
-Churns the silt black from sea-bottom;
-And the windy cliffs roar as they take its shock.
-
-Here on the Labdacid house long we watched it piling,
-Trouble on dead men's trouble: no generation
-Frees the next from the stroke of God:
-  Deliverance does not come.
-  The final branch of Oedipus
-Grew in his house, and a lightness hung above it:
-To-day they reap it with Death's red sickle,
-The unwise mouth and the tempter who sits in the brain.
-
-The power of God man's arrogance shall not limit:
-Sleep who takes all in his net takes not this,
-Nor the unflagging months of Heaven--ageless the Master
-Holds for ever the shimmering courts of Olympus.
-  For time approaching, and time hereafter,
-  And time forgotten, one rule stands:
-  That greatness never
-Shall touch the life of man without destruction.
-
-Hope goes fast and far: to many it carries comfort,
-To many it is but the trick of light-witted desire--
-Blind we walk, till the unseen flame has trapped our footsteps.
-"Of a mind that God leads to destruction
-  The sign is this--that in the end
-  Its good is evil."
-Not long shall that mind evade destruction.
+T1  - When God has shaken a house, the winds of madness
+T1  - Lash its breed till the breed is done:
+T1  - Even so the deep-sea swell
+T1  - Raked by wicked Thracian winds
+T1  - Scours in its running the subaqueous darkness,
+T1  - Churns the silt black from sea-bottom;
+T1  - And the windy cliffs roar as they take its shock.
+T1  - 
+T1  - Here on the Labdacid house long we watched it piling,
+T1  - Trouble on dead men's trouble: no generation
+T1  - Frees the next from the stroke of God:
+T1  - Deliverance does not come.
+T1  - The final branch of Oedipus
+T1  - Grew in his house, and a lightness hung above it:
+T1  - To-day they reap it with Death's red sickle,
+T1  - The unwise mouth and the tempter who sits in the brain.
+T1  - 
+T1  - The power of God man's arrogance shall not limit:
+T1  - Sleep who takes all in his net takes not this,
+T1  - Nor the unflagging months of Heaven--ageless the Master
+T1  - Holds for ever the shimmering courts of Olympus.
+T1  - For time approaching, and time hereafter,
+T1  - And time forgotten, one rule stands:
+T1  - That greatness never
+T1  - Shall touch the life of man without destruction.
+T1  - 
+T1  - Hope goes fast and far: to many it carries comfort,
+T1  - To many it is but the trick of light-witted desire--
+T1  - Blind we walk, till the unseen flame has trapped our footsteps.
+T1  - "Of a mind that God leads to destruction
+T1  - The sign is this--that in the end
+T1  - Its good is evil."
+T1  - Not long shall that mind evade destruction.
 SP  - 49-50
 PB  - {Antigone}
 ER  -

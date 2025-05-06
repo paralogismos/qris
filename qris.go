@@ -170,14 +170,14 @@ func newCitation(name, year, body, note string) Citation {
 type Quote struct {
 	Auth    string
 	Keyword string
-	Body    string
+	Body    []string
 	Page    string
 	Supp    string
 	Note    string
 	URL     string
 }
 
-func newQuote(auth, kw, body, page, supp, note, url string) Quote {
+func newQuote(auth, kw string, body []string, page, supp, note, url string) Quote {
 	return Quote{
 		Auth:    auth,
 		Keyword: kw,
@@ -404,6 +404,9 @@ func WriteQuotes(pf *ParsedFile, fname string, volume bool, dateStamp bool) {
 	// timestamp: when file was processed
 	dStamp := time.Now().Format("2006/01/02")
 
+	// Start file with a blank line per RIS specification.
+	fmt.Fprintln(file, "")
+
 	for _, s := range pf.Sources { // loop over sources of the parsed file
 		citBody := s.Citation.Body
 		citName := s.Citation.Name
@@ -440,8 +443,10 @@ func WriteQuotes(pf *ParsedFile, fname string, volume bool, dateStamp bool) {
 			if q.Keyword != "" {
 				fmt.Fprintln(file, "KW  -", q.Keyword)
 			}
-			if q.Body != "" {
-				fmt.Fprintln(file, "T1  -", q.Body)
+			if q.Body != nil {
+				for _, line := range q.Body {
+					fmt.Fprintln(file, "T1  -", line)
+				}
 			}
 			if q.Page != "" {
 				fmt.Fprintln(file, "SP  -", q.Page)

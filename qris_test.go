@@ -3,9 +3,11 @@
 package qris
 
 import (
-	"bytes"
+	//	"bytes"
+	"fmt" // REMOVE AFTER FIXING TESTS
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 )
@@ -44,91 +46,91 @@ func TestParseQuote(t *testing.T) {
 		testCase{
 			input: "Quote body followed by a single tab.\tp. 1 ",
 			want: Quote{
-				Body: `Quote body followed by a single tab.`,
+				Body: []string{`Quote body followed by a single tab.`},
 				Page: `1`,
 			},
 		},
 		testCase{
 			input: "Quote body followed by 3 spaces.   p. 2",
 			want: Quote{
-				Body: `Quote body followed by 3 spaces.`,
+				Body: []string{`Quote body followed by 3 spaces.`},
 				Page: `2`,
 			},
 		},
 		testCase{
 			input: "Quote body followed by 1 space and 1 tab. \tp. 3 ",
 			want: Quote{
-				Body: `Quote body followed by 1 space and 1 tab.`,
+				Body: []string{`Quote body followed by 1 space and 1 tab.`},
 				Page: `3`,
 			},
 		},
 		testCase{
 			input: "Quote body followed by page number and extra junk. \tp. 4  EXTRA JUNK HERE  ",
 			want: Quote{
-				Body: `Quote body followed by page number and extra junk.`,
+				Body: []string{`Quote body followed by page number and extra junk.`},
 				Page: `4`,
 			},
 		},
 		testCase{
 			input: "Quote body followed by two page numbers.\tpp. 5, 6",
 			want: Quote{
-				Body: `Quote body followed by two page numbers.`,
+				Body: []string{`Quote body followed by two page numbers.`},
 				Page: `5, 6`,
 			},
 		},
 		testCase{
 			input: "Quote body followed by two page numbers. \t pp. 10,11",
 			want: Quote{
-				Body: `Quote body followed by two page numbers.`,
+				Body: []string{`Quote body followed by two page numbers.`},
 				Page: `10,11`,
 			},
 		},
 		testCase{
 			input: "Quote body followed by two page numbers or page range. \t\t pp. 100 101",
 			want: Quote{
-				Body: `Quote body followed by two page numbers or page range.`,
+				Body: []string{`Quote body followed by two page numbers or page range.`},
 				Page: `100 101`,
 			},
 		},
 		testCase{
 			input: "Quote body followed by page range. \t pp. 240-42",
 			want: Quote{
-				Body: `Quote body followed by page range.`,
+				Body: []string{`Quote body followed by page range.`},
 				Page: `240-42`,
 			},
 		},
 		testCase{
 			input: "Quote body followed by page range. \t pp. 240 - 42",
 			want: Quote{
-				Body: `Quote body followed by page range.`,
+				Body: []string{`Quote body followed by page range.`},
 				Page: `240 - 42`,
 			},
 		},
 		testCase{
 			input: "Quote body followed by page range. \t pp. 240--42",
 			want: Quote{
-				Body: `Quote body followed by page range.`,
+				Body: []string{`Quote body followed by page range.`},
 				Page: `240--42`,
 			},
 		},
 		testCase{
 			input: "Quote body followed by p 42. \t p 42",
 			want: Quote{
-				Body: `Quote body followed by p 42.`,
+				Body: []string{`Quote body followed by p 42.`},
 				Page: `42`,
 			},
 		},
 		testCase{
 			input: "Quote body followed by pp 42, 43. \t p 42, 43",
 			want: Quote{
-				Body: `Quote body followed by pp 42, 43.`,
+				Body: []string{`Quote body followed by pp 42, 43.`},
 				Page: `42, 43`,
 			},
 		},
 		testCase{
 			input: "Quote body followed by pp 42-43. \t pp  42-43",
 			want: Quote{
-				Body: `Quote body followed by pp 42-43.`,
+				Body: []string{`Quote body followed by pp 42-43.`},
 				Page: `42-43`,
 			},
 		},
@@ -141,7 +143,7 @@ func TestParseQuote(t *testing.T) {
 			t.FailNow()
 		}
 		want := tc.want
-		if q.Body != want.Body {
+		if !slices.Equal(q.Body, want.Body) {
 			t.Errorf("failure in Body of <exTestLines[%d]>\n"+
 				"Body = %s\n\n"+
 				" want: %s",
@@ -197,8 +199,15 @@ func TestWriteResults(t *testing.T) {
 			t.Fatalf("%v: unable to open %s", err, wantPath)
 		}
 
-		if !bytes.Equal(result, want) {
+		if !slices.Equal(result, want) {
 			t.Errorf("%s does not match %s\n", resultPath, wantPath)
+			fmt.Println(len(result), len(want)) // REMOVE AFTER FIXING TESTS
+			for i := 0; i < len(result); i++ {
+				if result[i] != want[i] {
+					fmt.Println(i, result[i], want[i])
+					break
+				}
+			}
 		}
 
 		_ = os.Remove(resultPath)

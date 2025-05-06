@@ -11,7 +11,8 @@ import (
 
 // Regular Expressions
 var leadingSpace = regexp.MustCompile(`^[\p{Zs}\t]*`)
-var trailingSpace = regexp.MustCompile(`[\p{Zs}\t\n]*$`)
+
+// var trailingSpace = regexp.MustCompile(`[\p{Zs}\t\n]*$`)
 var sourceBegin = regexp.MustCompile(`^[\p{Zs}\t]*<\$>`)
 
 var authorLine = regexp.MustCompile(`^>>>`)
@@ -67,7 +68,7 @@ func ParseFile(fpath string) ParsedFile {
 	firstSource := true
 
 	inMultiLineQuote := false
-	fullQuote := ""
+	var fullQuote []string
 	for _, l := range rls[1:] {
 		if firstSource { // first source in the file
 			firstSource = false
@@ -76,6 +77,8 @@ func ParseFile(fpath string) ParsedFile {
 			ds = []Line{}
 			continue
 		}
+		// FIX: Don't match new source markup when in multiline quote!
+		//if !inMultiLineQuote && sourceBegin.MatchString(l.Body) {
 		if sourceBegin.MatchString(l.Body) { // new source encountered
 			src = newSource(cit, qs)
 			sources = append(sources, src) // save the last source
@@ -83,38 +86,41 @@ func ParseFile(fpath string) ParsedFile {
 			qs = []Quote{} // start new slice of quotes
 			continue
 		}
+		// FIX: Don't match multiline quote markup when in multiline quote!
+		//if !inMultiLineQuote && multiLineQuote.MatchString(l.Body) {
 		if multiLineQuote.MatchString(l.Body) { // begin multi-line quote
 			if q, isQuote := parseQuote(l); isQuote { // really a single-line quote?
 				// Cleanup front and back of the actual quote body and save it.
-				singleQuote := multiLineQuote.ReplaceAllLiteralString(q.Body, "")
-				singleQuote = strings.TrimSpace(singleQuote)
-				q.Body = singleQuote
+				singleQuote := multiLineQuote.ReplaceAllLiteralString(q.Body[0], "")
+				q.Body[0] = strings.TrimSpace(singleQuote)
 				qs = append(qs, q)
 			} else { // otherwise, actually a multi-line quote
 				inMultiLineQuote = true
-				// Remove multi-line quote token and leading space.
-				fullQuote = multiLineQuote.ReplaceAllLiteralString(l.Body, "")
+				// Remove multi-line quote token and surrounding whitespace before collecting the line.
+				fullQuote = append(fullQuote,
+					strings.TrimSpace(multiLineQuote.ReplaceAllLiteralString(l.Body, "")))
 				// Trim whitespace and attach a newline.
-				fullQuote = strings.TrimSpace(fullQuote) + "\n"
+				//fullQuote = strings.TrimSpace(fullQuote) + "\n"
 			}
 			continue
 		}
 		q, isQuote := parseQuote(l)
 		if isQuote { // quote line may end a multi-line quote
 			if inMultiLineQuote {
-				q.Body = fullQuote +
-					trailingSpace.ReplaceAllLiteralString(q.Body, "")
+				//q.Body = append(fullQuote, trailingSpace.ReplaceAllLiteralString(q.Body[0], ""))
+				q.Body = append(fullQuote, strings.TrimSpace(q.Body[0]))
 			} else {
-				q.Body = strings.TrimSpace(q.Body)
+				q.Body[0] = strings.TrimSpace(q.Body[0])
 			}
 			qs = append(qs, q)
 			inMultiLineQuote = false // reset multi-line quote parameters
-			fullQuote = ""
+			fullQuote = nil
 			continue
 		}
 		if inMultiLineQuote { // any line in multi-line quote is saved
 			// Remove trailing whitespace.
-			fullQuote += trailingSpace.ReplaceAllLiteralString(l.Body, "") + "\n"
+			//fullQuote = append(fullQuote, trailingSpace.ReplaceAllLiteralString(l.Body, ""))
+			fullQuote = append(fullQuote, strings.TrimSpace(l.Body))
 			continue
 		}
 		lastQuoteIdx := len(qs) - 1
@@ -219,7 +225,9 @@ func parseSupplemental(l Line) (string, bool) {
 }
 
 func parseQuote(q Line) (Quote, bool) {
-	var auth, kw, body, page, supp, note, url string
+	var auth, kw string
+	var body []string
+	var page, supp, note, url string
 
 	// Malformed page numbers are recorded using `pageUnknown`.
 	const pageUnknown = "?"
@@ -241,7 +249,8 @@ func parseQuote(q Line) (Quote, bool) {
 
 		// Get quote body
 		//body = strings.TrimSpace(bodyMatch)
-		body = trailingSpace.ReplaceAllLiteralString(bodyMatch, "")
+		//body = append(body, trailingSpace.ReplaceAllLiteralString(bodyMatch, ""))
+		body = append(body, strings.TrimSpace(bodyMatch))
 		// body = bodyMatch // Why doesn't this work?
 		// Split end into page and supplementary field
 		pageMatchIndices := quotePage.FindStringIndex(endMatch)
