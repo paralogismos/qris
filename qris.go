@@ -135,7 +135,7 @@ import (
 )
 
 // Definitions of system constants.
-const Version = "v0.12.2"
+const Version = "v0.12.3"
 const parsedSuffix = "_PARSED.ris"
 const discardSuffix = "_DISCARD.txt"
 const configDir = "qris"
