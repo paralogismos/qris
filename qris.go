@@ -344,6 +344,7 @@ func tidyString(l string) string {
 		'“': `"`, '”': `"`, '‘': `'`, '’': `'`,
 		'–': `-`, '—': `--`, '…': `...`,
 		'«': `<<`, '»': `>>`, '†': ``,
+		'§': "\xA7",
 		'À': `A`, 'È': `E`, 'Ì': `I`, 'Ò': `O`, 'Ù': `U`,
 		'à': `a`, 'è': `e`, 'ì': `i`, 'ò': `o`, 'ù': `u`,
 		'Á': `A`, 'É': `E`, 'Í': `I`, 'Ó': `O`, 'Ú': `U`, 'Ý': `Y`,
@@ -429,7 +430,7 @@ func WriteQuotes(pf *ParsedFile, fname string, volume bool, dateStamp bool) {
 				fmt.Fprintln(file, "A1  -", q.Auth)
 				familyName := citationFamilyName.FindString(citName)
 				familyName = strings.TrimSpace(familyName)
-				fmt.Fprintln(file, "A2  -", familyName)
+				fmt.Fprintln(file, "A2  - in", familyName)
 			} else {
 				fmt.Fprintln(file, "A1  -", citName)
 			}
