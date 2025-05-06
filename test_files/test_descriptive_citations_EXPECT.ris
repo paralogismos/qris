@@ -1,7 +1,6 @@
 
 TY  - 
 UR  - test_descriptive_citations
-AD  - 2025/05/05
 AB  - Lastname, Firstname {Book Title} Publisher Information, 2000.
 A1  - Lastname, Firstname
 Y1  - 2000
@@ -13,7 +12,6 @@ ER  -
 
 TY  - 
 UR  - test_descriptive_citations
-AD  - 2025/05/05
 AB  - Lastname, Firstname {Book Title} Publisher Information, 2000.
 A1  - Quote Author
 A2  - Lastname
@@ -28,7 +26,6 @@ ER  -
 
 TY  - 
 UR  - test_descriptive_citations
-AD  - 2025/05/05
 AB  - Lastname, Firstname, M.I. "Article Title" Publisher Information, (2000)
 A1  - Lastname, Firstname, M.I.
 Y1  - 2000
@@ -39,7 +36,6 @@ ER  -
 
 TY  - 
 UR  - test_descriptive_citations
-AD  - 2025/05/05
 AB  - Lastname, Firstname, M.I. "Article Title" Publisher Information, (2000)
 A1  - Lastname, Firstname, M.I.
 Y1  - 2000

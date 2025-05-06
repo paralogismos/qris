@@ -3,8 +3,6 @@
 package qris
 
 import (
-	//	"bytes"
-	"fmt" // REMOVE AFTER FIXING TESTS
 	"os"
 	"path/filepath"
 	"slices"
@@ -201,13 +199,6 @@ func TestWriteResults(t *testing.T) {
 
 		if !slices.Equal(result, want) {
 			t.Errorf("%s does not match %s\n", resultPath, wantPath)
-			fmt.Println(len(result), len(want)) // REMOVE AFTER FIXING TESTS
-			for i := 0; i < len(result); i++ {
-				if result[i] != want[i] {
-					fmt.Println(i, result[i], want[i])
-					break
-				}
-			}
 		}
 
 		_ = os.Remove(resultPath)
