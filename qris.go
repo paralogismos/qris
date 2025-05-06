@@ -338,6 +338,18 @@ func getLines(fpath string) []Line {
 	return rawLines
 }
 
+// Remove zero bytes to convert utf-8 to extended ASCII
+// func tidyString(l string) string {
+// 	input := []byte(l)
+// 	var output []byte = nil
+// 	for _, b := range input {
+// 		if b != 0 {
+// 			output = append(output, b)
+// 		}
+// 	}
+// 	return string(output)
+// }
+
 // Converts problematic unicode characters to reliable characters.
 func tidyString(l string) string {
 	conversions := map[rune]string{
