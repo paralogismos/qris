@@ -180,7 +180,7 @@ func TestWriteResults(t *testing.T) {
 		dataList, workPath := GetWorkPath(workDir, batchPath, tf)
 
 		// Write results to test directory.
-		WriteResults(workPath, dataList, volume, dateStamp)
+		WriteResults(workPath, dataList, volume, dateStamp, Extended)
 
 		// Compare with expected results.
 		resultPath := strings.TrimSuffix(tf, filepath.Ext(tf)) + "_PARSED.ris"

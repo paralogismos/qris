@@ -350,57 +350,74 @@ func getLines(fpath string) []Line {
 // 	return string(output)
 // }
 
-// Converts problematic unicode characters to reliable characters.
-func tidyString(l string) string {
-	// conversions := map[rune]string{
-	// 	'“': `"`, '”': `"`, '‘': `'`, '’': `'`,
-	// 	'–': `-`, '—': `--`, '…': `...`,
-	// 	'«': `<<`, '»': `>>`, '†': ``,
-	// 	'§': "\xA7",
-	// 	'À': `A`, 'È': `E`, 'Ì': `I`, 'Ò': `O`, 'Ù': `U`,
-	// 	'à': `a`, 'è': `e`, 'ì': `i`, 'ò': `o`, 'ù': `u`,
-	// 	'Á': `A`, 'É': `E`, 'Í': `I`, 'Ó': `O`, 'Ú': `U`, 'Ý': `Y`,
-	// 	'á': `a`, 'é': `e`, 'í': `i`, 'ó': `o`, 'ú': `u`, 'ý': `y`,
-	// 	'Â': `A`, 'Ê': `E`, 'Î': `I`, 'Ô': `O`, 'Û': `U`,
-	// 	'â': `a`, 'ê': `e`, 'î': `i`, 'ô': `o`, 'û': `u`,
-	// 	'Ã': `A`, 'Ñ': `N`, 'Õ': `O`,
-	// 	'ã': `a`, 'ñ': `n`, 'õ': `o`,
-	// 	'Ä': `A`, 'Ë': `E`, 'Ï': `I`, 'Ö': `O`, 'Ü': `U`, 'Ÿ': `Y`,
-	// 	'ä': `a`, 'ë': `e`, 'ï': `i`, 'ö': `o`, 'ü': `u`, 'ÿ': `y`,
-	// 	'Æ': `ae`, 'Œ': `OE`,
-	// 	'æ': `ae`, 'œ': `oe`,
-	// 	'Ç': `C`,
-	// 	'ç': `c`,
-	// }
+// An `Encoding` value is used to specify the encoding of the output.
+type Encoding int
 
-	conversions := map[rune]string{
-		'“': "\x93", '”': "\x94", '‘': "\x91", '’': "\x92",
-		'–': "\x96", '—': "\x97", '…': "\x85",
-		'«': "\xAB", '»': "\xBB", '†': "\x86",
-		'§': "\xA7",
-		'À': "\xC0", 'È': "\xC8", 'Ì': "\xCC", 'Ò': "\xD2", 'Ù': "\xD9",
-		'à': "\xE0", 'è': "\xE8", 'ì': "\xEC", 'ò': "\xF2", 'ù': "\xF9",
-		'Á': "\xC1", 'É': "\xC9", 'Í': "\xCD", 'Ó': "\xD3", 'Ú': "\xDA", 'Ý': "\xDD",
-		'á': "\xE1", 'é': "\xE9", 'í': "\xED", 'ó': "\xF3", 'ú': "\xFA", 'ý': "\xFD",
-		'Â': "\xC2", 'Ê': "\xCA", 'Î': "\xCE", 'Ô': "\xD4", 'Û': "\xDB",
-		'â': "\xE2", 'ê': "\xEA", 'î': "\xEE", 'ô': "\xF4", 'û': "\xFB",
-		'Ã': "\xC3", 'Ñ': "\xD1", 'Õ': "\xD5",
-		'ã': "\xE3", 'ñ': "\xF1", 'õ': "\xF5",
-		'Ä': "\xC4", 'Ë': "\xCB", 'Ï': "\xCF", 'Ö': "\xD6", 'Ü': "\xDC", 'Ÿ': "\x9F",
-		'ä': "\xE4", 'ë': "\xEB", 'ï': "\xEF", 'ö': "\xF6", 'ü': "\xFC", 'ÿ': "\xFF",
-		'Æ': "\xC6", 'Œ': "\x8C",
-		'æ': "\xE6", 'œ': "\x9C",
-		'Ç': "\xC7",
-		'ç': "\xE7",
+const (
+	None     Encoding = iota
+	Ascii             // plain ASCII
+	Extended          // extended ASCII
+	Utf8
+)
+
+// Converts problematic unicode characters to reliable characters.
+func tidyString(line string, enc Encoding) string {
+	var conversions map[rune]string
+	if enc == Ascii {
+		conversions = map[rune]string{
+			'“': `"`, '”': `"`, '‘': `'`, '’': `'`,
+			'–': `-`, '—': `--`, '…': `...`,
+			'«': `<<`, '»': `>>`, '†': ``,
+			'§': "\xA7",
+			'À': `A`, 'È': `E`, 'Ì': `I`, 'Ò': `O`, 'Ù': `U`,
+			'à': `a`, 'è': `e`, 'ì': `i`, 'ò': `o`, 'ù': `u`,
+			'Á': `A`, 'É': `E`, 'Í': `I`, 'Ó': `O`, 'Ú': `U`, 'Ý': `Y`,
+			'á': `a`, 'é': `e`, 'í': `i`, 'ó': `o`, 'ú': `u`, 'ý': `y`,
+			'Â': `A`, 'Ê': `E`, 'Î': `I`, 'Ô': `O`, 'Û': `U`,
+			'â': `a`, 'ê': `e`, 'î': `i`, 'ô': `o`, 'û': `u`,
+			'Ã': `A`, 'Ñ': `N`, 'Õ': `O`,
+			'ã': `a`, 'ñ': `n`, 'õ': `o`,
+			'Ä': `A`, 'Ë': `E`, 'Ï': `I`, 'Ö': `O`, 'Ü': `U`, 'Ÿ': `Y`,
+			'ä': `a`, 'ë': `e`, 'ï': `i`, 'ö': `o`, 'ü': `u`, 'ÿ': `y`,
+			'Æ': `ae`, 'Œ': `OE`,
+			'æ': `ae`, 'œ': `oe`,
+			'Ç': `C`,
+			'ç': `c`,
+		}
+	} else if enc == Extended {
+		conversions = map[rune]string{
+			'“': "\x93", '”': "\x94", '‘': "\x91", '’': "\x92",
+			'–': "\x96", '—': "\x97", '…': "\x85",
+			'«': "\xAB", '»': "\xBB", '†': "\x86",
+			'§': "\xA7",
+			'À': "\xC0", 'È': "\xC8", 'Ì': "\xCC", 'Ò': "\xD2", 'Ù': "\xD9",
+			'à': "\xE0", 'è': "\xE8", 'ì': "\xEC", 'ò': "\xF2", 'ù': "\xF9",
+			'Á': "\xC1", 'É': "\xC9", 'Í': "\xCD", 'Ó': "\xD3", 'Ú': "\xDA", 'Ý': "\xDD",
+			'á': "\xE1", 'é': "\xE9", 'í': "\xED", 'ó': "\xF3", 'ú': "\xFA", 'ý': "\xFD",
+			'Â': "\xC2", 'Ê': "\xCA", 'Î': "\xCE", 'Ô': "\xD4", 'Û': "\xDB",
+			'â': "\xE2", 'ê': "\xEA", 'î': "\xEE", 'ô': "\xF4", 'û': "\xFB",
+			'Ã': "\xC3", 'Ñ': "\xD1", 'Õ': "\xD5",
+			'ã': "\xE3", 'ñ': "\xF1", 'õ': "\xF5",
+			'Ä': "\xC4", 'Ë': "\xCB", 'Ï': "\xCF", 'Ö': "\xD6", 'Ü': "\xDC", 'Ÿ': "\x9F",
+			'ä': "\xE4", 'ë': "\xEB", 'ï': "\xEF", 'ö': "\xF6", 'ü': "\xFC", 'ÿ': "\xFF",
+			'Æ': "\xC6", 'Œ': "\x8C",
+			'æ': "\xE6", 'œ': "\x9C",
+			'Ç': "\xC7",
+			'ç': "\xE7",
+		}
 	}
 
-	tidyResult := ""
-	rs := []rune(l)
-	for _, r := range rs { // check for runes to be replaced by a single rune
-		if newRunes, replace := conversions[r]; replace {
-			tidyResult += newRunes
-		} else {
-			tidyResult += string(r)
+	var tidyResult string
+	if enc == Utf8 {
+		tidyResult = line
+	} else {
+		rs := []rune(line)
+		for _, r := range rs { // check for runes to be replaced by a single rune
+			if newRunes, replace := conversions[r]; replace {
+				tidyResult += newRunes
+			} else {
+				tidyResult += string(r)
+			}
 		}
 	}
 
@@ -421,7 +438,7 @@ func WriteDiscards(ds []Line, fname string) {
 	}
 }
 
-func WriteQuotes(pf *ParsedFile, fname string, volume bool, dateStamp bool) {
+func WriteQuotes(pf *ParsedFile, fname string, volume bool, dateStamp bool, enc Encoding) {
 	file, err := os.Create(fname)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -456,30 +473,30 @@ func WriteQuotes(pf *ParsedFile, fname string, volume bool, dateStamp bool) {
 			if dateStamp {
 				fmt.Fprintln(file, "AD  -", dStamp)
 			}
-			fmt.Fprintln(file, "AB  -", tidyString(citBody))
+			fmt.Fprintln(file, "AB  -", tidyString(citBody, enc))
 
 			// A1 gets citation name unless a primary quote author was specified
 			if q.Auth != "" {
-				fmt.Fprintln(file, "A1  -", tidyString(q.Auth))
+				fmt.Fprintln(file, "A1  -", tidyString(q.Auth, enc))
 				familyName := citationFamilyName.FindString(citName)
 				familyName = strings.TrimSpace(familyName)
-				fmt.Fprintln(file, "A2  - in", tidyString(familyName))
+				fmt.Fprintln(file, "A2  - in", tidyString(familyName, enc))
 			} else {
-				fmt.Fprintln(file, "A1  -", tidyString(citName))
+				fmt.Fprintln(file, "A1  -", tidyString(citName, enc))
 			}
 
 			if citYear != "" {
 				fmt.Fprintln(file, "Y1  -", citYear)
 			}
 			if citNote != "" {
-				fmt.Fprintln(file, "T2  -", tidyString(citNote))
+				fmt.Fprintln(file, "T2  -", tidyString(citNote, enc))
 			}
 			if q.Keyword != "" {
 				fmt.Fprintln(file, "KW  -", q.Keyword)
 			}
 			if q.Body != nil {
 				for _, line := range q.Body {
-					fmt.Fprintln(file, "T1  -", tidyString(line))
+					fmt.Fprintln(file, "T1  -", tidyString(line, enc))
 				}
 			}
 			if q.Page != "" {
@@ -487,11 +504,11 @@ func WriteQuotes(pf *ParsedFile, fname string, volume bool, dateStamp bool) {
 			}
 			if q.Supp != nil {
 				for _, supp := range q.Supp {
-					fmt.Fprintln(file, "PB  -", tidyString(supp))
+					fmt.Fprintln(file, "PB  -", tidyString(supp, enc))
 				}
 			}
 			if q.Note != "" {
-				fmt.Fprintln(file, "CY  -", tidyString(q.Note))
+				fmt.Fprintln(file, "CY  -", tidyString(q.Note, enc))
 			}
 			if q.URL != "" {
 				fmt.Fprintln(file, "UR  -", q.URL)
@@ -504,7 +521,7 @@ func WriteQuotes(pf *ParsedFile, fname string, volume bool, dateStamp bool) {
 
 // `WriteResults` iterates over a list of files, ensures that none are
 // directories, parses each file,  and writes the results to output files.
-func WriteResults(workPath string, dataList []string, volume bool, dateStamp bool) {
+func WriteResults(workPath string, dataList []string, volume bool, dateStamp bool, enc Encoding) {
 	for _, file := range dataList {
 		// Don't process parsed file artifacts.
 		if isParsedFile(file) || isDiscardFile(file) {
@@ -526,7 +543,7 @@ func WriteResults(workPath string, dataList []string, volume bool, dateStamp boo
 
 		pf := ParseFile(pFile)
 		WriteDiscards(pf.Discards, pDiscard)
-		WriteQuotes(&pf, pQuotes, volume, dateStamp)
+		WriteQuotes(&pf, pQuotes, volume, dateStamp, enc)
 	}
 }
 
