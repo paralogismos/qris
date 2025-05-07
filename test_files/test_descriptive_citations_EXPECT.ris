@@ -4,7 +4,7 @@ UR  - test_descriptive_citations
 AB  - Lastname, Firstname {Book Title} Publisher Information, 2000.
 A1  - Lastname, Firstname
 Y1  - 2000
-T2  - Citation Note: any whitespace may precede any line. -jmr.
+T2  - Citation Note: any whitespace may precede any line.
 T1  - Body of a single-line quote. Page numbers must be tab-delimited.
 SP  - 1
 CY  - Quote Note -jmr
@@ -16,7 +16,7 @@ AB  - Lastname, Firstname {Book Title} Publisher Information, 2000.
 A1  - Quote Author
 A2  - in Lastname
 Y1  - 2000
-T2  - Citation Note: any whitespace may precede any line. -jmr.
+T2  - Citation Note: any whitespace may precede any line.
 T1  - Body of another single-line quote attached to the same source.
 SP  - 31
 PB  - Supplementary Note

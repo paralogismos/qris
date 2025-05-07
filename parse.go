@@ -26,6 +26,7 @@ var nameInitialPeriod = regexp.MustCompile(`[\p{Zs}.]{1}[\pL]{1}\.$`)
 var citationFamilyName = regexp.MustCompile(`^[^,]*`)
 var citationYear = regexp.MustCompile(`\pN{4}\pL*`)
 
+var citNoteEnd = regexp.MustCompile(`-nb\.?$`)
 var noteEnd = regexp.MustCompile(`jmr$`)
 var noteEndAlt = regexp.MustCompile(`jmr.$`)
 
@@ -124,11 +125,12 @@ func ParseFile(fpath string) ParsedFile {
 			continue
 		}
 		lastQuoteIdx := len(qs) - 1
+		if cn, isCitNote := parseCitNote(l); isCitNote {
+			cit.Note = cn
+		}
 		if n, isNote := parseNote(l); isNote {
 			if lastQuoteIdx >= 0 {
 				qs[lastQuoteIdx].Note = n
-			} else {
-				cit.Note = n
 			}
 		} else if a, isAuth := parseAuth(l); isAuth {
 			qs[lastQuoteIdx].Auth = a
@@ -166,6 +168,16 @@ func parseCitation(rl Line) Citation {
 	note := ""
 
 	return newCitation(name, year, body, note)
+}
+
+func parseCitNote(l Line) (string, bool) {
+	isCitNote := false
+	body := strings.TrimSpace(l.Body)
+	if citNoteEnd.FindStringIndex(body) != nil {
+		isCitNote = true
+		body = strings.TrimSpace(citNoteEnd.ReplaceAllLiteralString(body, ""))
+	}
+	return body, isCitNote
 }
 
 func parseNote(l Line) (string, bool) {
