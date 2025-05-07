@@ -135,7 +135,7 @@ import (
 )
 
 // Definitions of system constants.
-const Version = "v0.14.1"
+const Version = "v0.14.2"
 const parsedSuffix = "_PARSED.ris"
 const discardSuffix = "_DISCARD.txt"
 const configDir = "qris"
@@ -381,8 +381,9 @@ func tidyString(line string, enc Encoding) string {
 			'ä': `a`, 'ë': `e`, 'ï': `i`, 'ö': `o`, 'ü': `u`, 'ÿ': `y`,
 			'Æ': `ae`, 'Œ': `OE`,
 			'æ': `ae`, 'œ': `oe`,
-			'Ç': `C`,
-			'ç': `c`,
+			'Ç':    `C`,
+			'ç':    `c`,
+			0x00A0: ` `, // NBSP
 		}
 	} else if enc == Extended {
 		conversions = map[rune]string{
@@ -402,8 +403,9 @@ func tidyString(line string, enc Encoding) string {
 			'ä': "\xE4", 'ë': "\xEB", 'ï': "\xEF", 'ö': "\xF6", 'ü': "\xFC", 'ÿ': "\xFF",
 			'Æ': "\xC6", 'Œ': "\x8C",
 			'æ': "\xE6", 'œ': "\x9C",
-			'Ç': "\xC7",
-			'ç': "\xE7",
+			'Ç':    "\xC7",
+			'ç':    "\xE7",
+			0x00A0: "\xA0", // NBSP
 		}
 	}
 
