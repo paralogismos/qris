@@ -172,12 +172,12 @@ type Quote struct {
 	Keyword string
 	Body    []string
 	Page    string
-	Supp    string
+	Supp    []string
 	Note    string
 	URL     string
 }
 
-func newQuote(auth, kw string, body []string, page, supp, note, url string) Quote {
+func newQuote(auth, kw string, body []string, page string, supp []string, note, url string) Quote {
 	return Quote{
 		Auth:    auth,
 		Keyword: kw,
@@ -464,8 +464,10 @@ func WriteQuotes(pf *ParsedFile, fname string, volume bool, dateStamp bool) {
 			if q.Page != "" {
 				fmt.Fprintln(file, "SP  -", q.Page)
 			}
-			if q.Supp != "" {
-				fmt.Fprintln(file, "PB  -", q.Supp)
+			if q.Supp != nil {
+				for _, supp := range q.Supp {
+					fmt.Fprintln(file, "PB  -", supp)
+				}
 			}
 			if q.Note != "" {
 				fmt.Fprintln(file, "CY  -", q.Note)

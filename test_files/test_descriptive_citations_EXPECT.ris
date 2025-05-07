@@ -47,5 +47,6 @@ T1  -
 T1  - Ends with a page number on the last line of the quote body.
 SP  - 49-50
 PB  - Any other line type may follow before a new quote line or a new source line.
+PB  - Any quote may have multiple supplementary notes.
 ER  -
 

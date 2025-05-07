@@ -127,8 +127,7 @@ func ParseFile(fpath string) ParsedFile {
 		lastQuoteIdx := len(qs) - 1
 		if cn, isCitNote := parseCitNote(l); isCitNote {
 			cit.Note = cn
-		}
-		if n, isNote := parseNote(l); isNote {
+		} else if n, isNote := parseNote(l); isNote {
 			if lastQuoteIdx >= 0 {
 				qs[lastQuoteIdx].Note = n
 			}
@@ -137,7 +136,7 @@ func ParseFile(fpath string) ParsedFile {
 		} else if k, isKeyword := parseKeyword(l); isKeyword {
 			qs[lastQuoteIdx].Keyword = k
 		} else if s, isSupp := parseSupplemental(l); isSupp {
-			qs[lastQuoteIdx].Supp = s
+			qs[lastQuoteIdx].Supp = append(qs[lastQuoteIdx].Supp, s)
 		} else if u, isURL := parseURL(l); isURL {
 			qs[lastQuoteIdx].URL = u
 		} else {
@@ -237,9 +236,8 @@ func parseSupplemental(l Line) (string, bool) {
 }
 
 func parseQuote(q Line) (Quote, bool) {
-	var auth, kw string
-	var body []string
-	var page, supp, note, url string
+	var auth, kw, page, note, url string
+	var body, supp []string
 
 	// Malformed page numbers are recorded using `pageUnknown`.
 	const pageUnknown = "?"
