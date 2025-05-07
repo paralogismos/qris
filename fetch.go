@@ -53,7 +53,8 @@ func TxtToLines(fpath string) ([]Line, error) {
 	scanner := bufio.NewScanner(file)
 	lineNo := 1
 	for scanner.Scan() {
-		rawLines = append(rawLines, newLine(lineNo, tidyString(scanner.Text())))
+		//rawLines = append(rawLines, newLine(lineNo, tidyString(scanner.Text())))
+		rawLines = append(rawLines, newLine(lineNo, scanner.Text()))
 		lineNo++
 	}
 
@@ -115,7 +116,7 @@ func DocxToLines(path string) ([]Line, error) {
 
 	for n, rl := range document.Lines {
 		line := strings.Join(rl.Runs, "")
-		line = tidyString(line)
+		//		line = tidyString(line)
 		lines = append(lines, newLine(n, line))
 	}
 	return lines, err

@@ -20,13 +20,13 @@ T2  - Citation Note: any whitespace may precede any line.
 T1  - Body of another single-line quote attached to the same source.
 SP  - 31
 PB  - Supplementary Note
-CY  - Quote Note -jmr
+CY  - Quote Note –jmr
 UR  - https://some_url/
 ER  -
 
 TY  - 
 UR  - test_descriptive_citations
-AB  - Lastname, Firstname, M.I. "Article Title" Publisher Information, (2000)
+AB  - Lastname, Firstname, M.I. “Article Title” Publisher Information, (2000)
 A1  - Lastname, Firstname, M.I.
 Y1  - 2000
 KW  - keyword ; keyword phrase ; more keywords and keyword phrases
@@ -36,7 +36,7 @@ ER  -
 
 TY  - 
 UR  - test_descriptive_citations
-AB  - Lastname, Firstname, M.I. "Article Title" Publisher Information, (2000)
+AB  - Lastname, Firstname, M.I. “Article Title” Publisher Information, (2000)
 A1  - Lastname, Firstname, M.I.
 Y1  - 2000
 T1  - Multi-line quote.
