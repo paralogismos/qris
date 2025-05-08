@@ -149,7 +149,7 @@ type Encoding int
 const (
 	None Encoding = iota
 	Ascii
-	ExtendedAscii
+	Ansi
 	Utf8
 	Utf16
 )
@@ -395,10 +395,10 @@ func writeToFile(f *os.File, data string, enc Encoding) {
 		mapping = nil
 	case Ascii:
 		mapping = utf8ToAscii()
-	case ExtendedAscii:
-		mapping = utf8ToExtAscii()
+	case Ansi:
+		mapping = utf8ToAnsi()
 	default:
-		mapping = utf8ToAscii()
+		mapping = utf8ToAnsi()
 	}
 	if enc != Utf16 {
 		fmt.Fprint(f, utf8ToNormalized(data, mapping))
@@ -446,7 +446,7 @@ func utf8ToAscii() map[rune]string {
 	}
 }
 
-func utf8ToExtAscii() map[rune]string {
+func utf8ToAnsi() map[rune]string {
 	return map[rune]string{
 		'“': "\x93", '”': "\x94", '‘': "\x91", '’': "\x92",
 		'–': "\x96", '—': "\x97", '…': "\x85",

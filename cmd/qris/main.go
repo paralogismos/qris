@@ -38,7 +38,7 @@ func main() {
 	dir := flag.String("d", "",
 		"Set the current working directory.")
 	encoding := flag.String("enc", "ext",
-		"Output encoding.\nOne of 'ascii', 'ext', 'utf8', or 'utf16'")
+		"Output encoding.\nOne of 'ascii', 'ansi', 'utf8', or 'utf16'")
 	filePath := flag.String("f", "",
 		"Path to a file to be parsed, absolute or relative.")
 	noDateStamp := flag.Bool("nods", false, "Omit AD datestamp field.")
@@ -65,14 +65,14 @@ func main() {
 	switch *encoding {
 	case "ascii":
 		enc = qris.Ascii
-	case "ext":
-		enc = qris.ExtendedAscii
+	case "ansi":
+		enc = qris.Ansi
 	case "utf8":
 		enc = qris.Utf8
 	case "utf16":
 		enc = qris.Utf16
 	default:
-		enc = qris.Ascii
+		enc = qris.Ansi
 	}
 
 	// Configure the system.
