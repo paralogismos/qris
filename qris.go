@@ -138,7 +138,7 @@ import (
 )
 
 // Definitions of system constants.
-const Version = "v0.16.0"
+const Version = "v0.17.0"
 const parsedSuffix = "_PARSED.ris"
 const discardSuffix = "_DISCARD.txt"
 const configDir = "qris"
@@ -403,14 +403,6 @@ func writeToFile(f *os.File, data string, enc Encoding) {
 	if enc != Utf16 {
 		fmt.Fprint(f, utf8ToNormalized(data, mapping))
 	}
-
-	// if enc == Utf16 {
-	// 	runes := []rune(data)
-	// 	codePoints := utf16.Encode(runes) // convert runes to utf-16
-	// 	binary.Write(f, binary.NativeEndian, codePoints)
-	// } else {
-	// 	fmt.Fprint(f, data)
-	// }
 }
 
 func utf8ToNormalized(data string, normTable map[rune]string) string {
