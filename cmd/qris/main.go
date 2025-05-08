@@ -38,10 +38,9 @@ func main() {
 		"Path to a file to be parsed, absolute or relative.")
 	batchPath := flag.String("b", "",
 		"Path to a directory containing files to be parsed, absolute or relative.")
-	dateStamp := flag.Bool("nods", true, "Omit AD datestamp field.")
+	noDateStamp := flag.Bool("nods", false, "Omit AD datestamp field.")
 	volume := flag.Bool("v", false, "Include VL volume field.")
-	encoding := flag.String("enc", "ext",
-		"Output encoding. One of: 'ascii', 'ext', 'ascii-ext', or 'utf8'.")
+	utf8 := flag.Bool("utf8", false, "Encode output as UTF-8. Default is UTF-16.")
 
 	// Custom usage message.
 	flag.Usage = func() {
@@ -55,21 +54,6 @@ func main() {
 	// Validate -f and -b flag usage.
 	if *filePath != "" && *batchPath != "" {
 		fmt.Fprintln(os.Stderr, "-f and -b flags may not be used together")
-		flag.Usage()
-		os.Exit(1)
-	}
-
-	// Validate -encoding usage and set encoding.
-	var enc qris.Encoding
-	switch *encoding {
-	case "ascii":
-		enc = qris.Ascii
-	case "ext", "ascii-ext":
-		enc = qris.Extended
-	case "utf8":
-		enc = qris.Utf8
-	default:
-		fmt.Fprintf(os.Stderr, "-encoding: unrecognized argument '%s'\n", *encoding)
 		flag.Usage()
 		os.Exit(1)
 	}
@@ -108,5 +92,5 @@ func main() {
 	dataList, workPath := qris.GetWorkPath(workDir, *batchPath, *filePath)
 
 	// Parse all files and write results to output.
-	qris.WriteResults(workPath, dataList, *volume, *dateStamp, enc)
+	qris.WriteResults(workPath, dataList, *volume, *noDateStamp, *utf8)
 }
