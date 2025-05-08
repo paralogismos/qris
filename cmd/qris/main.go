@@ -58,6 +58,14 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Set encoding.
+	var enc qris.Encoding
+	if *utf8 {
+		enc = qris.Utf8
+	} else {
+		enc = qris.Utf16
+	}
+
 	// Configure the system.
 	configPath := qris.GetConfigPath()
 	if *conf == "p" || *conf == "path" {
@@ -92,5 +100,5 @@ func main() {
 	dataList, workPath := qris.GetWorkPath(workDir, *batchPath, *filePath)
 
 	// Parse all files and write results to output.
-	qris.WriteResults(workPath, dataList, *volume, *noDateStamp, *utf8)
+	qris.WriteResults(workPath, dataList, *volume, *noDateStamp, enc)
 }

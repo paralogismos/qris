@@ -175,13 +175,13 @@ func TestWriteResults(t *testing.T) {
 
 	volume := false     // no volume information written
 	noDateStamp := true // no datestamp information written
-	utf8 := false       // write UTF-16 output
+	enc := Utf16        // write UTF-16 output
 	t.Chdir(testDir)    //
 	for _, tf := range testFiles {
 		dataList, workPath := GetWorkPath(workDir, batchPath, tf)
 
 		// Write results to test directory.
-		WriteResults(workPath, dataList, volume, noDateStamp, utf8)
+		WriteResults(workPath, dataList, volume, noDateStamp, enc)
 
 		// Compare with expected results.
 		resultPath := strings.TrimSuffix(tf, filepath.Ext(tf)) + "_PARSED.ris"

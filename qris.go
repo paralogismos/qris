@@ -131,6 +131,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 	"unicode/utf16"
@@ -142,6 +143,28 @@ const parsedSuffix = "_PARSED.ris"
 const discardSuffix = "_DISCARD.txt"
 const configDir = "qris"
 const configFile = "qris.conf"
+
+type Encoding int
+
+const (
+	None Encoding = iota
+	Utf8
+	Utf16
+)
+
+// Set platform-specific line ending.
+var lineEnding string = platformLineEnding()
+
+func platformLineEnding() string {
+	var lineEnding string
+	switch runtime.GOOS {
+	case "windows":
+		lineEnding = "\r\n"
+	default:
+		lineEnding = "\n"
+	}
+	return lineEnding
+}
 
 // The first line of the file is assumed to be the source title.
 // The first citation line may begin with the `sourceBegin` token.
@@ -354,22 +377,29 @@ func WriteDiscards(ds []Line, fname string) {
 	}
 }
 
-func writeFieldToFile(f *os.File, field string, data string, utf8 bool) {
-	line := field + "  - " + data + "\n"
-	writeToFile(f, line, utf8)
+func writeFieldToFile(f *os.File, field string, data string, enc Encoding) {
+	line := field + "  - " + data + lineEnding
+	writeToFile(f, line, enc)
 }
 
-func writeToFile(f *os.File, data string, utf8 bool) {
-	if utf8 {
-		fmt.Fprint(f, data)
-	} else {
-		runes := []rune(data)
+func writeToFile(f *os.File, data string, enc Encoding) {
+	// if utf16 {
+	// 	runes := []rune(data)
+	// 	codePoints := utf16.Encode(runes) // convert runes to utf-16
+	// 	binary.Write(f, binary.NativeEndian, codePoints)
+	// } else {
+	// 	fmt.Fprint(f, data)
+	// }
+	runes := []rune(data)
+	if enc == Utf16 {
 		codePoints := utf16.Encode(runes) // convert runes to utf-16
 		binary.Write(f, binary.NativeEndian, codePoints)
+	} else {
+		binary.Write(f, binary.NativeEndian, runes)
 	}
 }
 
-func WriteQuotes(pf *ParsedFile, fname string, volume bool, noDateStamp bool, utf8 bool) {
+func WriteQuotes(pf *ParsedFile, fname string, volume bool, noDateStamp bool, enc Encoding) {
 	file, err := os.Create(fname)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -387,7 +417,7 @@ func WriteQuotes(pf *ParsedFile, fname string, volume bool, noDateStamp bool, ut
 	dStamp := time.Now().Format("2006/01/02")
 
 	// Start file with a blank line per RIS specification.
-	writeToFile(file, "\n", utf8)
+	writeToFile(file, lineEnding, enc)
 
 	for _, s := range pf.Sources { // loop over sources of the parsed file
 		citBody := s.Citation.Body
@@ -396,63 +426,63 @@ func WriteQuotes(pf *ParsedFile, fname string, volume bool, noDateStamp bool, ut
 		citNote := s.Citation.Note
 
 		for _, q := range s.Quotes { // loop over quotes of each source
-			writeFieldToFile(file, "TY", "", utf8)
+			writeFieldToFile(file, "TY", "", enc)
 			if volume {
-				writeFieldToFile(file, "VL", bid, utf8)
+				writeFieldToFile(file, "VL", bid, enc)
 			}
-			writeFieldToFile(file, "UR", fid, utf8)
+			writeFieldToFile(file, "UR", fid, enc)
 			if !noDateStamp {
-				writeFieldToFile(file, "AD", dStamp, utf8)
+				writeFieldToFile(file, "AD", dStamp, enc)
 			}
-			writeFieldToFile(file, "AB", citBody, utf8)
+			writeFieldToFile(file, "AB", citBody, enc)
 
 			// A1 gets citation name unless a primary quote author was specified
 			if q.Auth != "" {
-				writeFieldToFile(file, "A1", q.Auth, utf8)
+				writeFieldToFile(file, "A1", q.Auth, enc)
 				familyName := citationFamilyName.FindString(citName)
 				familyName = strings.TrimSpace(familyName)
-				writeFieldToFile(file, "A2", "in "+familyName, utf8)
+				writeFieldToFile(file, "A2", "in "+familyName, enc)
 			} else {
-				writeFieldToFile(file, "A1", citName, utf8)
+				writeFieldToFile(file, "A1", citName, enc)
 			}
 
 			if citYear != "" {
-				writeFieldToFile(file, "Y1", citYear, utf8)
+				writeFieldToFile(file, "Y1", citYear, enc)
 			}
 			if citNote != "" {
-				writeFieldToFile(file, "T2", citNote, utf8)
+				writeFieldToFile(file, "T2", citNote, enc)
 			}
 			if q.Keyword != "" {
-				writeFieldToFile(file, "KW", q.Keyword, utf8)
+				writeFieldToFile(file, "KW", q.Keyword, enc)
 			}
 			if q.Body != nil {
 				for _, line := range q.Body {
-					writeFieldToFile(file, "T1", line, utf8)
+					writeFieldToFile(file, "T1", line, enc)
 				}
 			}
 			if q.Page != "" {
-				writeFieldToFile(file, "SP", q.Page, utf8)
+				writeFieldToFile(file, "SP", q.Page, enc)
 			}
 			if q.Supp != nil {
 				for _, supp := range q.Supp {
-					writeFieldToFile(file, "PB", supp, utf8)
+					writeFieldToFile(file, "PB", supp, enc)
 				}
 			}
 			if q.Note != "" {
-				writeFieldToFile(file, "CY", q.Note, utf8)
+				writeFieldToFile(file, "CY", q.Note, enc)
 			}
 			if q.URL != "" {
-				writeFieldToFile(file, "UR", q.URL, utf8)
+				writeFieldToFile(file, "UR", q.URL, enc)
 			}
-			writeFieldToFile(file, "ER", "", utf8)
-			writeToFile(file, "\n", utf8)
+			writeFieldToFile(file, "ER", "", enc)
+			writeToFile(file, lineEnding, enc)
 		}
 	}
 }
 
 // `WriteResults` iterates over a list of files, ensures that none are
 // directories, parses each file,  and writes the results to output files.
-func WriteResults(workPath string, dataList []string, volume bool, noDateStamp bool, utf8 bool) {
+func WriteResults(workPath string, dataList []string, volume bool, noDateStamp bool, enc Encoding) {
 	for _, file := range dataList {
 		// Don't process parsed file artifacts.
 		if isParsedFile(file) || isDiscardFile(file) {
@@ -474,7 +504,7 @@ func WriteResults(workPath string, dataList []string, volume bool, noDateStamp b
 
 		pf := ParseFile(pFile)
 		WriteDiscards(pf.Discards, pDiscard)
-		WriteQuotes(&pf, pQuotes, volume, noDateStamp, utf8)
+		WriteQuotes(&pf, pQuotes, volume, noDateStamp, enc)
 	}
 }
 

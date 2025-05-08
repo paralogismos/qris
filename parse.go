@@ -101,7 +101,7 @@ func ParseFile(fpath string) ParsedFile {
 				fullQuote = append(fullQuote,
 					strings.TrimSpace(multiLineQuote.ReplaceAllLiteralString(l.Body, "")))
 				// Trim whitespace and attach a newline.
-				//fullQuote = strings.TrimSpace(fullQuote) + "\n"
+				//fullQuote = strings.TrimSpace(fullQuote) + "\n" -> lineEnding()
 			}
 			continue
 		}
