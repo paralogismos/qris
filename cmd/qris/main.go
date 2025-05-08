@@ -31,16 +31,18 @@ func command(args_0 string) string {
 func main() {
 
 	// Parse command line flags.
-	conf := flag.String("config", "", "p, path: Show path to configuration file.\nr, rm, remove: Remove configuration file.")
-	dir := flag.String("d", "",
-		"Set the current working directory.")
-	filePath := flag.String("f", "",
-		"Path to a file to be parsed, absolute or relative.")
 	batchPath := flag.String("b", "",
 		"Path to a directory containing files to be parsed, absolute or relative.")
+	conf := flag.String("config", "",
+		"p, path: Show path to configuration file.\nr, rm, remove: Remove configuration file.")
+	dir := flag.String("d", "",
+		"Set the current working directory.")
+	encoding := flag.String("enc", "ext",
+		"Output encoding.\nOne of 'ascii', 'ext', 'utf8', or 'utf16'")
+	filePath := flag.String("f", "",
+		"Path to a file to be parsed, absolute or relative.")
 	noDateStamp := flag.Bool("nods", false, "Omit AD datestamp field.")
 	volume := flag.Bool("v", false, "Include VL volume field.")
-	utf8 := flag.Bool("utf8", false, "Encode output as UTF-8. Default is UTF-16.")
 
 	// Custom usage message.
 	flag.Usage = func() {
@@ -60,10 +62,17 @@ func main() {
 
 	// Set encoding.
 	var enc qris.Encoding
-	if *utf8 {
+	switch *encoding {
+	case "ascii":
+		enc = qris.Ascii
+	case "ext":
+		enc = qris.ExtendedAscii
+	case "utf8":
 		enc = qris.Utf8
-	} else {
+	case "utf16":
 		enc = qris.Utf16
+	default:
+		enc = qris.Ascii
 	}
 
 	// Configure the system.

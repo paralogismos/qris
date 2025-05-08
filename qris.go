@@ -148,6 +148,8 @@ type Encoding int
 
 const (
 	None Encoding = iota
+	Ascii
+	ExtendedAscii
 	Utf8
 	Utf16
 )
