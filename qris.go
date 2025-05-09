@@ -4,124 +4,165 @@
 //
 // Assumptions:
 //
-//   The first line is the title of the source.
-//     - for use of the user in the quote file
-//     - not used in creating the .ris file
+//	 The first line is the title of the source.
+//	   - for use of the user in the quote file
+//	   - not used in creating the .ris file
 //
-//   The second line is a citation.
-//     - the citation line should be parsed into citation author, year, raw-citation
-//     - a line following the citation is a citation note if it ends with
-//       "jmr" or "jmr."; the citation note is added to the citation information
-//       that is written for each quote from a source
-//     - the first citation line may optionally begin with "<$>" indicating a new source
+//	 The second line is a citation.
+//	   - the citation line should be parsed into citation author, year, raw-citation
+//	   - a line following the citation is a citation note if it ends with
+//	     "jmr" or "jmr."; the citation note is added to the citation information
+//	     that is written for each quote from a source
+//	   - the first citation line may optionally begin with "<$>" indicating a new source
 //
-//   Any line beginning with "<$>" is the citation line for a new source.
+//	 Any line beginning with "<$>" is the citation line for a new source.
 //
-//   Lines following a citation are quotes IF they end in a page number.
-//     - quote lines are parsed into quote body and page number
-//     - a page number must be tab-delimited
-//     - a page number must follow one of the formats:
-//       - \t p. N
-//       - \t pp. N
-//       - the "p" indicator is case-insensitive
-//       - the . is optional
-//       - there MUST BE at least one space following p. or p
-//       - N is the page number group:
-//         - n : a number in [0-9,i, I, v, V, x, X, l, L, or ?]
-//         - n,n
-//         - n-n
-//         - n--n (for em dash transliteration)
-//         - commas and dashes may be surrounded by spaces, e.g., n -- n
+//	 Lines following a citation are quotes IF they end in a page number.
+//	   - quote lines are parsed into quote body and page number
+//	   - a page number must be tab-delimited
+//	   - a page number must follow one of the formats:
+//	     - \t p. N
+//	     - \t pp. N
+//	     - the "p" indicator is case-insensitive
+//	     - the . is optional
+//	     - there MUST BE at least one space following p. or p
+//	     - N is the page number group:
+//	       - n : a number in [0-9,i, I, v, V, x, X, l, L, or ?]
+//	       - n,n
+//	       - n-n
+//	       - n--n (for em dash transliteration)
+//	       - commas and dashes may be surrounded by spaces, e.g., n -- n
 //
-//  A line following a citation that begins with "///" starts a multi-line quote
-//  which ends with a page number.
+//	A line following a citation that begins with "///" starts a multi-line quote
+//	which ends with a page number.
 //
-//  A line following a quote that ends with "%%" attches a supplementary note.
+//	A line following a quote that ends with "%%" attches a supplementary note.
 //
-//  A line following a quote that ends with "jmr" or "jmr." attaches a quote note.
+//	A line following a quote that ends with "jmr" or "jmr." attaches a quote note.
 //
-//  A line following a quote that begins with "^S:" or "^s:" attaches a keyword
-//  or a keyword list.
+//	A line following a quote that begins with "^S:" or "^s:" attaches a keyword
+//	or a keyword list.
 //
-//  A line following a quote that begins with "https://" or "http://" attaches a URL.
+//	A line following a quote that begins with "https://" or "http://" attaches a URL.
 //
-//  A line following a quote that begins with ">>>" specifies a quote author.
-//    - if a quote author is specified, this name is attached as the primary author
-//      of the quote and the citation author is attached as the secondary author
+//	A line following a quote that begins with ">>>" specifies a quote author.
+//	  - if a quote author is specified, this name is attached as the primary author
+//	    of the quote and the citation author is attached as the secondary author
 //
-//   Blank lines are ignored
+//	 Blank lines are ignored
 //
-//   Other lines are written to a review file in the format:
-//     - >[line #]
-//       [discarded line]
+//	 Other lines are written to a review file in the format:
+//	   - >[line #]
+//	     [discarded line]
 //
 // TODO:
 //
 //   - Explore better TUI interface:
-//     - ability to work on files directly in the shell working directory
-//       - note that the `-b` flag accepts the `.` argument to process all files
-//         in the current directory: this should be enough....
-//     - `qris [path]` should do something reasonable
-//       - currently this prints version information, but that is confusing:
-//         - `qris -f [path]` processes a file
-//         - `qris` prints version information
-//         - `qris [path]` seems like it ought to process a file
-//         - or at least print a message so that the user knows that nothing was processed
-//         - need to think about these issues more....
-//     - Can the `-b` flag be modified so that `-b` is used instead of `-b .`
-//       to process all files in the qris working directory?
-//       - then `-b .` could indicate processing all files in the current working
-//         directory
-//       - or: maybe the entire working directory idea should be scrapped...?
+//
+//   - ability to work on files directly in the shell working directory
+//
+//   - note that the `-b` flag accepts the `.` argument to process all files
+//     in the current directory: this should be enough....
+//
+//   - `qris [path]` should do something reasonable
+//
+//   - currently this prints version information, but that is confusing:
+//
+//   - `qris -f [path]` processes a file
+//
+//   - `qris` prints version information
+//
+//   - `qris [path]` seems like it ought to process a file
+//
+//   - or at least print a message so that the user knows that nothing was processed
+//
+//   - need to think about these issues more....
+//
+//   - Can the `-b` flag be modified so that `-b` is used instead of `-b .`
+//     to process all files in the qris working directory?
+//
+//   - then `-b .` could indicate processing all files in the current working
+//     directory
+//
+//   - or: maybe the entire working directory idea should be scrapped...?
+//
 //   - Try to handle .doc files:
-//     - currently have "zip: not a valid zip file" failing error
-//     - do .doc files have the same format as .docx, but without zip compression?
+//
+//   - currently have "zip: not a valid zip file" failing error
+//
+//   - do .doc files have the same format as .docx, but without zip compression?
+//
 //   - Update unit tests.
+//
 //   - Write integration tests.
+//
 //   - I think that many of the calls to `ReplaceAllString` could be replaced
 //     by `ReplaceAllLiteralString`.
 //
 //   - Can I modify so that _all_ citations must begin with "<$>"?
-//     - thus, the first line after the title line would no longer be
-//       automatically considered a citation
-//     - this would allow the user to include any number of descriptive lines
-//       before source information in the input file
-//     - this preliminary descriptive information could be collected
-//       in the DISCARDS file
+//
+//   - thus, the first line after the title line would no longer be
+//     automatically considered a citation
+//
+//   - this would allow the user to include any number of descriptive lines
+//     before source information in the input file
+//
+//   - this preliminary descriptive information could be collected
+//     in the DISCARDS file
+//
 //   - Should DISCARDS output be optional?
+//
 //   - Would the user like to preserve leading whitespace in multi-line quotes?
-//     - note that this would require preserving whitespace for both the
-//       intermediate lines of the multi-line quote, and for the final line
-//       which is a simple quote line ending with a page number; this could
-//       be accomplished by checking the `inMultiLineQuote` boolean
+//
+//   - note that this would require preserving whitespace for both the
+//     intermediate lines of the multi-line quote, and for the final line
+//     which is a simple quote line ending with a page number; this could
+//     be accomplished by checking the `inMultiLineQuote` boolean
+//
 //   - It makes more sense to me that %% should _precede_ a supplementary note
-//     - then all markup comes at the beginning of a line
-//     - except quote notes which end in jmr
-//     - and quotes which end in page numbers
-//       - note that multi-line quotes can end with the page on a separate line
+//
+//   - then all markup comes at the beginning of a line
+//
+//   - except quote notes which end in jmr
+//
+//   - and quotes which end in page numbers
+//
+//   - note that multi-line quotes can end with the page on a separate line
+//
 //   - Review trimming of whitespace:
-//     - when and where does it occur?
-//     - when and where should it occur?
-//     - make this more methodical and consistent
-//     - whitespace should not have to be trimmed in tests (as it is now)
+//
+//   - when and where does it occur?
+//
+//   - when and where should it occur?
+//
+//   - make this more methodical and consistent
+//
+//   - whitespace should not have to be trimmed in tests (as it is now)
+//
 //   - The input file title field `tit` is not being used.
-//     - Can I remove this?
-//     - The title line could be sent to the _DISCARDS.ris file.
+//
+//   - Can I remove this?
+//
+//   - The title line could be sent to the _DISCARDS.ris file.
+//
 //   - calling `tidyString` on the input should be optional.
 //
 //   - Should I move `Line` from `fetch.go` back into this file?
-// _ - Add functionality to store up to N notes following a quote.
-//     - Store notes in a slice or dictionary
-//     - Map notes array to numbered tags, e.g., C1, C2, ....
-//     - Need to discuss this with Jack
-// _ - GetConfigPath should perhaps create a config file if none exists.
-//     - This file would contain the default path to a working directory.
-// _ - Move functionality to get the working directory into a function.
-//     - GetWorkDir
-//     - Once this is established, the part that sets up a default working
-//       directory could be moved into GetConfigPath.
-// _ - Make eligible system constants unexported as soon as possible.
 //
+// _ - Add functionality to store up to N notes following a quote.
+//   - Store notes in a slice or dictionary
+//   - Map notes array to numbered tags, e.g., C1, C2, ....
+//   - Need to discuss this with Jack
+//
+// _ - GetConfigPath should perhaps create a config file if none exists.
+//   - This file would contain the default path to a working directory.
+//
+// _ - Move functionality to get the working directory into a function.
+//   - GetWorkDir
+//   - Once this is established, the part that sets up a default working
+//     directory could be moved into GetConfigPath.
+//
+// _ - Make eligible system constants unexported as soon as possible.
 package qris
 
 import (
