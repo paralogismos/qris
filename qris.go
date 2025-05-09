@@ -265,10 +265,9 @@ func writeFieldToFile(f *os.File, field string, data string, enc Encoding) {
 func writeToFile(f *os.File, data string, enc Encoding) {
 	var mapping map[rune]string
 	switch enc {
-	case Utf16: // TODO: move this code to a function in mappings.go
-		runes := []rune(data)
-		codePoints := utf16.Encode(runes) // convert runes to utf-16
-		binary.Write(f, binary.NativeEndian, codePoints)
+	case Utf16:
+		writeToFileUtf16(f, data)
+		return // write utf16 and early return
 	case Utf8:
 		mapping = nil
 	case Ascii:
@@ -278,9 +277,13 @@ func writeToFile(f *os.File, data string, enc Encoding) {
 	default:
 		mapping = utf8ToAnsi()
 	}
-	if enc != Utf16 {
-		fmt.Fprint(f, utf8ToNormalized(data, mapping))
-	}
+	fmt.Fprint(f, utf8ToNormalized(data, mapping))
+}
+
+func writeToFileUtf16(f *os.File, data string) {
+	runes := []rune(data)
+	codePoints := utf16.Encode(runes) // convert runes to utf-16
+	binary.Write(f, binary.NativeEndian, codePoints)
 }
 
 func WriteQuotes(pf *ParsedFile, fname string, volume bool, noDateStamp bool, enc Encoding) {
