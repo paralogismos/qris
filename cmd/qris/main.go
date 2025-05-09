@@ -37,7 +37,7 @@ func main() {
 		"p, path: Show path to configuration file.\nr, rm, remove: Remove configuration file.")
 	dir := flag.String("d", "",
 		"Set the current working directory.")
-	encoding := flag.String("enc", "ext",
+	encoding := flag.String("enc", "ansi",
 		"Output encoding.\nOne of 'ascii', 'ansi', 'utf8', or 'utf16'")
 	filePath := flag.String("f", "",
 		"Path to a file to be parsed, absolute or relative.")
