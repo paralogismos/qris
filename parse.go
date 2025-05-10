@@ -37,10 +37,15 @@ var multiLineQuote = regexp.MustCompile(`^[\p{Zs}\t]*///`)
 var quoteEnd = regexp.MustCompile(`\t\p{Zs}*[pP]{1,2}\.?\p{Zs}+[\pNiIvVxXlL\?]*.*`)
 var quoteEndAlt = regexp.MustCompile(`\p{Zs}{3,}?[pP]{1,2}\.?\p{Zs}+[\pNiIvVxXlL\?]*.*`)
 
+// var quotePage = regexp.MustCompile(
+// 	`[pP]{1,2}\.?\p{Zs}*[\pNiIvVxXlL\?]+\p{Zs}*[,-]*\p{Zs}*[\pNiIvVxXlL\?]*`)
+// var pageNumber = regexp.MustCompile(
+// 	`[\pNiIvVxXlL\?]+\p{Zs}*[,-]*\p{Zs}*[\pNiIvVxXlL\?]*`)
+
 var quotePage = regexp.MustCompile(
-	`[pP]{1,2}\.?\p{Zs}*[\pNiIvVxXlL\?]+\p{Zs}*[,-]*\p{Zs}*[\pNiIvVxXlL\?]*`)
+	`[pP]{1,2}\.?\p{Zs}*[\pNiIvVxXlL\?]+[f]{0,2}\p{Zs}*[,\pPd]*\p{Zs}*[\pNiIvVxXlL\?]*[f]{0,2}`)
 var pageNumber = regexp.MustCompile(
-	`[\pNiIvVxXlL\?]+\p{Zs}*[,-]*\p{Zs}*[\pNiIvVxXlL\?]*`)
+	`[\pNiIvVxXlL\?]+[f]{0,2}\p{Zs}*[,\pPd]*\p{Zs}*[\pNiIvVxXlL\?]*[f]{0,2}`)
 
 var parsedFile = regexp.MustCompile(parsedSuffix + `$`)
 var discardFile = regexp.MustCompile(discardSuffix + `$`)
