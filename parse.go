@@ -27,8 +27,7 @@ var citationFamilyName = regexp.MustCompile(`^[^,]*`)
 var citationYear = regexp.MustCompile(`\pN{4}\pL*`)
 
 var citNoteEnd = regexp.MustCompile(`-nb\.?$`)
-var noteEnd = regexp.MustCompile(`jmr$`)
-var noteEndAlt = regexp.MustCompile(`jmr.$`)
+var noteEnd = regexp.MustCompile(`jmr\.?$`)
 
 var multiLineQuote = regexp.MustCompile(`^[\p{Zs}\t]*///`)
 
@@ -36,11 +35,6 @@ var multiLineQuote = regexp.MustCompile(`^[\p{Zs}\t]*///`)
 // at least three spaces as the delimiter.
 var quoteEnd = regexp.MustCompile(`\t\p{Zs}*[pP]{1,2}\.?\p{Zs}+[\pNiIvVxXlL\?]*.*`)
 var quoteEndAlt = regexp.MustCompile(`\p{Zs}{3,}?[pP]{1,2}\.?\p{Zs}+[\pNiIvVxXlL\?]*.*`)
-
-// var quotePage = regexp.MustCompile(
-// 	`[pP]{1,2}\.?\p{Zs}*[\pNiIvVxXlL\?]+\p{Zs}*[,-]*\p{Zs}*[\pNiIvVxXlL\?]*`)
-// var pageNumber = regexp.MustCompile(
-// 	`[\pNiIvVxXlL\?]+\p{Zs}*[,-]*\p{Zs}*[\pNiIvVxXlL\?]*`)
 
 var quotePage = regexp.MustCompile(
 	`[pP]{1,2}\.?\p{Zs}*[\pNiIvVxXlL\?]+[f]{0,2}\p{Zs}*[,\pPd]*\p{Zs}*[\pNiIvVxXlL\?]*[f]{0,2}`)
@@ -188,8 +182,6 @@ func parseNote(l Line) (string, bool) {
 	isNote := false
 	body := strings.TrimSpace(l.Body)
 	if noteEnd.FindStringIndex(body) != nil {
-		isNote = true
-	} else if noteEndAlt.FindStringIndex(body) != nil {
 		isNote = true
 	}
 	return body, isNote
