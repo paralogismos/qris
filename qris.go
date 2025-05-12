@@ -57,95 +57,40 @@
 //
 // TODO:
 //
-//   - Explore better TUI interface:
-//
-//   - ability to work on files directly in the shell working directory
-//
-//   - note that the `-b` flag accepts the `.` argument to process all files
-//     in the current directory: this should be enough....
-//
 //   - `qris [path]` should do something reasonable
-//
-//   - currently this prints version information, but that is confusing:
-//
-//   - `qris -f [path]` processes a file
-//
-//   - `qris` prints version information
-//
-//   - `qris [path]` seems like it ought to process a file
-//
-//   - or at least print a message so that the user knows that nothing was processed
-//
-//   - need to think about these issues more....
+//     - currently this prints version information, but that is confusing:
+//     - or at least print a message so that the user knows that nothing was processed
+//     - need to think about these issues more....
 //
 //   - Can the `-b` flag be modified so that `-b` is used instead of `-b .`
 //     to process all files in the qris working directory?
-//
-//   - then `-b .` could indicate processing all files in the current working
-//     directory
-//
-//   - or: maybe the entire working directory idea should be scrapped...?
-//
-//   - Try to handle .doc files:
-//
-//   - currently have "zip: not a valid zip file" failing error
-//
-//   - do .doc files have the same format as .docx, but without zip compression?
-//
-//   - Update unit tests.
-//
-//   - Write integration tests.
+//     - then `-b .` could indicate processing all files in the current working
+//       directory
+//     - or: maybe the entire working directory idea should be scrapped...?
 //
 //   - I think that many of the calls to `ReplaceAllString` could be replaced
 //     by `ReplaceAllLiteralString`.
 //
 //   - Can I modify so that _all_ citations must begin with "<$>"?
-//
-//   - thus, the first line after the title line would no longer be
-//     automatically considered a citation
-//
-//   - this would allow the user to include any number of descriptive lines
-//     before source information in the input file
-//
-//   - this preliminary descriptive information could be collected
-//     in the DISCARDS file
+//     - not now: maybe in the future
+//     - thus, the first line after the title line would no longer be
+//       automatically considered a citation
+//     - this would allow the user to include any number of descriptive lines
+//       before source information in the input file
+//     - this preliminary descriptive information could be collected
+//       in the DISCARDS file
 //
 //   - Should DISCARDS output be optional?
 //
-//   - Would the user like to preserve leading whitespace in multi-line quotes?
-//
-//   - note that this would require preserving whitespace for both the
-//     intermediate lines of the multi-line quote, and for the final line
-//     which is a simple quote line ending with a page number; this could
-//     be accomplished by checking the `inMultiLineQuote` boolean
-//
 //   - It makes more sense to me that %% should _precede_ a supplementary note
-//
-//   - then all markup comes at the beginning of a line
-//
-//   - except quote notes which end in jmr
-//
-//   - and quotes which end in page numbers
-//
-//   - note that multi-line quotes can end with the page on a separate line
-//
-//   - Review trimming of whitespace:
-//
-//   - when and where does it occur?
-//
-//   - when and where should it occur?
-//
-//   - make this more methodical and consistent
-//
-//   - whitespace should not have to be trimmed in tests (as it is now)
+//     - then all markup comes at the beginning of a line
+//     - except quote notes which end in jmr
+//     - and quotes which end in page numbers
 //
 //   - The input file title field `tit` is not being used.
-//
-//   - Can I remove this?
+//     - Can I remove this?
 //
 //   - The title line could be sent to the _DISCARDS.ris file.
-//
-//   - calling `tidyString` on the input should be optional.
 //
 //   - Should I move `Line` from `fetch.go` back into this file?
 //
