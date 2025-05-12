@@ -42,7 +42,7 @@ func main() {
 	filePath := flag.String("f", "",
 		"Path to a file to be parsed, absolute or relative.")
 	noDateStamp := flag.Bool("nods", false, "Omit AD datestamp field.")
-	volume := flag.Bool("v", false, "Include VL volume field.")
+	volume := flag.Bool("vol", false, "Include VL volume field.")
 
 	// Custom usage message.
 	flag.Usage = func() {
