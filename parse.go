@@ -123,24 +123,39 @@ func ParseFile(fpath string) ParsedFile {
 			fullQuote = append(fullQuote, strings.TrimSpace(l.Body))
 			continue
 		}
+
+		// Citation notes should only follow a new citation line.
 		lastQuoteIdx := len(qs) - 1
-		if cn, isCitNote := parseCitNote(l); isCitNote {
+		if cn, isCitNote := parseCitNote(l); isCitNote && lastQuoteIdx < 0 {
 			cit.Note = cn
-		} else if n, isNote := parseNote(l); isNote {
-			if lastQuoteIdx >= 0 {
-				qs[lastQuoteIdx].Note = n
-			}
-		} else if a, isAuth := parseAuth(l); isAuth {
-			qs[lastQuoteIdx].Auth = a
-		} else if k, isKeyword := parseKeyword(l); isKeyword {
-			qs[lastQuoteIdx].Keyword = k
-		} else if s, isSupp := parseSupplemental(l); isSupp {
-			qs[lastQuoteIdx].Supp = append(qs[lastQuoteIdx].Supp, s)
-		} else if u, isURL := parseURL(l); isURL {
-			qs[lastQuoteIdx].URL = u
-		} else {
-			ds = append(ds, l)
+			continue
 		}
+
+		// The remaining fields should only follow a quote.
+		if lastQuoteIdx >= 0 {
+			if n, isNote := parseNote(l); isNote {
+				qs[lastQuoteIdx].Note = n
+				continue
+			}
+			if a, isAuth := parseAuth(l); isAuth {
+				qs[lastQuoteIdx].Auth = a
+				continue
+			}
+			if k, isKeyword := parseKeyword(l); isKeyword {
+				qs[lastQuoteIdx].Keyword = k
+				continue
+			}
+			if s, isSupp := parseSupplemental(l); isSupp {
+				qs[lastQuoteIdx].Supp = append(qs[lastQuoteIdx].Supp, s)
+				continue
+			}
+			if u, isURL := parseURL(l); isURL {
+				qs[lastQuoteIdx].URL = u
+				continue
+			}
+		}
+		// Send malformed lines to DISCARD.
+		ds = append(ds, l)
 	}
 	src = newSource(cit, qs)
 	sources = append(sources, src) // save the last parsed source
