@@ -30,7 +30,8 @@ Usage of qris:
         Path to a file to be parsed, absolute or relative.
   -nods
         Omit AD datestamp field.
-  -v    Include VL volume field.
+  -vol
+        Include VL volume field.
 ```
 
 ### Setting a Working Directory
