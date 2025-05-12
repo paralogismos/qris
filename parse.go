@@ -77,32 +77,35 @@ func ParseFile(fpath string) ParsedFile {
 			ds = []Line{}
 			continue
 		}
-		// FIX: Don't match new source markup when in multiline quote!
-		//if !inMultiLineQuote && sourceBegin.MatchString(l.Body) {
-		if sourceBegin.MatchString(l.Body) { // new source encountered
-			src = newSource(cit, qs)
-			sources = append(sources, src) // save the last source
-			cit = parseCitation(l)
-			qs = []Quote{} // start new slice of quotes
-			continue
-		}
-		// FIX: Don't match multiline quote markup when in multiline quote!
-		//if !inMultiLineQuote && multiLineQuote.MatchString(l.Body) {
-		if multiLineQuote.MatchString(l.Body) { // begin multi-line quote
-			if q, isQuote := parseQuote(l); isQuote { // really a single-line quote?
-				// Cleanup front and back of the actual quote body and save it.
-				singleQuote := multiLineQuote.ReplaceAllLiteralString(q.Body[0], "")
-				q.Body[0] = strings.TrimSpace(singleQuote)
-				qs = append(qs, q)
-			} else { // otherwise, actually a multi-line quote
-				inMultiLineQuote = true
-				// Remove multi-line quote token and surrounding whitespace before collecting the line.
-				fullQuote = append(fullQuote,
-					strings.TrimSpace(multiLineQuote.ReplaceAllLiteralString(l.Body, "")))
-				// Trim whitespace and attach a newline.
-				//fullQuote = strings.TrimSpace(fullQuote) + "\n" -> lineEnding()
+		// THE LOGIC BELOW IS CONVOLUTED.
+		// A STATE MACHINE WOULD HELP CLEAN THIS UP.
+		//
+		// Do not match new source line or new multiline quote
+		// if already in a multiline quote.
+		if !inMultiLineQuote {
+			if sourceBegin.MatchString(l.Body) { // new source encountered
+				src = newSource(cit, qs)
+				sources = append(sources, src) // save the last source
+				cit = parseCitation(l)
+				qs = []Quote{} // start new slice of quotes
+				continue
 			}
-			continue
+			if multiLineQuote.MatchString(l.Body) { // begin multi-line quote
+				if q, isQuote := parseQuote(l); isQuote { // really a single-line quote?
+					// Cleanup front and back of the actual quote body and save it.
+					singleQuote := multiLineQuote.ReplaceAllLiteralString(q.Body[0], "")
+					q.Body[0] = strings.TrimSpace(singleQuote)
+					qs = append(qs, q)
+				} else { // otherwise, actually a multi-line quote
+					inMultiLineQuote = true
+					// Remove multi-line quote token and surrounding whitespace before collecting the line.
+					fullQuote = append(fullQuote,
+						strings.TrimSpace(multiLineQuote.ReplaceAllLiteralString(l.Body, "")))
+					// Trim whitespace and attach a newline.
+					//fullQuote = strings.TrimSpace(fullQuote) + "\n" -> lineEnding()
+				}
+				continue
+			}
 		}
 		q, isQuote := parseQuote(l)
 		if isQuote { // quote line may end a multi-line quote
