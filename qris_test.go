@@ -164,6 +164,8 @@ func TestParseQuote(t *testing.T) {
 //     case of a failing test
 //   - would Cleanup be beneficial here?
 func TestWriteResults(t *testing.T) {
+	// Set Unix LF line endings for tests.
+	LineEnding = "\n"
 	workDir := GetWorkDir("")
 	batchPath := "" // not testing batch mode
 	testDir := "test_files"
