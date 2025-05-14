@@ -41,6 +41,8 @@ func main() {
 		"Output encoding.\nOne of 'ascii', 'ansi', 'utf8', or 'utf16'")
 	filePath := flag.String("f", "",
 		"Path to a file to be parsed, absolute or relative.")
+	lineEnd := flag.String("lend", "platform",
+		"Line ending for output.\nOne of 'lf', 'crlf', 'platform'.")
 	noDateStamp := flag.Bool("nods", false, "Omit AD datestamp field.")
 	volume := flag.Bool("vol", false, "Include VL volume field.")
 
@@ -76,6 +78,17 @@ func main() {
 	}
 
 	// Configure the system.
+	switch *lineEnding {
+	case "platform":
+		qris.LineEnding = qris.PlatformLineEnding()
+	case "lf":
+		qris.LineEnding = "\n"
+	case "crlf":
+		qris.LineEnding = "\r\n"
+	default:
+		// qris.LineEnding defaults to PlatformLineEnding()
+	}
+
 	configPath := qris.GetConfigPath()
 	if *conf == "p" || *conf == "path" {
 		fmt.Println("Configuration file at", configPath)

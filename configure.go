@@ -19,9 +19,9 @@ const configDir = "qris"
 const configFile = "qris.conf"
 
 // Set platform-specific line ending.
-var lineEnding string = platformLineEnding()
+var LineEnding string = PlatformLineEnding()
 
-func platformLineEnding() string {
+func PlatformLineEnding() string {
 	var lineEnding string
 	switch runtime.GOOS {
 	case "windows":

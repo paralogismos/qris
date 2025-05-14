@@ -244,7 +244,7 @@ func WriteDiscards(ds []Line, fname string) {
 }
 
 func writeFieldToFile(f *os.File, field string, data string, enc Encoding) {
-	line := field + "  - " + data + lineEnding
+	line := field + "  - " + data + LineEnding
 	writeToFile(f, line, enc)
 }
 
@@ -290,7 +290,7 @@ func WriteQuotes(pf *ParsedFile, fname string, volume bool, noDateStamp bool, en
 	dStamp := time.Now().Format("2006/01/02")
 
 	// Start file with a blank line per RIS specification.
-	writeToFile(file, lineEnding, enc)
+	writeToFile(file, LineEnding, enc)
 
 	for _, s := range pf.Sources { // loop over sources of the parsed file
 		citBody := s.Citation.Body
@@ -348,7 +348,7 @@ func WriteQuotes(pf *ParsedFile, fname string, volume bool, noDateStamp bool, en
 				writeFieldToFile(file, "UR", q.URL, enc)
 			}
 			writeFieldToFile(file, "ER", "", enc)
-			writeToFile(file, lineEnding, enc)
+			writeToFile(file, LineEnding, enc)
 		}
 	}
 }
