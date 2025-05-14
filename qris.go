@@ -58,37 +58,50 @@
 // TODO:
 //
 //   - `qris [path]` should do something reasonable
-//     - currently this prints version information, but that is confusing:
-//     - or at least print a message so that the user knows that nothing was processed
-//     - need to think about these issues more....
+//
+//   - currently this prints version information, but that is confusing:
+//
+//   - or at least print a message so that the user knows that nothing was processed
+//
+//   - need to think about these issues more....
 //
 //   - Can the `-b` flag be modified so that `-b` is used instead of `-b .`
 //     to process all files in the qris working directory?
-//     - then `-b .` could indicate processing all files in the current working
-//       directory
-//     - or: maybe the entire working directory idea should be scrapped...?
+//
+//   - then `-b .` could indicate processing all files in the current working
+//     directory
+//
+//   - or: maybe the entire working directory idea should be scrapped...?
 //
 //   - I think that many of the calls to `ReplaceAllString` could be replaced
 //     by `ReplaceAllLiteralString`.
 //
 //   - Can I modify so that _all_ citations must begin with "<$>"?
-//     - not now: maybe in the future
-//     - thus, the first line after the title line would no longer be
-//       automatically considered a citation
-//     - this would allow the user to include any number of descriptive lines
-//       before source information in the input file
-//     - this preliminary descriptive information could be collected
-//       in the DISCARDS file
+//
+//   - not now: maybe in the future
+//
+//   - thus, the first line after the title line would no longer be
+//     automatically considered a citation
+//
+//   - this would allow the user to include any number of descriptive lines
+//     before source information in the input file
+//
+//   - this preliminary descriptive information could be collected
+//     in the DISCARDS file
 //
 //   - Should DISCARDS output be optional?
 //
 //   - It makes more sense to me that %% should _precede_ a supplementary note
-//     - then all markup comes at the beginning of a line
-//     - except quote notes which end in jmr
-//     - and quotes which end in page numbers
+//
+//   - then all markup comes at the beginning of a line
+//
+//   - except quote notes which end in jmr
+//
+//   - and quotes which end in page numbers
 //
 //   - The input file title field `tit` is not being used.
-//     - Can I remove this?
+//
+//   - Can I remove this?
 //
 //   - The title line could be sent to the _DISCARDS.ris file.
 //

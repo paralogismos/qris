@@ -78,7 +78,7 @@ func main() {
 	}
 
 	// Configure the system.
-	switch *lineEnding {
+	switch *lineEnd {
 	case "platform":
 		qris.LineEnding = qris.PlatformLineEnding()
 	case "lf":
