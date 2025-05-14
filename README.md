@@ -28,6 +28,9 @@ Usage of qris:
         One of 'ascii', 'ansi', 'utf8', or 'utf16' (default "ansi")
   -f string
         Path to a file to be parsed, absolute or relative.
+  -lend string
+        Line ending for output.
+        One of 'lf', 'crlf', or 'platform'. (default "platform")
   -nods
         Omit AD datestamp field.
   -vol

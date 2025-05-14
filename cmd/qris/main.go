@@ -42,7 +42,7 @@ func main() {
 	filePath := flag.String("f", "",
 		"Path to a file to be parsed, absolute or relative.")
 	lineEnd := flag.String("lend", "platform",
-		"Line ending for output.\nOne of 'lf', 'crlf', 'platform'.")
+		"Line ending for output.\nOne of 'lf', 'crlf', or 'platform'.")
 	noDateStamp := flag.Bool("nods", false, "Omit AD datestamp field.")
 	volume := flag.Bool("vol", false, "Include VL volume field.")
 
