@@ -15,7 +15,7 @@ vet: fmt
 
 build: fmt vet
 	cd $(MAINDIR) && \
-	go build         && \
+	go build      && \
 	cd ../..
 
 # Tried to display the installation location.
