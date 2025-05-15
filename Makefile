@@ -1,7 +1,7 @@
 # Simple Go Makefile
 .POSIX:
 
-P =                               # name of package to build provided by user
+P = qris                          # name of package to build
 MAINDIR = cmd/$(P)                # assume cmd/<package>/main.go structure
 EXECNAME = $(P).exe               # adds .exe on Windows
 IPATH = ${GOPATH}\bin
@@ -14,9 +14,9 @@ vet: fmt
 	go vet ./...
 
 build: fmt vet
-	@pushd $(MAINDIR) && \
+	cd $(MAINDIR) && \
 	go build         && \
-	popd
+	cd ../..
 
 # Tried to display the installation location.
 #
@@ -31,11 +31,11 @@ install: fmt vet
 
 .PHONY: clean uninstall
 clean:
-	@pushd $(MAINDIR) && \
+	@cd $(MAINDIR) && \
 	go clean         && \
-	popd
+	cd ../..
 
 uninstall:
-	@pushd $(MAINDIR) && \
+	@cd $(MAINDIR) && \
 	go clean -i      && \
-	popd
+	cd ../..
