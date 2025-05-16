@@ -389,7 +389,11 @@ func WriteResults(workPath string, dataList []string, volume bool, noDateStamp b
 		pDiscard := base + discardSuffix
 
 		pf := ParseFile(pFile)
-		WriteDiscards(pf.Discards, pDiscard)
 		WriteQuotes(&pf, pQuotes, volume, noDateStamp, enc)
+
+		// Only write a _DISCARD file if there were discarded lines.
+		if len(pf.Discards) > 0 {
+			WriteDiscards(pf.Discards, pDiscard)
+		}
 	}
 }
