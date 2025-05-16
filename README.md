@@ -19,3 +19,8 @@ More detailed information can be found on the [Installation](https://github.com/
 ## Using the Tool
 
 See the [Qris wiki](https://github.com/paralogismos/qris/wiki) for information about [basic usage](https://github.com/paralogismos/qris/wiki#qris-basic-usage), [command line flags](https://github.com/paralogismos/qris/wiki/Qris-Command-Line-Flags), [quote file formatting](https://github.com/paralogismos/qris/wiki/Qris-Input-and-Output-Formats), and more.
+
+> [!NOTE]
+> Be aware that specially formatted elements in a `.docx` file may not be captured by Qris. Currently Qris can extract html links and non-breaking hyphens, but not numbered or bulleted lists.  
+> This is likely to manifest as missing content that is not reported in a _DISCARD file.  
+> It would be best to avoid such specially formatted elements, but if you encounter such a problem you might raise an isuue on the [Issues](https://github.com/paralogismos/qris/issues) page.
