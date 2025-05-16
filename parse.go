@@ -11,6 +11,7 @@ import (
 
 // Regular Expressions
 var leadingSpace = regexp.MustCompile(`^[\p{Zs}\t]*`)
+var blankLine = regexp.MustCompile(`^[\p{Zs}\t]*$`)
 
 // var trailingSpace = regexp.MustCompile(`[\p{Zs}\t\n]*$`)
 var sourceBegin = regexp.MustCompile(`^[\p{Zs}\t]*<\$>`)
@@ -163,7 +164,9 @@ func ParseFile(fpath string) ParsedFile {
 			}
 		}
 		// Send malformed lines to DISCARD.
-		ds = append(ds, l)
+		if !blankLine.MatchString(l.Body) {
+			ds = append(ds, l)
+		}
 	}
 	src = newSource(cit, qs)
 	sources = append(sources, src) // save the last parsed source
