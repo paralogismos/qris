@@ -1,5 +1,6 @@
 # Qris
-**_A Simple Tool for Creating RIS Files_**
+
+## A Simple Tool for Creating RIS Files
 
 Qris is designed to process files containing annotated quotations into a RIS format suitable for import into [EndNote](https://support.clarivate.com/Endnote/). This allows a user to create and maintain, with a text editor or word processor, quote files which may later be processed and easily imported.
 
