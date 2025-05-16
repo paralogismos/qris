@@ -16,10 +16,12 @@ import (
 
 var isDocx = regexp.MustCompile(`\.docx$`)
 var tabTag = regexp.MustCompile(`<w:tab/>`)
+var noBreakHyphen = regexp.MustCompile(`<w:noBreakHyphen/>`)
 var htmlOpen = regexp.MustCompile(`<w:hyperlink [^>]*>`)
 var htmlClose = regexp.MustCompile(`</w:hyperlink>`)
 
 var tabElement = "<w:t>\t</w:t>"
+var hyphenElement = "<w:t>-</w:t>"
 
 // A `Line` is a string of content coupled with a line number reference to the
 // original file; 1-indexed.
@@ -53,7 +55,6 @@ func TxtToLines(fpath string) ([]Line, error) {
 	scanner := bufio.NewScanner(file)
 	lineNo := 1
 	for scanner.Scan() {
-		//rawLines = append(rawLines, newLine(lineNo, tidyString(scanner.Text())))
 		rawLines = append(rawLines, newLine(lineNo, scanner.Text()))
 		lineNo++
 	}
@@ -90,12 +91,19 @@ func DocxToLines(path string) ([]Line, error) {
 		}
 	}
 
-	// Replace special tab elements with tab characters before parsing.
+	// Initial preprocessing of file content.
 	sDocBytes := string(docBytes)
+
+	// Replace special tab elements with tab characters before parsing.
 	sDocBytes = tabTag.ReplaceAllString(sDocBytes, tabElement)
+
+	// Convert non-breaking hyphen characters to ASCII dashes.
+	sDocBytes = noBreakHyphen.ReplaceAllString(sDocBytes, hyphenElement)
+
 	// Expose hyperlink text before parsing.
 	sDocBytes = htmlOpen.ReplaceAllString(sDocBytes, "")
 	sDocBytes = htmlClose.ReplaceAllString(sDocBytes, "")
+
 	docBytes = []byte(sDocBytes)
 
 	// Replace html tags with text.
@@ -116,7 +124,6 @@ func DocxToLines(path string) ([]Line, error) {
 
 	for n, rl := range document.Lines {
 		line := strings.Join(rl.Runs, "")
-		//		line = tidyString(line)
 		lines = append(lines, newLine(n, line))
 	}
 	return lines, err

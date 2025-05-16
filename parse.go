@@ -24,7 +24,11 @@ var citationName = regexp.MustCompile(`^[^“"{]*`)
 var finalPeriod = regexp.MustCompile(`\.$`)
 var nameInitialPeriod = regexp.MustCompile(`[\p{Zs}.]{1}[\pL]{1}\.$`)
 var citationFamilyName = regexp.MustCompile(`^[^,]*`)
-var citationYear = regexp.MustCompile(`\pN{4}\pL*`)
+
+var citationYear = regexp.MustCompile(`[^\pN]\pN{4}\pL?[^\pN]?`)
+var citationYearTrim = regexp.MustCompile(`\pN{4}\pL?`)
+
+//var citationYear = regexp.MustCompile(`\pN{4}\pL*`)
 
 var citNoteEnd = regexp.MustCompile(`-nb\.?$`)
 var noteEnd = regexp.MustCompile(`jmr\.?$`)
@@ -169,15 +173,18 @@ func ParseFile(fpath string) ParsedFile {
 func parseCitation(rl Line) Citation {
 	tl := sourceBegin.ReplaceAllString(rl.Body, "") // trim `sourceBegin` token
 	tl = strings.TrimSpace(tl)
+
 	name := strings.TrimSpace(citationName.FindString(tl))
 	if !nameInitialPeriod.MatchString(name) {
 		name = finalPeriod.ReplaceAllString(name, "")
 	}
+
 	year := ""
-	yearMatches := citationYear.FindAllStringSubmatch(tl, -1)
+	yearMatches := citationYear.FindAllString(tl, -1)
 	countMatches := len(yearMatches)
 	if countMatches > 0 {
-		year = yearMatches[countMatches-1][0]
+		year = yearMatches[countMatches-1]
+		year = citationYearTrim.FindString(year)
 	}
 
 	body := tl
