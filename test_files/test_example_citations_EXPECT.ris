@@ -90,3 +90,21 @@ SP  - 49-50
 PB  - {Antigone}
 ER  - 
 
+TY  - 
+UR  - test_example_citations
+AB  - Brown, James Robert. “Proofs and pictures.” {British Journal for Philosophy of Science}. 48 (1997): 161-180.
+A1  - Brown, James Robert
+Y1  - 1997
+T1  - [At] this time I’ll call on your imagination; like Shakespeare’s Prologue on the imagined battlefield of Agincourt, I’ll urge you to ‘Work your thoughts!’
+SP  - 164
+ER  - 
+
+TY  - 
+UR  - test_example_citations
+AB  - Brown, J. R. “Proofs and pictures.” {British Journal for Philosophy of Science}. 48 (1997): 161180.
+A1  - Brown, J. R.
+Y1  - 1997
+T1  - There is a spectrum of ways to understand Bolzano’s achievement. … (I) Balzano firmly established a theorem that was not known to be true until his proof. … (II) Bolzano’s proof explained the theorem. … (III) The theorem confirmed the premises of the proof. … The consequence of adopting (III) is highly significant for our view of pictures. We can draw the moral quickly: on this view {pictures are crucial}.
+SP  - 164, 5
+ER  - 
+
