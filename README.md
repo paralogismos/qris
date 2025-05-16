@@ -22,5 +22,7 @@ See the [Qris wiki](https://github.com/paralogismos/qris/wiki) for information a
 
 > [!NOTE]
 > Be aware that specially formatted elements in a `.docx` file may not be captured by Qris. Currently Qris can extract html links and non-breaking hyphens, but not numbered or bulleted lists.  
+>  
 > This is likely to manifest as missing content that is not reported in a _DISCARD file.  
+>  
 > It would be best to avoid such specially formatted elements, but if you encounter such a problem you might raise an isuue on the [Issues](https://github.com/paralogismos/qris/issues) page.
