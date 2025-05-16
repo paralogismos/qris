@@ -11,9 +11,11 @@ The current input annotation format is specific to a particular use case, but th
 See the [Qris Wiki](https://github.com/paralogismos/qris/wiki) for more detailed information.
 
 ## Simple Installation
+
 Grab the `qris.exe` executable from the [Latest Release](https://github.com/paralogismos/qris/releases/latest) page. Drop the executable into your `/Windows/System32/` folder.
 
 More detailed information can be found on the [Installation](https://github.com/paralogismos/qris/wiki/Installation) wiki page.
 
 ## Using the Tool
+
 See the [Qris wiki](https://github.com/paralogismos/qris/wiki) for information about [basic usage](https://github.com/paralogismos/qris/wiki#qris-basic-usage), [command line flags](https://github.com/paralogismos/qris/wiki/Qris-Command-Line-Flags), [quote file formatting](https://github.com/paralogismos/qris/wiki/Qris-Input-and-Output-Formats), and more.
