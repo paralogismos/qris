@@ -23,11 +23,9 @@ See the [Qris wiki](https://github.com/paralogismos/qris/wiki) for information a
 ## Known Issues
 
 - The older `.doc` file format used by Microsoft Word before 2007 is not currently supported by Qris.
-
   - To work around this, open `.doc` files in a word processor that supports them and save them again as `.docx` files.
 
-- Be aware that specially formatted elements in a `.docx` file may not be captured by Qris. Currently Qris can extract html links and non-breaking hyphens, but not numbered or bulleted lists.
-
+- Be aware that specially formatted elements in a `.docx` file may not be captured by Qris.
   - This is likely to manifest as missing content that is not reported in a _DISCARD file.
-
+  - Currently Qris can extract html links and non-breaking hyphens, but not numbered or bulleted lists.
   - It would be best to avoid such specially formatted elements, but if you encounter such a problem you might raise an issue on the [Issues](https://github.com/paralogismos/qris/issues) page.
