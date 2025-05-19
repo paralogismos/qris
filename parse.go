@@ -11,6 +11,7 @@ import (
 // Regular Expressions
 var leadingSpace = regexp.MustCompile(`^[\p{Zs}\t]*`)
 var blankLine = regexp.MustCompile(`^[\p{Zs}\t]*$`)
+var commentLine = regexp.MustCompile(`^#`)
 
 // var trailingSpace = regexp.MustCompile(`[\p{Zs}\t\n]*$`)
 var sourceBegin = regexp.MustCompile(`^[\p{Zs}\t]*<\$>`)
@@ -72,6 +73,9 @@ func ParseFile(fpath string) ParsedFile {
 	inMultiLineQuote := false
 	var fullQuote []string
 	for _, l := range rls[1:] {
+		if commentLine.MatchString(l.Body) {
+			continue // Ignore comment lines.
+		}
 		if firstSource { // first source in the file
 			firstSource = false
 			cit = parseCitation(l)
