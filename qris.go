@@ -143,6 +143,12 @@ const (
 	Utf16
 )
 
+type OutOpts struct {
+	Volume    bool
+	DateStamp bool
+	Encoding  Encoding
+}
+
 // The first line of the file is assumed to be the source title.
 // The first citation line may begin with the `sourceBegin` token.
 // All subsequent citations must begin with the `sourceBegin` token.
@@ -285,13 +291,16 @@ func writeToFileUtf16(f *os.File, data string) {
 	binary.Write(f, binary.NativeEndian, codePoints)
 }
 
-func WriteQuotes(pf *ParsedFile, fname string, volume bool, noDateStamp bool, enc Encoding) {
+func WriteQuotes(pf *ParsedFile, fname string, outOpts OutOpts) {
 	file, err := os.Create(fname)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 	defer file.Close()
+
+	// Use encoding:
+	enc := outOpts.Encoding
 
 	// batch ID
 	bid := filepath.Base(filepath.Dir(fname))
@@ -313,11 +322,11 @@ func WriteQuotes(pf *ParsedFile, fname string, volume bool, noDateStamp bool, en
 
 		for _, q := range s.Quotes { // loop over quotes of each source
 			writeFieldToFile(file, "TY", "", enc)
-			if volume {
+			if outOpts.Volume {
 				writeFieldToFile(file, "VL", bid, enc)
 			}
 			writeFieldToFile(file, "UR", fid, enc)
-			if !noDateStamp {
+			if outOpts.DateStamp {
 				writeFieldToFile(file, "AD", dStamp, enc)
 			}
 			writeFieldToFile(file, "AB", citBody, enc)
@@ -368,7 +377,7 @@ func WriteQuotes(pf *ParsedFile, fname string, volume bool, noDateStamp bool, en
 
 // `WriteResults` iterates over a list of files, ensures that none are
 // directories, parses each file,  and writes the results to output files.
-func WriteResults(workPath string, dataList []string, volume bool, noDateStamp bool, enc Encoding) {
+func WriteResults(workPath string, dataList []string, outOpts OutOpts) {
 	for _, file := range dataList {
 		// Don't process parsed file artifacts.
 		if isParsedFile(file) || isDiscardFile(file) {
@@ -389,7 +398,7 @@ func WriteResults(workPath string, dataList []string, volume bool, noDateStamp b
 		pDiscard := base + discardSuffix
 
 		pf := ParseFile(pFile)
-		WriteQuotes(&pf, pQuotes, volume, noDateStamp, enc)
+		WriteQuotes(&pf, pQuotes, outOpts)
 
 		// Only write a _DISCARD file if there were discarded lines.
 		if len(pf.Discards) > 0 {

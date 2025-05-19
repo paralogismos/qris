@@ -37,14 +37,14 @@ func main() {
 		"p, path: Show path to configuration file.\nr, rm, remove: Remove configuration file.")
 	dir := flag.String("d", "",
 		"Set the current working directory.")
-	encoding := flag.String("enc", "ansi",
+	enc := flag.String("enc", "ansi",
 		"Output encoding.\nOne of 'ascii', 'ansi', 'utf8', or 'utf16'")
 	filePath := flag.String("f", "",
 		"Path to a file to be parsed, absolute or relative.")
-	lineEnd := flag.String("lend", "platform",
+	lineEnd := flag.String("linend", "platform",
 		"Line ending for output.\nOne of 'lf', 'crlf', or 'platform'.")
-	noDateStamp := flag.Bool("nods", false, "Omit AD datestamp field.")
-	volume := flag.Bool("vol", false, "Include VL volume field.")
+	dateStamp := flag.Bool("datestamp", true, "Include AD datestamp field.")
+	volume := flag.Bool("volume", false, "Include VL volume field.")
 
 	// Custom usage message.
 	flag.Usage = func() {
@@ -63,18 +63,18 @@ func main() {
 	}
 
 	// Set encoding.
-	var enc qris.Encoding
-	switch *encoding {
+	var encoding qris.Encoding
+	switch *enc {
 	case "ascii":
-		enc = qris.Ascii
+		encoding = qris.Ascii
 	case "ansi":
-		enc = qris.Ansi
+		encoding = qris.Ansi
 	case "utf8":
-		enc = qris.Utf8
+		encoding = qris.Utf8
 	case "utf16":
-		enc = qris.Utf16
+		encoding = qris.Utf16
 	default:
-		enc = qris.Ansi
+		encoding = qris.Ansi
 	}
 
 	// Configure the system.
@@ -121,6 +121,15 @@ func main() {
 	// included in `workPath`.
 	dataList, workPath := qris.GetWorkPath(workDir, *batchPath, *filePath)
 
+	outOpts := qris.OutOpts{
+		Volume:    *volume,
+		DateStamp: *dateStamp,
+		Encoding:  encoding,
+	}
+
 	// Parse all files and write results to output.
-	qris.WriteResults(workPath, dataList, *volume, *noDateStamp, enc)
+	qris.WriteResults(workPath, dataList, outOpts)
+
+	// REFACTOR
+	// parsedFiles, discardFiles, err := processQuoteFiles(workPath, dataList, *volume, *noDateStamp, enc)
 }
