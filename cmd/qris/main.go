@@ -127,9 +127,9 @@ func main() {
 		Encoding:  encoding,
 	}
 
-	// Parse all files and write results to output.
-	qris.WriteResults(workPath, dataList, outOpts)
+	// Parse all files.
+	parsedFiles := qris.ProcessQuoteFiles(workPath, dataList)
 
-	// REFACTOR
-	// parsedFiles, discardFiles, err := processQuoteFiles(workPath, dataList, *volume, *noDateStamp, enc)
+	// Write parsed content to output.
+	qris.WriteResults(parsedFiles, outOpts)
 }

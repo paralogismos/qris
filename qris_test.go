@@ -181,11 +181,10 @@ func TestWriteResults(t *testing.T) {
 	t.Chdir(testDir)   //
 	for _, tf := range testFiles {
 		dataList, workPath := GetWorkPath(workDir, batchPath, tf)
-
+		// Process a test file.
+		parsedFiles := ProcessQuoteFiles(workPath, dataList)
 		// Write results to test directory.
-		WriteResults(workPath, dataList,
-			OutOpts{Volume: volume, DateStamp: dateStamp, Encoding: enc},
-		)
+		WriteResults(parsedFiles, OutOpts{Volume: volume, DateStamp: dateStamp, Encoding: enc})
 
 		// Compare with expected results.
 		resultPath := strings.TrimSuffix(tf, filepath.Ext(tf)) + "_PARSED.ris"

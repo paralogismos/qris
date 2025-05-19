@@ -214,17 +214,15 @@ func newSource(cit Citation, qs []Quote) Source {
 // `Discards` is a slice of `Line`s which aren't quotes, to be reviewed manually
 // by the user.
 type ParsedFile struct {
-	Filename string
-	Title    string // first line of parsed file
+	Filepath string // full filepath
 	Sources  []Source
 	Discards []Line
 }
 
-func newParsedFile(fn, tit string, srcs []Source, ds []Line) ParsedFile {
+func newParsedFile(fp string, ss []Source, ds []Line) ParsedFile {
 	return ParsedFile{
-		Filename: fn,
-		Title:    tit,
-		Sources:  srcs,
+		Filepath: fp,
+		Sources:  ss,
 		Discards: ds,
 	}
 }
@@ -291,7 +289,7 @@ func writeToFileUtf16(f *os.File, data string) {
 	binary.Write(f, binary.NativeEndian, codePoints)
 }
 
-func WriteQuotes(pf *ParsedFile, fname string, outOpts OutOpts) {
+func WriteQuotes(pf ParsedFile, fname string, outOpts OutOpts) {
 	file, err := os.Create(fname)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -306,7 +304,8 @@ func WriteQuotes(pf *ParsedFile, fname string, outOpts OutOpts) {
 	bid := filepath.Base(filepath.Dir(fname))
 
 	// file ID
-	fid := strings.TrimSuffix(pf.Filename, filepath.Ext(pf.Filename))
+	fid := filepath.Base(pf.Filepath)
+	fid = strings.TrimSuffix(fid, filepath.Ext(fid))
 
 	// timestamp: when file was processed
 	dStamp := time.Now().Format("2006/01/02")
@@ -375,33 +374,35 @@ func WriteQuotes(pf *ParsedFile, fname string, outOpts OutOpts) {
 	}
 }
 
-// `WriteResults` iterates over a list of files, ensures that none are
-// directories, parses each file,  and writes the results to output files.
-func WriteResults(workPath string, dataList []string, outOpts OutOpts) {
+// `ProcessQuoteFiles` iterates over a list of files and returns
+// a list of `ParsedFile`s.
+func ProcessQuoteFiles(workPath string, dataList []string) []ParsedFile {
+	var parsedFiles []ParsedFile
 	for _, file := range dataList {
 		// Don't process parsed file artifacts.
 		if isParsedFile(file) || isDiscardFile(file) {
 			continue
 		}
+		fmt.Printf("Processing %s...\n", file) // Display file name as it is processed
+		pFile := filepath.Join(workPath, file) // File path to process
+		parsedFiles = append(parsedFiles, ParseFile(pFile))
+	}
+	return parsedFiles
+}
 
-		// Display file name as it is processed
-		fmt.Println(file)
+// `WriteResults` iterates over a list of files, ensures that none are
+// directories, parses each file,  and writes the results to output files.
+func WriteResults(parsedFiles []ParsedFile, outOpts OutOpts) {
+	for _, pf := range parsedFiles {
+		fpath := pf.Filepath
+		base := strings.TrimSuffix(fpath, filepath.Ext(fpath))
+		pQuotes := base + parsedSuffix // File to store parsed quotes
 
-		// File path to process
-		pFile := filepath.Join(workPath, file)
-
-		// File to store parsed quotes
-		base := strings.TrimSuffix(pFile, filepath.Ext(pFile))
-		pQuotes := base + parsedSuffix
-
-		// File to store discarded lines
-		pDiscard := base + discardSuffix
-
-		pf := ParseFile(pFile)
-		WriteQuotes(&pf, pQuotes, outOpts)
+		WriteQuotes(pf, pQuotes, outOpts)
 
 		// Only write a _DISCARD file if there were discarded lines.
 		if len(pf.Discards) > 0 {
+			pDiscard := base + discardSuffix // File to store discarded lines
 			WriteDiscards(pf.Discards, pDiscard)
 		}
 	}

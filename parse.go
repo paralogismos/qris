@@ -4,7 +4,6 @@
 package qris
 
 import (
-	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -62,10 +61,7 @@ func isDiscardFile(f string) bool {
 
 // THIS FUNCTION SHOULD BE REFACTORED TO STREAMLINE THE LOGIC
 func ParseFile(fpath string) ParsedFile {
-	// rls := cleanLines(getLines(fpath))
 	rls := getLines(fpath)
-	fn := filepath.Base(fpath)
-	tit := rls[0].Body
 	var cit Citation
 	var src Source
 	qs := []Quote{}
@@ -107,8 +103,6 @@ func ParseFile(fpath string) ParsedFile {
 					// Remove multi-line quote token and surrounding whitespace before collecting the line.
 					fullQuote = append(fullQuote,
 						strings.TrimSpace(multiLineQuote.ReplaceAllLiteralString(l.Body, "")))
-					// Trim whitespace and attach a newline.
-					//fullQuote = strings.TrimSpace(fullQuote) + "\n" -> lineEnding()
 				}
 				continue
 			}
@@ -116,7 +110,6 @@ func ParseFile(fpath string) ParsedFile {
 		q, isQuote := parseQuote(l)
 		if isQuote { // quote line may end a multi-line quote
 			if inMultiLineQuote {
-				//q.Body = append(fullQuote, trailingSpace.ReplaceAllLiteralString(q.Body[0], ""))
 				q.Body = append(fullQuote, strings.TrimSpace(q.Body[0]))
 			} else {
 				q.Body[0] = strings.TrimSpace(q.Body[0])
@@ -128,7 +121,6 @@ func ParseFile(fpath string) ParsedFile {
 		}
 		if inMultiLineQuote { // any line in multi-line quote is saved
 			// Remove trailing whitespace.
-			//fullQuote = append(fullQuote, trailingSpace.ReplaceAllLiteralString(l.Body, ""))
 			fullQuote = append(fullQuote, strings.TrimSpace(l.Body))
 			continue
 		}
@@ -170,7 +162,7 @@ func ParseFile(fpath string) ParsedFile {
 	}
 	src = newSource(cit, qs)
 	sources = append(sources, src) // save the last parsed source
-	return newParsedFile(fn, tit, sources, ds)
+	return newParsedFile(fpath, sources, ds)
 }
 
 // `parseCitation` parses a line into a `Citation` struct.
@@ -286,10 +278,7 @@ func parseQuote(q Line) (Quote, bool) {
 		endMatch := q.Body[endMatchIndices[0]:]
 
 		// Get quote body
-		//body = strings.TrimSpace(bodyMatch)
-		//body = append(body, trailingSpace.ReplaceAllLiteralString(bodyMatch, ""))
 		body = append(body, strings.TrimSpace(bodyMatch))
-		// body = bodyMatch // Why doesn't this work?
 		// Split end into page and supplementary field
 		pageMatchIndices := quotePage.FindStringIndex(endMatch)
 
@@ -299,25 +288,6 @@ func parseQuote(q Line) (Quote, bool) {
 		} else {
 			page = pageNumber.FindString(strings.TrimSpace(endMatch))
 		}
-
-		// REMOVE THIS SPECIAL CASE: IT INTERFERES WITH OTHER MARKUPS THAT
-		// INCLUDE PAGE NUMBERS!
-		// Special Case: page # at end of quote with no tabs and
-		// only one or two spaces delimiting
-	} //  else if bodyEnd := len(q.Body) - 30; bodyEnd > 0 {
-	// 	simpleEnd := q.Body[bodyEnd:]
-	// 	pageMatchIndices := quotePage.FindStringIndex(simpleEnd)
-	// 	isQuote = pageMatchIndices != nil
-
-	// 	if isQuote {
-	// 		//	body = strings.TrimSpace(q.Body[:pageMatchIndices[0]+bodyEnd])
-	// 		body = trailingSpace.ReplaceAllLiteralString(q.Body[:pageMatchIndices[0]+bodyEnd], "")
-	// 		// I thought I could use this and trim in the calling function....
-	// 		//			body = q.Body[:pageMatchIndices[0]+bodyEnd]
-	// 		page = pageNumber.FindString(
-	// 			strings.TrimSpace(simpleEnd[pageMatchIndices[0]:]))
-	// 	}
-	// }
-
+	}
 	return newQuote(auth, kw, body, page, supp, note, url), isQuote
 }
