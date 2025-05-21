@@ -72,7 +72,7 @@ func ParseFile(fpath string) ParsedFile {
 
 	inMultiLineQuote := false
 	var fullQuote []string
-	for _, l := range rls[1:] {
+	for _, l := range rls[1:] { // Always ignore first line of input file.
 		if commentLine.MatchString(l.Body) {
 			continue // Ignore comment lines.
 		}
