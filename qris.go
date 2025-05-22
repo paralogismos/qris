@@ -211,21 +211,24 @@ func newSource(cit Citation, qs []Quote) Source {
 }
 
 // Results of parsing one file.
-// `Discards` is a slice of `Line`s which aren't quotes, to be reviewed manually
-// by the user.
+// `State` is initially `Start`, passing through other `ParseState`s during
+// processing. The `State` is set to `Finished` after processing is completed.
+// `Discards` is a slice of `Line`s which were not recognized. These can be
+// reviewed manually by the user.
 type ParsedFile struct {
 	Filepath string // full filepath
+	State    ParseState
 	Sources  []Source
 	Discards []Line
 }
 
-func newParsedFile(fp string, ss []Source, ds []Line) ParsedFile {
-	return ParsedFile{
-		Filepath: fp,
-		Sources:  ss,
-		Discards: ds,
-	}
-}
+// func newParsedFile(fp string, ss []Source, ds []Line) ParsedFile {
+// 	return ParsedFile{
+// 		Filepath: fp,
+// 		Sources:  ss,
+// 		Discards: ds,
+// 	}
+// }
 
 // `getLines` takes a file specified by `fpath` and returns a slice
 // containing raw lines from the file keyed by the original line number
@@ -385,7 +388,8 @@ func ProcessQuoteFiles(workPath string, dataList []string) []ParsedFile {
 		}
 		fmt.Printf("Processing %s...\n", file) // Display file name as it is processed
 		pFile := filepath.Join(workPath, file) // File path to process
-		parsedFiles = append(parsedFiles, ParseFile(pFile))
+		//parsedFiles = append(parsedFiles, ParseFile(pFile))
+		parsedFiles = append(parsedFiles, ProcessFile(pFile))
 	}
 	return parsedFiles
 }
