@@ -15,6 +15,7 @@ import (
 )
 
 var isDocx = regexp.MustCompile(`\.docx$`)
+var isTxt = regexp.MustCompile(`\.txt$`)
 var tabTag = regexp.MustCompile(`<w:tab/>`)
 var noBreakHyphen = regexp.MustCompile(`<w:noBreakHyphen/>`)
 var htmlOpen = regexp.MustCompile(`<w:hyperlink [^>]*>`)
@@ -39,6 +40,10 @@ func newLine(lineNo int, body string) Line {
 
 func IsDocxFile(s string) bool {
 	return isDocx.MatchString(s)
+}
+
+func IsTxtFile(s string) bool {
+	return isTxt.MatchString(s)
 }
 
 // Takes a `fpath` argument which leads to a .txt file and
