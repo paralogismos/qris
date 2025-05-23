@@ -109,26 +109,25 @@ func SetWorkDir(dirPath, configPath string) {
 	}
 }
 
-// *** I don't think that this function is being used anymore....
-// *** Maybe this should be removed.
+// NO LONGER IN USE: REMOVE
 // `GetFileList` creates a list of filenames from the text file specified by `fpath`.
 // This file should have one filename per line.
-func GetFileList(fpath string) []string {
-	file, err := os.Open(fpath)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
-	defer file.Close()
+// func GetFileList(fpath string) []string {
+// 	file, err := os.Open(fpath)
+// 	if err != nil {
+// 		fmt.Fprintln(os.Stderr, err)
+// 		os.Exit(1)
+// 	}
+// 	defer file.Close()
 
-	files := []string{}
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		files = append(files, scanner.Text())
-	}
+// 	files := []string{}
+// 	scanner := bufio.NewScanner(file)
+// 	for scanner.Scan() {
+// 		files = append(files, scanner.Text())
+// 	}
 
-	return files
-}
+// 	return files
+// }
 
 // `GetBatchList` takes a path argument and returns a list of all files found
 // in the directory specified by the path. Directories found in the specified

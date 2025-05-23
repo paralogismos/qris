@@ -162,15 +162,6 @@ type Citation struct {
 	Note string
 }
 
-func newCitation(name, year, body, note string) Citation {
-	return Citation{
-		Name: name,
-		Year: year,
-		Body: body,
-		Note: note,
-	}
-}
-
 // Parsed from a `Line` for which `IsQuote` is true, or from the `Line`s of a
 // multi-line quote. Includes line number from original file.
 // Body and page are parsed from the lines of a quote. Other fields are supplied
@@ -182,32 +173,13 @@ type Quote struct {
 	Page    string
 	Supp    []string
 	Note    string
-	URL     string
-}
-
-func newQuote(auth, kw string, body []string, page string, supp []string, note, url string) Quote {
-	return Quote{
-		Auth:    auth,
-		Keyword: kw,
-		Body:    body,
-		Page:    page,
-		Supp:    supp,
-		Note:    note,
-		URL:     url,
-	}
+	Url     string
 }
 
 // A file may include multiple sources.
 type Source struct {
 	Citation Citation
 	Quotes   []Quote
-}
-
-func newSource(cit Citation, qs []Quote) Source {
-	return Source{
-		Citation: cit,
-		Quotes:   qs,
-	}
 }
 
 // Results of parsing one file.
@@ -221,14 +193,6 @@ type ParsedFile struct {
 	Sources  []Source
 	Discards []Line
 }
-
-// func newParsedFile(fp string, ss []Source, ds []Line) ParsedFile {
-// 	return ParsedFile{
-// 		Filepath: fp,
-// 		Sources:  ss,
-// 		Discards: ds,
-// 	}
-// }
 
 // `getLines` takes a file specified by `fpath` and returns a slice
 // containing raw lines from the file keyed by the original line number
@@ -368,8 +332,8 @@ func WriteQuotes(pf ParsedFile, fname string, outOpts OutOpts) {
 			if q.Note != "" {
 				writeFieldToFile(file, "CY", q.Note, enc)
 			}
-			if q.URL != "" {
-				writeFieldToFile(file, "UR", q.URL, enc)
+			if q.Url != "" {
+				writeFieldToFile(file, "UR", q.Url, enc)
 			}
 			writeFieldToFile(file, "ER", "", enc)
 			writeToFile(file, LineEnding, enc)

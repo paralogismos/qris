@@ -14,12 +14,15 @@ var blankLine = regexp.MustCompile(`^[\p{Zs}\t]*$`)
 var commentLine = regexp.MustCompile(`^#`)
 
 // var trailingSpace = regexp.MustCompile(`[\p{Zs}\t\n]*$`)
-var sourceBegin = regexp.MustCompile(`^[\p{Zs}\t]*<\$>`)
+// var sourceBegin = regexp.MustCompile(`^[\p{Zs}\t]*<\$>`)
+var sourceBegin = regexp.MustCompile(`^<\$>`)
 
 var authorLine = regexp.MustCompile(`^>>>`)
 var keywordLine = regexp.MustCompile(`^\^[sS]:`)
-var supplementalLine = regexp.MustCompile(`%%$`)
-var URLLine = regexp.MustCompile(`^[\p{Zs}\t]*https?://`)
+var supplementLine = regexp.MustCompile(`%%$`)
+
+// var UrlLine = regexp.MustCompile(`^[\p{Zs}\t]*https?://`)
+var UrlLine = regexp.MustCompile(`^https?://`)
 
 var citationName = regexp.MustCompile(`^[^“"{]*`)
 var finalPeriod = regexp.MustCompile(`\.$`)
@@ -35,7 +38,8 @@ var citationYearTrim = regexp.MustCompile(`\pN{4}\pL?`)
 var citNoteEnd = regexp.MustCompile(`-nb\.?$`)
 var noteEnd = regexp.MustCompile(`jmr\.?$`)
 
-var multiLineQuote = regexp.MustCompile(`^[\p{Zs}\t]*///`)
+// var multiLineQuote = regexp.MustCompile(`^[\p{Zs}\t]*///`)
+var multiLineQuote = regexp.MustCompile(`^///`)
 
 // A quote end is either tab-delimited pp., or space-delimited pp. with
 // at least three spaces as the delimiter.
@@ -73,166 +77,154 @@ const (
 type LineType int
 
 const (
-	Unknown LineType = iota
-	Blank
-	Comment
+	UnknownLn LineType = iota
+	BlankLn
+	CommentLn
+	CitationLn
+	CitationNoteLn
+	QuoteLn
+	MultiQuoteLn
+	QuoteNoteLn
+	QuoteAuthorLn
+	KeywordLn
+	SupplementLn
+	UrlLn
 )
+
+func determineLineType(body string, ps ParseState) LineType {
+	switch {
+	case blankLine.MatchString(body) && ps != InMultiQuote:
+		return BlankLn
+	case commentLine.MatchString(body):
+		return CommentLn
+	case sourceBegin.MatchString(body) || ps == Start:
+		return CitationLn
+	case citNoteEnd.FindStringIndex(body) != nil:
+		return CitationNoteLn
+	case quoteEnd.FindStringIndex(body) != nil ||
+		quoteEndAlt.FindStringIndex(body) != nil:
+		return QuoteLn
+	case multiLineQuote.MatchString(body):
+		return MultiQuoteLn
+	case noteEnd.MatchString(body):
+		return QuoteNoteLn
+	case authorLine.MatchString(body):
+		return QuoteAuthorLn
+	case keywordLine.MatchString(body):
+		return KeywordLn
+	case supplementLine.MatchString(body):
+		return SupplementLn
+	case UrlLine.MatchString(body):
+		return UrlLn
+	default:
+		return UnknownLn
+	}
+}
 
 func ProcessFile(fpath string) ParsedFile {
 	var pf ParsedFile
+	curSrc := -1 // No sources yet.
+	curQte := -1 // No quotes yet.
 	pf.Filepath = fpath
 	pf.State = Start
 	rls := getLines(fpath)
 	for _, l := range rls[1:] { // Always ignore first line of input file.
-		if isSkipLine(l, pf) {
+		body := strings.TrimSpace(l.Body)
+		lineType := determineLineType(body, pf.State)
+		if lineType == CommentLn || lineType == BlankLn { // Skipped lines.
 			continue
 		}
-		processLine(l, &pf)
+		switch pf.State {
+		case Start:
+			if lineType == CitationLn {
+				pf.Sources = append(pf.Sources, getSource(body))
+				curSrc += 1 // Added a source.
+				curQte = -1 // No quotes yet.
+				pf.State = InSource
+				break
+			}
+		case InSource:
+			if lineType == CitationNoteLn {
+				pf.Sources[curSrc].Citation.Note = getCitationNote(body)
+				break
+			}
+			if lineType == QuoteLn {
+				b, p := getQuote(body)
+				pf.Sources[curSrc].Quotes =
+					append(pf.Sources[curSrc].Quotes, Quote{Body: []string{b}, Page: p})
+				curQte += 1 // Added a quote.
+				pf.State = InQuote
+				break
+			}
+			if lineType == MultiQuoteLn {
+				b := beginMultiQuote(body)
+				pf.Sources[curSrc].Quotes =
+					append(pf.Sources[curSrc].Quotes, Quote{Body: []string{b}})
+				curQte += 1 // Added a quote.
+				pf.State = InMultiQuote
+				break
+			}
+		case InMultiQuote:
+			if lineType == QuoteLn { // This line ends a multi-line quote.
+				b, p := getQuote(body)
+				pf.Sources[curSrc].Quotes[curQte].Body =
+					append(pf.Sources[curSrc].Quotes[curQte].Body, b)
+				pf.Sources[curSrc].Quotes[curQte].Page = p
+				pf.State = InQuote
+				break
+			}
+			// All non-skipped, non-single-quote lines are captured.
+			pf.Sources[curSrc].Quotes[curQte].Body =
+				append(pf.Sources[curSrc].Quotes[curQte].Body, strings.TrimSpace(body))
+		case InQuote:
+			if lineType == CitationLn {
+				pf.Sources = append(pf.Sources, getSource(body))
+				curSrc += 1 // Added a source.
+				curQte = -1 // No quotes yet.
+				pf.State = InSource
+				break
+			}
+			if lineType == QuoteLn {
+				b, p := getQuote(body)
+				pf.Sources[curSrc].Quotes =
+					append(pf.Sources[curSrc].Quotes, Quote{Body: []string{b}, Page: p})
+				curQte += 1 // Added a quote.
+				pf.State = InQuote
+				break
+			}
+			if lineType == MultiQuoteLn {
+				b := beginMultiQuote(body)
+				pf.Sources[curSrc].Quotes =
+					append(pf.Sources[curSrc].Quotes, Quote{Body: []string{b}})
+				curQte += 1 // Added a quote.
+				pf.State = InMultiQuote
+				break
+			}
+			if lineType == QuoteNoteLn {
+				pf.Sources[curSrc].Quotes[curQte].Note = getNote(body)
+			}
+			if lineType == QuoteAuthorLn {
+				pf.Sources[curSrc].Quotes[curQte].Auth = getQuoteAuthor(body)
+			}
+			if lineType == KeywordLn {
+				pf.Sources[curSrc].Quotes[curQte].Keyword = getKeyword(body)
+			}
+			if lineType == SupplementLn {
+				pf.Sources[curSrc].Quotes[curQte].Supp =
+					append(pf.Sources[curSrc].Quotes[curQte].Supp, getSupplement(body))
+			}
+			if lineType == UrlLn {
+				pf.Sources[curSrc].Quotes[curQte].Url = getUrl(body)
+			}
+		default:
+			if lineType == UnknownLn {
+				pf.Discards = append(pf.Discards, l)
+			}
+		}
 	}
 	pf.State = Finished
 	return pf
 }
-
-func processLine(l Line, pf *ParsedFile) /*error*/ {
-	body := l.Body
-	switch pf.State {
-	case Start:
-		if parseCitation(body, pf) {
-			break
-		}
-	case InSource:
-		if parseCitNote(body, pf) || parseQuote(body, pf) || parseMultiQuote(body, pf) {
-			break
-		}
-	case InMultiQuote:
-		if parseQuote(body, pf) { // This line ends a multi-line quote.
-			break
-		}
-		// All non-skipped, non-single-quote lines are captured.
-		sourceIdx := len(pf.Sources) - 1
-		quoteIdx := len(pf.Sources[sourceIdx].Quotes) - 1
-		pf.Sources[sourceIdx].Quotes[quoteIdx].Body =
-			append(pf.Sources[sourceIdx].Quotes[quoteIdx].Body, strings.TrimSpace(body))
-	case InQuote:
-		if parseCitation(body, pf) || parseQuote(body, pf) ||
-			parseMultiQuote(body, pf) || parseNote(body, pf) ||
-			parseAuth(body, pf) || parseKeyword(body, pf) ||
-			parseSupplemental(body, pf) || parseURL(body, pf) {
-			break
-		}
-	default:
-		pf.Discards = append(pf.Discards, l)
-	}
-}
-
-// THIS FUNCTION SHOULD BE REFACTORED TO STREAMLINE THE LOGIC
-// func ParseFile(fpath string) ParsedFile {
-// 	rls := getLines(fpath)
-// 	var cit Citation
-// 	var src Source
-// 	qs := []Quote{}
-// 	ds := []Line{}
-// 	sources := []Source{}
-// 	firstSource := true
-
-// 	inMultiLineQuote := false
-// 	var fullQuote []string
-// 	for _, l := range rls[1:] { // Always ignore first line of input file.
-// 		if commentLine.MatchString(l.Body) {
-// 			continue // Ignore comment lines.
-// 		}
-// 		if firstSource { // first source in the file
-// 			firstSource = false
-// 			cit = parseCitation(l)
-// 			qs = []Quote{}
-// 			ds = []Line{}
-// 			continue
-// 		}
-// 		// THE LOGIC BELOW IS CONVOLUTED.
-// 		// A STATE MACHINE WOULD HELP CLEAN THIS UP.
-// 		//
-// 		// Do not match new source line or new multiline quote
-// 		// if already in a multiline quote.
-// 		if !inMultiLineQuote {
-// 			if sourceBegin.MatchString(l.Body) { // new source encountered
-// 				src = newSource(cit, qs)
-// 				sources = append(sources, src) // save the last source
-// 				cit = parseCitation(l)
-// 				qs = []Quote{} // start new slice of quotes
-// 				continue
-// 			}
-// 			if multiLineQuote.MatchString(l.Body) { // begin multi-line quote
-// 				if q, isQuote := parseQuote(l); isQuote { // really a single-line quote?
-// 					// Cleanup front and back of the actual quote body and save it.
-// 					singleQuote := multiLineQuote.ReplaceAllLiteralString(q.Body[0], "")
-// 					q.Body[0] = strings.TrimSpace(singleQuote)
-// 					qs = append(qs, q)
-// 				} else { // otherwise, actually a multi-line quote
-// 					inMultiLineQuote = true
-// 					// Remove multi-line quote token and surrounding whitespace before collecting the line.
-// 					fullQuote = append(fullQuote,
-// 						strings.TrimSpace(multiLineQuote.ReplaceAllLiteralString(l.Body, "")))
-// 				}
-// 				continue
-// 			}
-// 		}
-// 		q, isQuote := parseQuote(l)
-// 		if isQuote { // quote line may end a multi-line quote
-// 			if inMultiLineQuote {
-// 				q.Body = append(fullQuote, strings.TrimSpace(q.Body[0]))
-// 			} else {
-// 				q.Body[0] = strings.TrimSpace(q.Body[0])
-// 			}
-// 			qs = append(qs, q)
-// 			inMultiLineQuote = false // reset multi-line quote parameters
-// 			fullQuote = nil
-// 			continue
-// 		}
-// 		if inMultiLineQuote { // any line in multi-line quote is saved
-// 			// Remove trailing whitespace.
-// 			fullQuote = append(fullQuote, strings.TrimSpace(l.Body))
-// 			continue
-// 		}
-
-// 		// Citation notes should only follow a new citation line.
-// 		lastQuoteIdx := len(qs) - 1
-// 		if cn, isCitNote := parseCitNote(l); isCitNote && lastQuoteIdx < 0 {
-// 			cit.Note = cn
-// 			continue
-// 		}
-
-// 		// The remaining fields should only follow a quote.
-// 		if lastQuoteIdx >= 0 {
-// 			if n, isNote := parseNote(l); isNote {
-// 				qs[lastQuoteIdx].Note = n
-// 				continue
-// 			}
-// 			if a, isAuth := parseAuth(l); isAuth {
-// 				qs[lastQuoteIdx].Auth = a
-// 				continue
-// 			}
-// 			if k, isKeyword := parseKeyword(l); isKeyword {
-// 				qs[lastQuoteIdx].Keyword = k
-// 				continue
-// 			}
-// 			if s, isSupp := parseSupplemental(l); isSupp {
-// 				qs[lastQuoteIdx].Supp = append(qs[lastQuoteIdx].Supp, s)
-// 				continue
-// 			}
-// 			if u, isURL := parseURL(l); isURL {
-// 				qs[lastQuoteIdx].URL = u
-// 				continue
-// 			}
-// 		}
-// 		// Send malformed lines to DISCARD.
-// 		if !blankLine.MatchString(l.Body) {
-// 			ds = append(ds, l)
-// 		}
-// 	}
-// 	src = newSource(cit, qs)
-// 	sources = append(sources, src) // save the last parsed source
-// 	return newParsedFile(fpath, sources, ds)
-// }
 
 // `isSkipLine` returns `true` if `l` should be ignored during processing,
 // or `false` otherwise.
@@ -248,25 +240,16 @@ func isSkipLine(l Line, pf ParsedFile) bool {
 	return isSkip
 }
 
-// `parseCitation` parses a line into a `Citation` struct.
-// func parseCitation(rl Line) Citation {
-//
-// `parseCitation` parses the body of a line into a `Citation`, adds it to the
-// list of `Source`s of the provided `ParsedFile`, updates the `ParseState`, and
-// returns `true`, or returns `false` if the provided `Line` is not a citation.
-func parseCitation(l string, pf *ParsedFile) bool {
-	if !sourceBegin.MatchString(l) { // This line is not a citation.
-		return false
-	}
-	tl := sourceBegin.ReplaceAllString(l, "") // trim `sourceBegin` token
-	tl = strings.TrimSpace(tl)
-	name := strings.TrimSpace(citationName.FindString(tl))
+func getSource(b string) Source {
+	tb := sourceBegin.ReplaceAllString(b, "") // trim `sourceBegin` token
+	tb = strings.TrimSpace(tb)
+	name := strings.TrimSpace(citationName.FindString(tb))
 	if !nameInitialPeriod.MatchString(name) {
 		name = finalPeriod.ReplaceAllString(name, "")
 	}
-	year := citationYearAlt.FindString(tl) // year at end of citation
+	year := citationYearAlt.FindString(tb) // year at end of citation
 	if year == "" {
-		yearMatches := citationYear.FindAllString(tl, -1) // year buried in citation
+		yearMatches := citationYear.FindAllString(tb, -1) // year buried in citation
 		countMatches := len(yearMatches)
 		if countMatches > 0 {
 			year = yearMatches[countMatches-1]
@@ -276,172 +259,62 @@ func parseCitation(l string, pf *ParsedFile) bool {
 	cit := Citation{
 		Name: name,
 		Year: year,
-		Body: tl,
+		Body: tb,
 	}
 	src := Source{Citation: cit}
-	pf.Sources = append(pf.Sources, src)
-	pf.State = InSource
-	return true
+	return src
 }
 
-// func parseCitNote(l Line) (string, bool) {
-func parseCitNote(l string, pf *ParsedFile) bool {
-	isCitNote := false
-	body := strings.TrimSpace(l)
-	if citNoteEnd.FindStringIndex(body) != nil {
-		isCitNote = true
-		sourceIdx := len(pf.Sources) - 1
-		pf.Sources[sourceIdx].Citation.Note =
-			strings.TrimSpace(citNoteEnd.ReplaceAllLiteralString(body, ""))
-	}
-	return isCitNote
+func getCitationNote(b string) string {
+	return strings.TrimSpace(citNoteEnd.ReplaceAllLiteralString(b, ""))
 }
 
-func parseQuote(l string, pf *ParsedFile) bool {
+func getQuote(b string) (string, string) {
 	// Malformed page numbers are recorded using `pageUnknown`.
 	const pageUnknown = "?"
 	var page string
-	endMatchIndices := quoteEnd.FindStringIndex(l) // Tab-delimited quote ends.
+	endMatchIndices := quoteEnd.FindStringIndex(b) // Tab-delimited quote ends.
 	if endMatchIndices == nil {                    // Alternate Case: space-delimited quote ends.
-		endMatchIndices = quoteEndAlt.FindStringIndex(l)
+		endMatchIndices = quoteEndAlt.FindStringIndex(b)
 	}
-	isQuote := endMatchIndices != nil
-	if isQuote {
-		// Split quote into body and end
-		bodyMatch := l[:endMatchIndices[0]]
-		endMatch := l[endMatchIndices[0]:]
+	// Split quote into body and end
+	bodyMatch := b[:endMatchIndices[0]]
+	endMatch := b[endMatchIndices[0]:]
 
-		// Get quote body: single-line quote may begin with multi-quote token.
-		body := strings.TrimSpace(multiLineQuote.ReplaceAllLiteralString(bodyMatch, ""))
+	// Get quote body: single-line quote may begin with multi-quote token.
+	body := strings.TrimSpace(multiLineQuote.ReplaceAllLiteralString(bodyMatch, ""))
 
-		// Split end into page and supplementary field
-		pageMatchIndices := quotePage.FindStringIndex(endMatch)
+	// Split end into page and supplementary field
+	pageMatchIndices := quotePage.FindStringIndex(endMatch)
 
-		if pageMatchIndices == nil { // Unable to parse page number
-			page = pageUnknown
-		} else {
-			page = pageNumber.FindString(strings.TrimSpace(endMatch))
-		}
-		sourceIdx := len(pf.Sources) - 1
-		if pf.State == InMultiQuote { // This line ends a multi-line quote.
-			quoteIdx := len(pf.Sources[sourceIdx].Quotes) - 1
-			pf.Sources[sourceIdx].Quotes[quoteIdx].Body =
-				append(pf.Sources[sourceIdx].Quotes[quoteIdx].Body, body)
-			pf.Sources[sourceIdx].Quotes[quoteIdx].Page = page
-		} else {
-			pf.Sources[sourceIdx].Quotes =
-				append(pf.Sources[sourceIdx].Quotes, Quote{Body: []string{body}, Page: page})
-		}
-		pf.State = InQuote
+	if pageMatchIndices == nil { // Unable to parse page number
+		page = pageUnknown
+	} else {
+		page = pageNumber.FindString(strings.TrimSpace(endMatch))
 	}
-	return isQuote
+	return body, page
 }
 
-func parseMultiQuote(l string, pf *ParsedFile) bool {
-	l = strings.TrimSpace(l)
-	isMultiQuote := multiLineQuote.MatchString(l)
-	if isMultiQuote {
-		body := strings.TrimSpace(multiLineQuote.ReplaceAllLiteralString(l, ""))
-		sourceIdx := len(pf.Sources) - 1
-		pf.Sources[sourceIdx].Quotes =
-			append(pf.Sources[sourceIdx].Quotes, Quote{Body: []string{body}})
-		pf.State = InMultiQuote
-	}
-	return isMultiQuote
+func beginMultiQuote(b string) string {
+	return strings.TrimSpace(multiLineQuote.ReplaceAllLiteralString(b, ""))
 }
 
-func parseNote(l string, pf *ParsedFile) bool {
-	l = strings.TrimSpace(l)
-	isNote := noteEnd.MatchString(l)
-	if isNote {
-		sourceIdx := len(pf.Sources) - 1
-		quoteIdx := len(pf.Sources[sourceIdx].Quotes) - 1
-		pf.Sources[sourceIdx].Quotes[quoteIdx].Note = l
-	}
-	return isNote
+func getNote(b string) string {
+	return b
 }
 
-func parseURL(l string, pf *ParsedFile) bool {
-	l = strings.TrimSpace(l)
-	isURL := URLLine.MatchString(l)
-	if isURL { // Don't remove http prefix from url.
-		sourceIdx := len(pf.Sources) - 1
-		quoteIdx := len(pf.Sources[sourceIdx].Quotes) - 1
-		pf.Sources[sourceIdx].Quotes[quoteIdx].URL = l
-	}
-	return isURL
+func getQuoteAuthor(b string) string {
+	return strings.TrimSpace(authorLine.ReplaceAllString(b, ""))
 }
 
-func parseAuth(l string, pf *ParsedFile) bool {
-	l = strings.TrimSpace(l)
-	isAuth := authorLine.MatchString(l)
-	if isAuth {
-		body := strings.TrimSpace(authorLine.ReplaceAllString(l, ""))
-		sourceIdx := len(pf.Sources) - 1
-		quoteIdx := len(pf.Sources[sourceIdx].Quotes) - 1
-		pf.Sources[sourceIdx].Quotes[quoteIdx].Auth = body
-	}
-	return isAuth
+func getKeyword(b string) string {
+	return strings.TrimSpace(keywordLine.ReplaceAllString(b, ""))
 }
 
-func parseKeyword(l string, pf *ParsedFile) bool {
-	l = strings.TrimSpace(l)
-	isKeyword := keywordLine.MatchString(l)
-	if isKeyword {
-		body := strings.TrimSpace(keywordLine.ReplaceAllString(l, ""))
-		sourceIdx := len(pf.Sources) - 1
-		quoteIdx := len(pf.Sources[sourceIdx].Quotes) - 1
-		pf.Sources[sourceIdx].Quotes[quoteIdx].Keyword = body
-	}
-	return isKeyword
+func getSupplement(b string) string {
+	return strings.TrimSpace(supplementLine.ReplaceAllString(b, ""))
 }
 
-func parseSupplemental(l string, pf *ParsedFile) bool {
-	l = strings.TrimSpace(l)
-	isSupp := supplementalLine.MatchString(l)
-	if isSupp {
-		body := strings.TrimSpace(supplementalLine.ReplaceAllString(l, ""))
-		sourceIdx := len(pf.Sources) - 1
-		quoteIdx := len(pf.Sources[sourceIdx].Quotes) - 1
-		pf.Sources[sourceIdx].Quotes[quoteIdx].Supp =
-			append(pf.Sources[sourceIdx].Quotes[quoteIdx].Supp, body)
-	}
-	return isSupp
+func getUrl(b string) string {
+	return b // Don't remove http prefix from url.
 }
-
-// func parseQuote(q Line) (Quote, bool) {
-// 	var auth, kw, page, note, url string
-// 	var body, supp []string
-
-// 	// Malformed page numbers are recorded using `pageUnknown`.
-// 	const pageUnknown = "?"
-
-// 	// Predominant Case: tab-delimited quote ends
-// 	endMatchIndices := quoteEnd.FindStringIndex(q.Body)
-
-// 	// Alternate Case: space-delimited quote ends
-// 	if endMatchIndices == nil {
-// 		endMatchIndices = quoteEndAlt.FindStringIndex(q.Body)
-// 	}
-
-// 	isQuote := endMatchIndices != nil
-
-// 	if isQuote {
-// 		// Split quote into body and end
-// 		bodyMatch := q.Body[:endMatchIndices[0]]
-// 		endMatch := q.Body[endMatchIndices[0]:]
-
-// 		// Get quote body
-// 		body = append(body, strings.TrimSpace(bodyMatch))
-// 		// Split end into page and supplementary field
-// 		pageMatchIndices := quotePage.FindStringIndex(endMatch)
-
-// 		if pageMatchIndices == nil {
-// 			// Unable to parse page number
-// 			page = pageUnknown
-// 		} else {
-// 			page = pageNumber.FindString(strings.TrimSpace(endMatch))
-// 		}
-// 	}
-// 	return newQuote(auth, kw, body, page, supp, note, url), isQuote
-// }
