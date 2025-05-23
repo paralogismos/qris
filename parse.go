@@ -260,12 +260,10 @@ func parseCitation(l string, pf *ParsedFile) bool {
 	}
 	tl := sourceBegin.ReplaceAllString(l, "") // trim `sourceBegin` token
 	tl = strings.TrimSpace(tl)
-
 	name := strings.TrimSpace(citationName.FindString(tl))
 	if !nameInitialPeriod.MatchString(name) {
 		name = finalPeriod.ReplaceAllString(name, "")
 	}
-
 	year := citationYearAlt.FindString(tl) // year at end of citation
 	if year == "" {
 		yearMatches := citationYear.FindAllString(tl, -1) // year buried in citation
@@ -275,9 +273,6 @@ func parseCitation(l string, pf *ParsedFile) bool {
 		}
 	}
 	year = citationYearTrim.FindString(year)
-	//body := tl
-	//note := ""
-
 	cit := Citation{
 		Name: name,
 		Year: year,
@@ -287,7 +282,6 @@ func parseCitation(l string, pf *ParsedFile) bool {
 	pf.Sources = append(pf.Sources, src)
 	pf.State = InSource
 	return true
-	//return newCitation(name, year, body, note)
 }
 
 // func parseCitNote(l Line) (string, bool) {
@@ -296,43 +290,34 @@ func parseCitNote(l string, pf *ParsedFile) bool {
 	body := strings.TrimSpace(l)
 	if citNoteEnd.FindStringIndex(body) != nil {
 		isCitNote = true
-		// body = strings.TrimSpace(citNoteEnd.ReplaceAllLiteralString(body, ""))
 		sourceIdx := len(pf.Sources) - 1
 		pf.Sources[sourceIdx].Citation.Note =
 			strings.TrimSpace(citNoteEnd.ReplaceAllLiteralString(body, ""))
 	}
 	return isCitNote
-	// return body, isCitNote
 }
 
 func parseQuote(l string, pf *ParsedFile) bool {
 	// Malformed page numbers are recorded using `pageUnknown`.
 	const pageUnknown = "?"
 	var page string
-
-	// Predominant Case: tab-delimited quote ends
-	endMatchIndices := quoteEnd.FindStringIndex(l)
-
-	// Alternate Case: space-delimited quote ends
-	if endMatchIndices == nil {
+	endMatchIndices := quoteEnd.FindStringIndex(l) // Tab-delimited quote ends.
+	if endMatchIndices == nil {                    // Alternate Case: space-delimited quote ends.
 		endMatchIndices = quoteEndAlt.FindStringIndex(l)
 	}
 	isQuote := endMatchIndices != nil
-
 	if isQuote {
 		// Split quote into body and end
 		bodyMatch := l[:endMatchIndices[0]]
 		endMatch := l[endMatchIndices[0]:]
 
 		// Get quote body: single-line quote may begin with multi-quote token.
-		//body := []string{strings.TrimSpace(multiLineQuote.ReplaceAllLiteralString(bodyMatch, ""))}
 		body := strings.TrimSpace(multiLineQuote.ReplaceAllLiteralString(bodyMatch, ""))
 
 		// Split end into page and supplementary field
 		pageMatchIndices := quotePage.FindStringIndex(endMatch)
 
-		if pageMatchIndices == nil {
-			// Unable to parse page number
+		if pageMatchIndices == nil { // Unable to parse page number
 			page = pageUnknown
 		} else {
 			page = pageNumber.FindString(strings.TrimSpace(endMatch))
@@ -350,7 +335,6 @@ func parseQuote(l string, pf *ParsedFile) bool {
 		pf.State = InQuote
 	}
 	return isQuote
-	// return newQuote(auth, kw, body, page, supp, note, url), isQuote
 }
 
 func parseMultiQuote(l string, pf *ParsedFile) bool {
@@ -359,7 +343,6 @@ func parseMultiQuote(l string, pf *ParsedFile) bool {
 	if isMultiQuote {
 		body := strings.TrimSpace(multiLineQuote.ReplaceAllLiteralString(l, ""))
 		sourceIdx := len(pf.Sources) - 1
-		//quoteIdx := len(pf.Sources[sourceIdx].Quotes) - 1
 		pf.Sources[sourceIdx].Quotes =
 			append(pf.Sources[sourceIdx].Quotes, Quote{Body: []string{body}})
 		pf.State = InMultiQuote
@@ -367,7 +350,6 @@ func parseMultiQuote(l string, pf *ParsedFile) bool {
 	return isMultiQuote
 }
 
-// func parseNote(l Line) (string, bool) {
 func parseNote(l string, pf *ParsedFile) bool {
 	l = strings.TrimSpace(l)
 	isNote := noteEnd.MatchString(l)
@@ -379,12 +361,10 @@ func parseNote(l string, pf *ParsedFile) bool {
 	return isNote
 }
 
-// func parseURL(l Line) (string, bool) {
 func parseURL(l string, pf *ParsedFile) bool {
 	l = strings.TrimSpace(l)
 	isURL := URLLine.MatchString(l)
-	if isURL {
-		// Don't remove http prefix from url.
+	if isURL { // Don't remove http prefix from url.
 		sourceIdx := len(pf.Sources) - 1
 		quoteIdx := len(pf.Sources[sourceIdx].Quotes) - 1
 		pf.Sources[sourceIdx].Quotes[quoteIdx].URL = l
@@ -392,7 +372,6 @@ func parseURL(l string, pf *ParsedFile) bool {
 	return isURL
 }
 
-// func parseAuth(l Line) (string, bool) {
 func parseAuth(l string, pf *ParsedFile) bool {
 	l = strings.TrimSpace(l)
 	isAuth := authorLine.MatchString(l)
@@ -405,7 +384,6 @@ func parseAuth(l string, pf *ParsedFile) bool {
 	return isAuth
 }
 
-// func parseKeyword(l Line) (string, bool) {
 func parseKeyword(l string, pf *ParsedFile) bool {
 	l = strings.TrimSpace(l)
 	isKeyword := keywordLine.MatchString(l)
@@ -418,7 +396,6 @@ func parseKeyword(l string, pf *ParsedFile) bool {
 	return isKeyword
 }
 
-// func parseSupplemental(l Line) (string, bool) {
 func parseSupplemental(l string, pf *ParsedFile) bool {
 	l = strings.TrimSpace(l)
 	isSupp := supplementalLine.MatchString(l)
