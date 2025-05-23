@@ -16,6 +16,11 @@ import (
 
 var isDocx = regexp.MustCompile(`\.docx$`)
 var isTxt = regexp.MustCompile(`\.txt$`)
+var isDiscard = regexp.MustCompile(discardSuffix + `$`)
+
+//var isRis = regexp.MustCompile(`\.ris`)
+//var isParsed = regexp.MustCompile(parsedSuffix + `$`)
+
 var tabTag = regexp.MustCompile(`<w:tab/>`)
 var noBreakHyphen = regexp.MustCompile(`<w:noBreakHyphen/>`)
 var htmlOpen = regexp.MustCompile(`<w:hyperlink [^>]*>`)
@@ -38,12 +43,24 @@ func newLine(lineNo int, body string) Line {
 	}
 }
 
-func IsDocxFile(s string) bool {
+func isDocxFile(s string) bool {
 	return isDocx.MatchString(s)
 }
 
-func IsTxtFile(s string) bool {
+func isTxtFile(s string) bool {
 	return isTxt.MatchString(s)
+}
+
+// `isDiscardFile` returns true if `s` ends with `discardSuffix`.
+func isDiscardFile(s string) bool {
+	return isDiscard.MatchString(s)
+	//	return discardFile.FindStringIndex(f) != nil
+}
+
+// `notInputFile` returns true if `s` should NOT be processed.
+func notInputFile(s string) bool {
+	return !(isDocxFile(s) ||
+		(isTxtFile(s) && !isDiscardFile(s)))
 }
 
 // Takes a `fpath` argument which leads to a .txt file and

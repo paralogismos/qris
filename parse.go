@@ -51,19 +51,6 @@ var quotePage = regexp.MustCompile(
 var pageNumber = regexp.MustCompile(
 	`[\pNiIvVxXlL\?]+[f]{0,2}\p{Zs}*[,\pPd]*\p{Zs}*[\pNiIvVxXlL\?]*[f]{0,2}`)
 
-var parsedFile = regexp.MustCompile(parsedSuffix + `$`)
-var discardFile = regexp.MustCompile(discardSuffix + `$`)
-
-// `isParsedFile` returns true if `f` ends with `parsedSuffix`.
-func isParsedFile(f string) bool {
-	return parsedFile.FindStringIndex(f) != nil
-}
-
-// `isDiscardFile` returns true if `f` ends with `discardSuffix`.
-func isDiscardFile(f string) bool {
-	return discardFile.FindStringIndex(f) != nil
-}
-
 type ParseState int
 
 const (

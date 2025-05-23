@@ -200,7 +200,7 @@ type ParsedFile struct {
 func getLines(fpath string) []Line {
 	rawLines := []Line{}
 	var err error
-	if IsDocxFile(fpath) {
+	if isDocxFile(fpath) {
 		rawLines, err = DocxToLines(fpath)
 	} else { // Assume that `fpath` leads to a .txt file.
 		rawLines, err = TxtToLines(fpath)
@@ -345,15 +345,24 @@ func WriteQuotes(pf ParsedFile, fname string, outOpts OutOpts) {
 // a list of `ParsedFile`s.
 func ProcessQuoteFiles(workPath string, dataList []string) []ParsedFile {
 	var parsedFiles []ParsedFile
-	for _, file := range dataList {
+	processedCount := 0
+	for _, f := range dataList {
 		// Don't process parsed file artifacts.
-		if isParsedFile(file) || isDiscardFile(file) {
+		if notInputFile(f) {
 			continue
 		}
-		fmt.Printf("Processing %s...\n", file) // Display file name as it is processed
-		pFile := filepath.Join(workPath, file) // File path to process
-		//parsedFiles = append(parsedFiles, ParseFile(pFile))
+		fmt.Printf("Processing %s...\n", f) // Display file name as it is processed
+		pFile := filepath.Join(workPath, f) // File path to process
 		parsedFiles = append(parsedFiles, ProcessFile(pFile))
+		processedCount += 1
+	}
+	switch processedCount {
+	case 0:
+		fmt.Println("No files processed")
+	case 1:
+		fmt.Println("Processed 1 file")
+	default:
+		fmt.Printf("Processed %d files\n", processedCount)
 	}
 	return parsedFiles
 }
