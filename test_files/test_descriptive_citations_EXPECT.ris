@@ -20,13 +20,13 @@ T2  - Citation Note: any whitespace may precede any line.
 T1  - Body of another single-line quote attached to the same source.
 SP  - 31
 PB  - Supplementary Note
-CY  - Quote Note –jmr.
+CY  - Quote Note â€“jmr.
 UR  - https://some_url/
 ER  - 
 
 TY  - 
 UR  - test_descriptive_citations
-AB  - Lastname, Firstname, M.I. “Article Title” Publisher Information, (2000)
+AB  - Lastname, Firstname, M.I. â€œArticle Titleâ€ Publisher Information, (2000)
 A1  - Lastname, Firstname, M.I.
 Y1  - 2000
 KW  - keyword ; keyword phrase ; more keywords and keyword phrases
@@ -36,25 +36,25 @@ ER  -
 
 TY  - 
 UR  - test_descriptive_citations
-AB  - Lastname, Firstname, M.I. “Article Title” Publisher Information, (2000)
+AB  - Lastname, Firstname, M.I. â€œArticle Titleâ€ Publisher Information, (2000)
 A1  - Lastname, Firstname, M.I.
 Y1  - 2000
-T1  - A quote page number may include an “ff” suffix.
+T1  - A quote page number may include an â€œffâ€ suffix.
 SP  - 42ff
 ER  - 
 
 TY  - 
 UR  - test_descriptive_citations
-AB  - Lastname, Firstname, M.I. “Article Title” Publisher Information, (2000)
+AB  - Lastname, Firstname, M.I. â€œArticle Titleâ€ Publisher Information, (2000)
 A1  - Lastname, Firstname, M.I.
 Y1  - 2000
-T1  - The “ff” suffix may occur in a page range:
-SP  - 41ff – 42ff
+T1  - The â€œffâ€ suffix may occur in a page range:
+SP  - 41ff â€“ 42ff
 ER  - 
 
 TY  - 
 UR  - test_descriptive_citations
-AB  - Lastname, Firstname, M.I. “Article Title” Publisher Information, (2000)
+AB  - Lastname, Firstname, M.I. â€œArticle Titleâ€ Publisher Information, (2000)
 A1  - Lastname, Firstname, M.I.
 Y1  - 2000
 T1  - Another page number example:
@@ -63,7 +63,7 @@ ER  -
 
 TY  - 
 UR  - test_descriptive_citations
-AB  - Lastname, Firstname, M.I. “Article Title” Publisher Information, (2000)
+AB  - Lastname, Firstname, M.I. â€œArticle Titleâ€ Publisher Information, (2000)
 A1  - Lastname, Firstname, M.I.
 Y1  - 2000
 T1  - Multi-line quote.

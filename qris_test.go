@@ -177,7 +177,7 @@ func TestWriteResults(t *testing.T) {
 
 	volume := false    // no volume information written
 	dateStamp := false // no datestamp information written
-	enc := Ansi        // write ANSI encoded (extended ASCII) output
+	enc := Utf8        // write UTF-8 encoded output
 	t.Chdir(testDir)   //
 	for _, tf := range testFiles {
 		dataList, workPath := GetWorkPath(workDir, batchPath, tf)

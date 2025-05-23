@@ -6,7 +6,7 @@ A1  - Simon, Bennett
 Y1  - 1978
 T1  - Thus the state of psychiatry today: the musicians do not play the same instrument, they could never form a symphony orchestra (who could agree on the conductor?), but there is not complete cacophony.
 SP  - 21
-CY  - first sentence of Chapter 1: ìOn the Babel of Tongues in Contemporary Psychiatryî -jmr
+CY  - first sentence of Chapter 1: ‚ÄúOn the Babel of Tongues in Contemporary Psychiatry‚Äù -jmr
 ER  - 
 
 TY  - 
@@ -15,10 +15,10 @@ AB  - Simon, Bennett {Mind and Madness in Ancient Greece} Ithaca, NY: Cornell Un
 A1  - Michel Foucault
 A2  - in Simon
 Y1  - 1978
-T1  - The science of mental disease, as it would develop in the asylum, would always be only of the order of observation and classification. It would not be a dialogue. It could not be that until psychoanalysis had exorcised this phenomenon of observation Ö and substituted for its silent magic the powers of language.
+T1  - The science of mental disease, as it would develop in the asylum, would always be only of the order of observation and classification. It would not be a dialogue. It could not be that until psychoanalysis had exorcised this phenomenon of observation ‚Ä¶ and substituted for its silent magic the powers of language.
 SP  - 31
 PB  - {Madness and Civilization}
-CY  - epigraph to Chapter 2: ìThe Development of Models of Mental Illnessî ñjmr
+CY  - epigraph to Chapter 2: ‚ÄúThe Development of Models of Mental Illness‚Äù ‚Äìjmr
 UR  - https://plato.stanford.edu/entries/foucault/
 ER  - 
 
@@ -28,7 +28,7 @@ AB  - Dodds, E.R. {The Greeks and the Irrational} University of California Press
 A1  - Maurice Bowra
 A2  - in Dodds
 Y1  - 1951
-T2  - ìAn erudite, readable, and uncommonly interesting bookî according to Scientific American
+T2  - ‚ÄúAn erudite, readable, and uncommonly interesting book‚Äù according to Scientific American
 T1  - this complete anthropomorphic system has of course no relation to real religion or to morality. These gods are a delightful, gay invention of poets.
 SP  - 2
 PB  - {Tradition and Design in the Illiad} p. 222
@@ -39,9 +39,9 @@ UR  - test_example_citations
 AB  - Dodds, E.R. {The Greeks and the Irrational} University of California Press, 1951
 A1  - Dodds, E.R.
 Y1  - 1951
-T2  - ìAn erudite, readable, and uncommonly interesting bookî according to Scientific American
+T2  - ‚ÄúAn erudite, readable, and uncommonly interesting book‚Äù according to Scientific American
 KW  - Sophocles ; tragedy
-T1  - It was above all Sophocles, the last great exponent of the archaic world-view, who expressed the full tragic significance of the old religious themes in their unsoftened, unmoralised formsóthe overwhelming sense of human helplessness in the face of the divine mystery, and of the ate that waits on all human achievementóand who made these thoughts part of the cultural inheritance of Western Man.
+T1  - It was above all Sophocles, the last great exponent of the archaic world-view, who expressed the full tragic significance of the old religious themes in their unsoftened, unmoralised forms‚Äîthe overwhelming sense of human helplessness in the face of the divine mystery, and of the ate that waits on all human achievement‚Äîand who made these thoughts part of the cultural inheritance of Western Man.
 SP  - 49
 ER  - 
 
@@ -51,7 +51,7 @@ AB  - Dodds, E.R. {The Greeks and the Irrational} University of California Press
 A1  - Sophocles
 A2  - in Dodds
 Y1  - 1951
-T2  - ìAn erudite, readable, and uncommonly interesting bookî according to Scientific American
+T2  - ‚ÄúAn erudite, readable, and uncommonly interesting book‚Äù according to Scientific American
 T1  - Blessed is he whose life has not tasted of evil.
 T1  - When God has shaken a house, the winds of madness
 T1  - Lash its breed till the breed is done:
@@ -62,17 +62,17 @@ T1  - Churns the silt black from sea-bottom;
 T1  - And the windy cliffs roar as they take its shock.
 T1  - 
 T1  - Here on the Labdacid house long we watched it piling,
-T1  - Trouble on dead menís trouble: no generation
+T1  - Trouble on dead men‚Äôs trouble: no generation
 T1  - Frees the next from the stroke of God:
 T1  - Deliverance does not come.
 T1  - The final branch of Oedipus
 T1  - Grew in his house, and a lightness hung above it:
-T1  - To-day they reap it with Deathís red sickle,
+T1  - To-day they reap it with Death‚Äôs red sickle,
 T1  - The unwise mouth and the tempter who sits in the brain.
 T1  - 
-T1  - The power of God manís arrogance shall not limit:
+T1  - The power of God man‚Äôs arrogance shall not limit:
 T1  - Sleep who takes all in his net takes not this,
-T1  - Nor the unflagging months of Heavenóageless the Master
+T1  - Nor the unflagging months of Heaven‚Äîageless the Master
 T1  - Holds for ever the shimmering courts of Olympus.
 T1  - For time approaching, and time hereafter,
 T1  - And time forgotten, one rule stands:
@@ -80,11 +80,11 @@ T1  - That greatness never
 T1  - Shall touch the life of man without destruction.
 T1  - 
 T1  - Hope goes fast and far: to many it carries comfort,
-T1  - To many it is but the trick of light-witted desireó
+T1  - To many it is but the trick of light-witted desire‚Äî
 T1  - Blind we walk, till the unseen flame has trapped our footsteps.
-T1  - ìOf a mind that God leads to destruction
-T1  - The sign is thisóthat in the end
-T1  - Its good is evil.î
+T1  - ‚ÄúOf a mind that God leads to destruction
+T1  - The sign is this‚Äîthat in the end
+T1  - Its good is evil.‚Äù
 T1  - Not long shall that mind evade destruction.
 SP  - 49-50
 PB  - {Antigone}
@@ -92,19 +92,19 @@ ER  -
 
 TY  - 
 UR  - test_example_citations
-AB  - Brown, James Robert. ìProofs and pictures.î {British Journal for Philosophy of Science}. 48 (1997): 161-180.
+AB  - Brown, James Robert. ‚ÄúProofs and pictures.‚Äù {British Journal for Philosophy of Science}. 48 (1997): 161-180.
 A1  - Brown, James Robert
 Y1  - 1997
-T1  - [At] this time Iíll call on your imagination; like Shakespeareís Prologue on the imagined battlefield of Agincourt, Iíll urge you to ëWork your thoughts!í
+T1  - [At] this time I‚Äôll call on your imagination; like Shakespeare‚Äôs Prologue on the imagined battlefield of Agincourt, I‚Äôll urge you to ‚ÄòWork your thoughts!‚Äô
 SP  - 164
 ER  - 
 
 TY  - 
 UR  - test_example_citations
-AB  - Brown, J. R. ìProofs and pictures.î {British Journal for Philosophy of Science}. 48 (1997): 161180.
+AB  - Brown, J. R. ‚ÄúProofs and pictures.‚Äù {British Journal for Philosophy of Science}. 48 (1997): 161180.
 A1  - Brown, J. R.
 Y1  - 1997
-T1  - There is a spectrum of ways to understand Bolzanoís achievement. Ö (I) Balzano firmly established a theorem that was not known to be true until his proof. Ö (II) Bolzanoís proof explained the theorem. Ö (III) The theorem confirmed the premises of the proof. Ö The consequence of adopting (III) is highly significant for our view of pictures. We can draw the moral quickly: on this view {pictures are crucial}.
+T1  - There is a spectrum of ways to understand Bolzano‚Äôs achievement. ‚Ä¶ (I) Balzano firmly established a theorem that was not known to be true until his proof. ‚Ä¶ (II) Bolzano‚Äôs proof explained the theorem. ‚Ä¶ (III) The theorem confirmed the premises of the proof. ‚Ä¶ The consequence of adopting (III) is highly significant for our view of pictures. We can draw the moral quickly: on this view {pictures are crucial}.
 SP  - 164, 5
 ER  - 
 
