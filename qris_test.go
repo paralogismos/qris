@@ -10,151 +10,119 @@ import (
 	"testing"
 )
 
-// func TestParseCitation(t *testing.T) {
-// 	ex_citation := newLine(0,
-// 		`Brown, Jason W. "Neuropsychology and the self-concept." `+
-// 			`The Journal of Nervous and Mental Disease. 187 no.3 (1999e): 131-41.`)
-// 	cit := parseCitation(ex_citation)
-// 	want_name := "Brown, Jason W."
-// 	want_year := "1999e"
-// 	want_body := `Brown, Jason W. "Neuropsychology and the self-concept." ` +
-// 		`The Journal of Nervous and Mental Disease. 187 no.3 (1999e): 131-41.`
-// 	if cit.Name != want_name ||
-// 		cit.Year != want_year ||
-// 		cit.Body != want_body {
-// 		t.Fail()
-// 	}
-// }
+func TestGetSource(t *testing.T) {
+	citLine := `Brown, Jason W. "Neuropsychology and the self-concept." ` +
+		`The Journal of Nervous and Mental Disease. 187 no.3 (1999e): 131-41.`
+	src := getSource(citLine)
+	want_name := "Brown, Jason W."
+	want_year := "1999e"
+	want_body := `Brown, Jason W. "Neuropsychology and the self-concept." ` +
+		`The Journal of Nervous and Mental Disease. 187 no.3 (1999e): 131-41.`
+	if src.Citation.Name != want_name ||
+		src.Citation.Year != want_year ||
+		src.Citation.Body != want_body {
+		t.Fail()
+	}
+}
 
-// func TestParseNote(t *testing.T) {
-// 	ex_note := newLine(0, `page numbers are accoring to the pdf made by jmr --jmr `)
-// 	note, isNote := parseNote(ex_note)
-// 	want_note := `page numbers are accoring to the pdf made by jmr --jmr`
-// 	if !isNote || note != want_note {
-// 		t.Fail()
-// 	}
-// }
+func TestGetNote(t *testing.T) {
+	qNoteLine := `page numbers are accoring to the pdf made by jmr --jmr`
+	note := getNote(qNoteLine)
+	want_note := `page numbers are accoring to the pdf made by jmr --jmr`
+	if note != want_note {
+		t.Fail()
+	}
+}
 
-// func TestParseQuote(t *testing.T) {
-// 	type testCase struct {
-// 		input string
-// 		want  Quote
-// 	}
-// 	testCases := []testCase{
-// 		testCase{
-// 			input: "Quote body followed by a single tab.\tp. 1 ",
-// 			want: Quote{
-// 				Body: []string{`Quote body followed by a single tab.`},
-// 				Page: `1`,
-// 			},
-// 		},
-// 		testCase{
-// 			input: "Quote body followed by 3 spaces.   p. 2",
-// 			want: Quote{
-// 				Body: []string{`Quote body followed by 3 spaces.`},
-// 				Page: `2`,
-// 			},
-// 		},
-// 		testCase{
-// 			input: "Quote body followed by 1 space and 1 tab. \tp. 3 ",
-// 			want: Quote{
-// 				Body: []string{`Quote body followed by 1 space and 1 tab.`},
-// 				Page: `3`,
-// 			},
-// 		},
-// 		testCase{
-// 			input: "Quote body followed by page number and extra junk. \tp. 4  EXTRA JUNK HERE  ",
-// 			want: Quote{
-// 				Body: []string{`Quote body followed by page number and extra junk.`},
-// 				Page: `4`,
-// 			},
-// 		},
-// 		testCase{
-// 			input: "Quote body followed by two page numbers.\tpp. 5, 6",
-// 			want: Quote{
-// 				Body: []string{`Quote body followed by two page numbers.`},
-// 				Page: `5, 6`,
-// 			},
-// 		},
-// 		testCase{
-// 			input: "Quote body followed by two page numbers. \t pp. 10,11",
-// 			want: Quote{
-// 				Body: []string{`Quote body followed by two page numbers.`},
-// 				Page: `10,11`,
-// 			},
-// 		},
-// 		testCase{
-// 			input: "Quote body followed by two page numbers or page range. \t\t pp. 100 101",
-// 			want: Quote{
-// 				Body: []string{`Quote body followed by two page numbers or page range.`},
-// 				Page: `100 101`,
-// 			},
-// 		},
-// 		testCase{
-// 			input: "Quote body followed by page range. \t pp. 240-42",
-// 			want: Quote{
-// 				Body: []string{`Quote body followed by page range.`},
-// 				Page: `240-42`,
-// 			},
-// 		},
-// 		testCase{
-// 			input: "Quote body followed by page range. \t pp. 240 - 42",
-// 			want: Quote{
-// 				Body: []string{`Quote body followed by page range.`},
-// 				Page: `240 - 42`,
-// 			},
-// 		},
-// 		testCase{
-// 			input: "Quote body followed by page range. \t pp. 240--42",
-// 			want: Quote{
-// 				Body: []string{`Quote body followed by page range.`},
-// 				Page: `240--42`,
-// 			},
-// 		},
-// 		testCase{
-// 			input: "Quote body followed by p 42. \t p 42",
-// 			want: Quote{
-// 				Body: []string{`Quote body followed by p 42.`},
-// 				Page: `42`,
-// 			},
-// 		},
-// 		testCase{
-// 			input: "Quote body followed by pp 42, 43. \t p 42, 43",
-// 			want: Quote{
-// 				Body: []string{`Quote body followed by pp 42, 43.`},
-// 				Page: `42, 43`,
-// 			},
-// 		},
-// 		testCase{
-// 			input: "Quote body followed by pp 42-43. \t pp  42-43",
-// 			want: Quote{
-// 				Body: []string{`Quote body followed by pp 42-43.`},
-// 				Page: `42-43`,
-// 			},
-// 		},
-// 	}
+func TestGetQuote(t *testing.T) {
+	type testCase struct {
+		input    string
+		wantBody string
+		wantPage string
+	}
+	testCases := []testCase{
+		testCase{
+			input:    "Quote body followed by a single tab.\tp. 1 ",
+			wantBody: `Quote body followed by a single tab.`,
+			wantPage: `1`,
+		},
+		testCase{
+			input:    "Quote body followed by 3 spaces.   p. 2",
+			wantBody: `Quote body followed by 3 spaces.`,
+			wantPage: `2`,
+		},
+		testCase{
+			input:    "Quote body followed by 1 space and 1 tab. \tp. 3 ",
+			wantBody: `Quote body followed by 1 space and 1 tab.`,
+			wantPage: `3`,
+		},
+		testCase{
+			input:    "Quote body followed by page number and extra junk. \tp. 4  EXTRA JUNK HERE  ",
+			wantBody: `Quote body followed by page number and extra junk.`,
+			wantPage: `4`,
+		},
+		testCase{
+			input:    "Quote body followed by two page numbers.\tpp. 5, 6",
+			wantBody: `Quote body followed by two page numbers.`,
+			wantPage: `5, 6`,
+		},
+		testCase{
+			input:    "Quote body followed by two page numbers. \t pp. 10,11",
+			wantBody: `Quote body followed by two page numbers.`,
+			wantPage: `10,11`,
+		},
+		testCase{
+			input:    "Quote body followed by two page numbers or page range. \t\t pp. 100 101",
+			wantBody: `Quote body followed by two page numbers or page range.`,
+			wantPage: `100 101`,
+		},
+		testCase{
+			input:    "Quote body followed by page range. \t pp. 240-42",
+			wantBody: `Quote body followed by page range.`,
+			wantPage: `240-42`,
+		},
+		testCase{
+			input:    "Quote body followed by page range. \t pp. 240 - 42",
+			wantBody: `Quote body followed by page range.`,
+			wantPage: `240 - 42`,
+		},
+		testCase{
+			input:    "Quote body followed by page range. \t pp. 240--42",
+			wantBody: `Quote body followed by page range.`,
+			wantPage: `240--42`,
+		},
+		testCase{
+			input:    "Quote body followed by p 42. \t p 42",
+			wantBody: `Quote body followed by p 42.`,
+			wantPage: `42`,
+		},
+		testCase{
+			input:    "Quote body followed by pp 42, 43. \t p 42, 43",
+			wantBody: `Quote body followed by pp 42, 43.`,
+			wantPage: `42, 43`,
+		},
+		testCase{
+			input:    "Quote body followed by pp 42-43. \t pp  42-43",
+			wantBody: `Quote body followed by pp 42-43.`,
+			wantPage: `42-43`,
+		},
+	}
 
-// 	for n, tc := range testCases {
-// 		q, isQuote := parseQuote(newLine(0, tc.input))
-// 		if !isQuote {
-// 			t.Logf("unable to parse testCases[%d]\n", n)
-// 			t.FailNow()
-// 		}
-// 		want := tc.want
-// 		if !slices.Equal(q.Body, want.Body) {
-// 			t.Errorf("failure in Body of <exTestLines[%d]>\n"+
-// 				"Body = %s\n\n"+
-// 				" want: %s",
-// 				n, q.Body, want.Body)
-// 		}
-// 		q.Page = strings.TrimSpace(q.Page)
-// 		if q.Page != want.Page {
-// 			t.Errorf("failure in Page of <exTestLines[%d]>\n"+
-// 				"Page = %s\n want: %s\n",
-// 				n, q.Page, want.Page)
-// 		}
-// 	}
-// }
+	for n, tc := range testCases {
+		b, p := getQuote(tc.input)
+		if b != tc.wantBody {
+			t.Errorf("failure in Body of <exTestLines[%d]>\n"+
+				"Body = %s\n\n"+
+				" want: %s",
+				n, b, tc.wantBody)
+		}
+		if p != tc.wantPage {
+			t.Errorf("failure in Page of <exTestLines[%d]>\n"+
+				"Page = %s\n want: %s\n",
+				n, p, tc.wantPage)
+		}
+	}
+}
 
 // I may make some changes here:
 // - handle multiple single test files

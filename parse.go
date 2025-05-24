@@ -277,7 +277,7 @@ func getQuote(b string) (string, string) {
 	if pageMatchIndices == nil { // Unable to parse page number
 		page = pageUnknown
 	} else {
-		page = pageNumber.FindString(strings.TrimSpace(endMatch))
+		page = strings.TrimSpace(pageNumber.FindString(strings.TrimSpace(endMatch)))
 	}
 	return body, page
 }
