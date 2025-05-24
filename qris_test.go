@@ -186,6 +186,7 @@ func TestWriteResults(t *testing.T) {
 		"test_descriptive_citations.docx",
 		"test_example_citations.docx",
 		"bib22e_FUNKY.docx",
+		"24Brown1997_Qu.docx",
 	}
 
 	volume := false    // no volume information written
