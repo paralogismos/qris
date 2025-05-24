@@ -11,17 +11,64 @@ import (
 )
 
 func TestGetSource(t *testing.T) {
-	citLine := `Brown, Jason W. "Neuropsychology and the self-concept." ` +
-		`The Journal of Nervous and Mental Disease. 187 no.3 (1999e): 131-41.`
-	src := getSource(citLine)
-	want_name := "Brown, Jason W."
-	want_year := "1999e"
-	want_body := `Brown, Jason W. "Neuropsychology and the self-concept." ` +
-		`The Journal of Nervous and Mental Disease. 187 no.3 (1999e): 131-41.`
-	if src.Citation.Name != want_name ||
-		src.Citation.Year != want_year ||
-		src.Citation.Body != want_body {
-		t.Fail()
+	testCases := []struct {
+		input    string
+		wantName string
+		wantYear string
+		wantBody string
+	}{
+		{
+			input: `Brown, Jason W. "Neuropsychology and the self-concept." ` +
+				`The Journal of Nervous and Mental Disease. 187 no.3 (1999e): 131-41.`,
+			wantName: "Brown, Jason W.",
+			wantYear: "1999e",
+			wantBody: `Brown, Jason W. "Neuropsychology and the self-concept." ` +
+				`The Journal of Nervous and Mental Disease. 187 no.3 (1999e): 131-41.`,
+		},
+		{
+			input: `Varela, Francisco J.` +
+				` “Resonant cell assemblies: A new approach to cognitive functions and neuronal synchrony.”` +
+				` {Biological Research}. 28 no.1 (1995): 81-95.`,
+			wantName: "Varela, Francisco J.",
+			wantYear: "1995",
+			wantBody: `Varela, Francisco J.` +
+				` “Resonant cell assemblies: A new approach to cognitive functions and neuronal synchrony.”` +
+				` {Biological Research}. 28 no.1 (1995): 81-95.`,
+		},
+		{
+			input: `Bermúdez, José Luis.` +
+				` {Thinking without Words}. New York, NY: Oxford University Press, 2003.`,
+			wantName: `Bermúdez, José Luis`,
+			wantYear: `2003`,
+			wantBody: `Bermúdez, José Luis. {Thinking without Words}. New York, NY: Oxford University Press, 2003.`,
+		},
+		{
+			input:    `Gurwitsch, Aron. {Field of Consciousness}. Pittsburgh: Duquesne University Press, 1964 (1957).`,
+			wantName: `Gurwitsch, Aron`,
+			wantYear: `1957`,
+			wantBody: `Gurwitsch, Aron. {Field of Consciousness}. Pittsburgh: Duquesne University Press, 1964 (1957).`,
+		},
+	}
+	for n, tc := range testCases {
+		src := getSource(tc.input)
+		if src.Citation.Name != tc.wantName {
+			t.Errorf("failure in Name of [%d]\n"+
+				"Name = %s\n"+
+				"want: %s",
+				n, src.Citation.Name, tc.wantName)
+		}
+		if src.Citation.Year != tc.wantYear {
+			t.Errorf("failure in Year of [%d]\n"+
+				"Year = %s\n"+
+				"want: %s",
+				n, src.Citation.Year, tc.wantYear)
+		}
+		if src.Citation.Body != tc.wantBody {
+			t.Errorf("failure in Body of [%d]\n"+
+				"Body = %s\n"+
+				"want: %s",
+				n, src.Citation.Body, tc.wantBody)
+		}
 	}
 }
 
