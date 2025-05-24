@@ -35,79 +35,77 @@ func TestGetNote(t *testing.T) {
 }
 
 func TestGetQuote(t *testing.T) {
-	type testCase struct {
+	testCases := []struct {
 		input    string
 		wantBody string
 		wantPage string
-	}
-	testCases := []testCase{
-		testCase{
+	}{
+		{
 			input:    "Quote body followed by a single tab.\tp. 1 ",
 			wantBody: `Quote body followed by a single tab.`,
 			wantPage: `1`,
 		},
-		testCase{
+		{
 			input:    "Quote body followed by 3 spaces.   p. 2",
 			wantBody: `Quote body followed by 3 spaces.`,
 			wantPage: `2`,
 		},
-		testCase{
+		{
 			input:    "Quote body followed by 1 space and 1 tab. \tp. 3 ",
 			wantBody: `Quote body followed by 1 space and 1 tab.`,
 			wantPage: `3`,
 		},
-		testCase{
+		{
 			input:    "Quote body followed by page number and extra junk. \tp. 4  EXTRA JUNK HERE  ",
 			wantBody: `Quote body followed by page number and extra junk.`,
 			wantPage: `4`,
 		},
-		testCase{
+		{
 			input:    "Quote body followed by two page numbers.\tpp. 5, 6",
 			wantBody: `Quote body followed by two page numbers.`,
 			wantPage: `5, 6`,
 		},
-		testCase{
+		{
 			input:    "Quote body followed by two page numbers. \t pp. 10,11",
 			wantBody: `Quote body followed by two page numbers.`,
 			wantPage: `10,11`,
 		},
-		testCase{
+		{
 			input:    "Quote body followed by two page numbers or page range. \t\t pp. 100 101",
 			wantBody: `Quote body followed by two page numbers or page range.`,
 			wantPage: `100 101`,
 		},
-		testCase{
+		{
 			input:    "Quote body followed by page range. \t pp. 240-42",
 			wantBody: `Quote body followed by page range.`,
 			wantPage: `240-42`,
 		},
-		testCase{
+		{
 			input:    "Quote body followed by page range. \t pp. 240 - 42",
 			wantBody: `Quote body followed by page range.`,
 			wantPage: `240 - 42`,
 		},
-		testCase{
+		{
 			input:    "Quote body followed by page range. \t pp. 240--42",
 			wantBody: `Quote body followed by page range.`,
 			wantPage: `240--42`,
 		},
-		testCase{
+		{
 			input:    "Quote body followed by p 42. \t p 42",
 			wantBody: `Quote body followed by p 42.`,
 			wantPage: `42`,
 		},
-		testCase{
+		{
 			input:    "Quote body followed by pp 42, 43. \t p 42, 43",
 			wantBody: `Quote body followed by pp 42, 43.`,
 			wantPage: `42, 43`,
 		},
-		testCase{
+		{
 			input:    "Quote body followed by pp 42-43. \t pp  42-43",
 			wantBody: `Quote body followed by pp 42-43.`,
 			wantPage: `42-43`,
 		},
 	}
-
 	for n, tc := range testCases {
 		b, p := getQuote(tc.input)
 		if b != tc.wantBody {
