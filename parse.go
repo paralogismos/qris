@@ -121,6 +121,9 @@ func ProcessFile(fpath string) ParsedFile {
 		if lineType == CommentLn || lineType == BlankLn { // Skipped lines.
 			continue
 		}
+		if lineType == UnknownLn && pf.State != InMultiQuote {
+			pf.Discards = append(pf.Discards, l)
+		}
 		switch pf.State {
 		case Start:
 			if lineType == CitationLn {
@@ -203,10 +206,8 @@ func ProcessFile(fpath string) ParsedFile {
 			if lineType == UrlLn {
 				pf.Sources[curSrc].Quotes[curQte].Url = getUrl(body)
 			}
-		default:
-			if lineType == UnknownLn {
-				pf.Discards = append(pf.Discards, l)
-			}
+		default: // Unrecognized state: discard line for review.
+			pf.Discards = append(pf.Discards, l)
 		}
 	}
 	pf.State = Finished
