@@ -17,6 +17,21 @@ func TestDetermineLineType(t *testing.T) {
 		wantType LineType
 	}{
 		{
+			input:    `This line should be discarded.`,
+			ps:       InSource,
+			wantType: UnknownLn,
+		},
+		{
+			input:    `# This line is a comment before any sources.`,
+			ps:       Start,
+			wantType: CommentLn,
+		},
+		{
+			input:    `# This line is a comment in a source.`,
+			ps:       InSource,
+			wantType: CommentLn,
+		},
+		{
 			input: `Brown, Jason W. "Neuropsychology and the self-concept." ` +
 				`The Journal of Nervous and Mental Disease. 187 no.3 (1999e): 131-41.`,
 			ps:       Start,
