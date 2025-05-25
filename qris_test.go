@@ -10,6 +10,30 @@ import (
 	"testing"
 )
 
+func TestDetermineLineType(t *testing.T) {
+	testCases := []struct {
+		input    string
+		ps       ParseState
+		wantType LineType
+	}{
+		{
+			input: `Brown, Jason W. "Neuropsychology and the self-concept." ` +
+				`The Journal of Nervous and Mental Disease. 187 no.3 (1999e): 131-41.`,
+			ps:       Start,
+			wantType: CitationLn,
+		},
+	}
+	for n, tc := range testCases {
+		lt := determineLineType(tc.input, tc.ps)
+		if lt != tc.wantType {
+			t.Errorf("failure in [%d]\n"+
+				"found: %v\n"+
+				"want: %v",
+				n, lt, tc.wantType)
+		}
+	}
+}
+
 func TestGetSource(t *testing.T) {
 	testCases := []struct {
 		input    string
