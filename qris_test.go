@@ -22,12 +22,12 @@ func TestDetermineLineType(t *testing.T) {
 			wantType: UnknownLn,
 		},
 		{
-			input:    `# This line is a comment before any sources.`,
+			input:    `## This line is a comment before any sources.`,
 			ps:       Start,
 			wantType: CommentLn,
 		},
 		{
-			input:    `# This line is a comment in a source.`,
+			input:    `## This line is a comment in a source.`,
 			ps:       InSource,
 			wantType: CommentLn,
 		},

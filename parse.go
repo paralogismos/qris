@@ -11,7 +11,7 @@ import (
 // Regular Expressions
 var leadingSpace = regexp.MustCompile(`^[\p{Zs}\t]*`)
 var blankLine = regexp.MustCompile(`^[\p{Zs}\t]*$`)
-var commentLine = regexp.MustCompile(`^#`)
+var commentLine = regexp.MustCompile(`^##`)
 
 // var trailingSpace = regexp.MustCompile(`[\p{Zs}\t\n]*$`)
 // var sourceBegin = regexp.MustCompile(`^[\p{Zs}\t]*<\$>`)
