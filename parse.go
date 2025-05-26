@@ -78,6 +78,37 @@ const (
 	UrlLn
 )
 
+func (lt LineType) String() string {
+	var s string
+	switch lt {
+	case UnknownLn:
+		s = "UnknownLn"
+	case BlankLn:
+		s = "BlankLn"
+	case CommentLn:
+		s = "CommentLn"
+	case CitationLn:
+		s = "CitationLn"
+	case CitationNoteLn:
+		s = "CitationNoteLn"
+	case QuoteLn:
+		s = "QuoteLn"
+	case MultiQuoteLn:
+		s = "MultiQuoteLn"
+	case QuoteNoteLn:
+		s = "QuoteNoteLn"
+	case QuoteAuthorLn:
+		s = "QuoteAuthorLn"
+	case KeywordLn:
+		s = "KeywordLn"
+	case SupplementLn:
+		s = "SupplementLn"
+	case UrlLn:
+		s = "UrlLn"
+	}
+	return s
+}
+
 func determineLineType(body string, ps ParseState) LineType {
 	switch {
 	case blankLine.MatchString(body) && ps != InMultiQuote:
