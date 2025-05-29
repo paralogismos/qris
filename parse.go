@@ -12,6 +12,7 @@ import (
 var leadingSpace = regexp.MustCompile(`^[\p{Zs}\t]*`)
 var blankLine = regexp.MustCompile(`^[\p{Zs}\t]*$`)
 var commentLine = regexp.MustCompile(`^##`)
+var discardLine = regexp.MustCompile(`^__`)
 
 // var trailingSpace = regexp.MustCompile(`[\p{Zs}\t\n]*$`)
 // var sourceBegin = regexp.MustCompile(`^[\p{Zs}\t]*<\$>`)
@@ -65,6 +66,7 @@ type LineType int
 
 const (
 	UnknownLn LineType = iota
+	DiscardLn
 	BlankLn
 	CommentLn
 	CitationLn
@@ -83,6 +85,8 @@ func (lt LineType) String() string {
 	switch lt {
 	case UnknownLn:
 		s = "UnknownLn"
+	case DiscardLn:
+		s = "DiscardLn"
 	case BlankLn:
 		s = "BlankLn"
 	case CommentLn:
@@ -115,6 +119,8 @@ func determineLineType(body string, ps ParseState) LineType {
 		return BlankLn
 	case commentLine.MatchString(body):
 		return CommentLn
+	case discardLine.MatchString(body):
+		return DiscardLn
 	case sourceBegin.MatchString(body) || ps == Start:
 		return CitationLn
 	case citNoteEnd.FindStringIndex(body) != nil:
@@ -152,7 +158,8 @@ func ProcessFile(fpath string) ParsedFile {
 		if lineType == CommentLn || lineType == BlankLn { // Skipped lines.
 			continue
 		}
-		if lineType == UnknownLn && pf.State != InMultiQuote {
+		if lineType == DiscardLn ||
+			(lineType == UnknownLn && pf.State != InMultiQuote) {
 			pf.Discards = append(pf.Discards, l)
 		}
 		switch pf.State {
