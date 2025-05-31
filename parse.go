@@ -12,14 +12,19 @@ import (
 var blankLine = regexp.MustCompile(`^[\p{Zs}\t]*$`)
 var commentLine = regexp.MustCompile(`^##`)
 var discardLine = regexp.MustCompile(`^__`)
-var sourceBegin = regexp.MustCompile(`^<\$>`)
-var citNoteEnd = regexp.MustCompile(`-nb\.?$`)
-var multiLineQuote = regexp.MustCompile(`^///`)
-var noteEnd = regexp.MustCompile(`jmr\.?$`)
-var authorLine = regexp.MustCompile(`^>>>`)
+var citationLine = regexp.MustCompile(`^<\$>`)
+var citationNoteLine = regexp.MustCompile(`-nb\.?$`)
+var mlqLine = regexp.MustCompile(`^///`)
+var quoteNoteLine = regexp.MustCompile(`jmr\.?$`)
+var quoteAuthorLine = regexp.MustCompile(`^>>>`)
 var supplementLine = regexp.MustCompile(`%%$`)
 var keywordLine = regexp.MustCompile(`^\^[sS]:`)
-var UrlLine = regexp.MustCompile(`^https?://`)
+var urlLine = regexp.MustCompile(`^https?://`)
+
+// A quote end is either tab-delimited pp., or space-delimited pp. with
+// at least three spaces as the delimiter.
+var quoteLine = regexp.MustCompile(`\t\p{Zs}*[pP]{1,2}\.?\p{Zs}+[\pNiIvVxXlL\?]*.*`)
+var quoteLineAlt = regexp.MustCompile(`\p{Zs}{3,}?[pP]{1,2}\.?\p{Zs}+[\pNiIvVxXlL\?]*.*`)
 
 // Citation Line Information
 var citationName = regexp.MustCompile(`^[^“"{]*`)
@@ -31,10 +36,6 @@ var citationYearAlt = regexp.MustCompile(`[^\pN]\pN{4}\pL?[\pP]?$`)
 var citationYearTrim = regexp.MustCompile(`\pN{4}\pL?`)
 
 // Quote Line Information
-// A quote end is either tab-delimited pp., or space-delimited pp. with
-// at least three spaces as the delimiter.
-var quoteEnd = regexp.MustCompile(`\t\p{Zs}*[pP]{1,2}\.?\p{Zs}+[\pNiIvVxXlL\?]*.*`)
-var quoteEndAlt = regexp.MustCompile(`\p{Zs}{3,}?[pP]{1,2}\.?\p{Zs}+[\pNiIvVxXlL\?]*.*`)
 var quotePage = regexp.MustCompile(
 	`[pP]{1,2}\.?\p{Zs}*[\pNiIvVxXlL\?]+[f]{0,2}\p{Zs}*[,\pPd]*\p{Zs}*[\pNiIvVxXlL\?]*[f]{0,2}`)
 var pageNumber = regexp.MustCompile(
@@ -109,24 +110,24 @@ func determineLineType(body string, ps ParseState) LineType {
 		return CommentLn
 	case discardLine.MatchString(body):
 		return DiscardLn
-	case sourceBegin.MatchString(body) || ps == Start:
+	case citationLine.MatchString(body) || ps == Start:
 		return CitationLn
-	case citNoteEnd.FindStringIndex(body) != nil:
+	case citationNoteLine.FindStringIndex(body) != nil:
 		return CitationNoteLn
-	case quoteEnd.FindStringIndex(body) != nil ||
-		quoteEndAlt.FindStringIndex(body) != nil:
+	case quoteLine.FindStringIndex(body) != nil ||
+		quoteLineAlt.FindStringIndex(body) != nil:
 		return QuoteLn
-	case multiLineQuote.MatchString(body):
+	case mlqLine.MatchString(body):
 		return MultiQuoteLn
-	case noteEnd.MatchString(body):
+	case quoteNoteLine.MatchString(body):
 		return QuoteNoteLn
-	case authorLine.MatchString(body):
+	case quoteAuthorLine.MatchString(body):
 		return QuoteAuthorLn
 	case keywordLine.MatchString(body):
 		return KeywordLn
 	case supplementLine.MatchString(body):
 		return SupplementLn
-	case UrlLine.MatchString(body):
+	case urlLine.MatchString(body):
 		return UrlLn
 	default:
 		return UnknownLn
@@ -255,7 +256,7 @@ func isSkipLine(l Line, pf ParsedFile) bool {
 }
 
 func getSource(b string) Source {
-	tb := sourceBegin.ReplaceAllString(b, "") // trim `sourceBegin` token
+	tb := citationLine.ReplaceAllString(b, "") // trim `citationLine` token
 	tb = strings.TrimSpace(tb)
 	name := strings.TrimSpace(citationName.FindString(tb))
 	if !nameInitialPeriod.MatchString(name) {
@@ -280,23 +281,23 @@ func getSource(b string) Source {
 }
 
 func getCitationNote(b string) string {
-	return strings.TrimSpace(citNoteEnd.ReplaceAllLiteralString(b, ""))
+	return strings.TrimSpace(citationNoteLine.ReplaceAllLiteralString(b, ""))
 }
 
 func getQuote(b string) (string, string) {
 	// Malformed page numbers are recorded using `pageUnknown`.
 	const pageUnknown = "?"
 	var page string
-	endMatchIndices := quoteEnd.FindStringIndex(b) // Tab-delimited quote ends.
-	if endMatchIndices == nil {                    // Alternate Case: space-delimited quote ends.
-		endMatchIndices = quoteEndAlt.FindStringIndex(b)
+	endMatchIndices := quoteLine.FindStringIndex(b) // Tab-delimited quote ends.
+	if endMatchIndices == nil {                     // Alternate Case: space-delimited quote ends.
+		endMatchIndices = quoteLineAlt.FindStringIndex(b)
 	}
 	// Split quote into body and end
 	bodyMatch := b[:endMatchIndices[0]]
 	endMatch := b[endMatchIndices[0]:]
 
 	// Get quote body: single-line quote may begin with multi-quote token.
-	body := strings.TrimSpace(multiLineQuote.ReplaceAllLiteralString(bodyMatch, ""))
+	body := strings.TrimSpace(mlqLine.ReplaceAllLiteralString(bodyMatch, ""))
 
 	// Split end into page and supplementary field
 	pageMatchIndices := quotePage.FindStringIndex(endMatch)
@@ -310,7 +311,7 @@ func getQuote(b string) (string, string) {
 }
 
 func beginMultiQuote(b string) string {
-	return strings.TrimSpace(multiLineQuote.ReplaceAllLiteralString(b, ""))
+	return strings.TrimSpace(mlqLine.ReplaceAllLiteralString(b, ""))
 }
 
 func getNote(b string) string {
@@ -318,7 +319,7 @@ func getNote(b string) string {
 }
 
 func getQuoteAuthor(b string) string {
-	return strings.TrimSpace(authorLine.ReplaceAllString(b, ""))
+	return strings.TrimSpace(quoteAuthorLine.ReplaceAllString(b, ""))
 }
 
 func getKeyword(b string) string {
