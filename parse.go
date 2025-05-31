@@ -9,20 +9,16 @@ import (
 )
 
 // Regular Expressions
-var leadingSpace = regexp.MustCompile(`^[\p{Zs}\t]*`)
 var blankLine = regexp.MustCompile(`^[\p{Zs}\t]*$`)
 var commentLine = regexp.MustCompile(`^##`)
 var discardLine = regexp.MustCompile(`^__`)
 
-// var trailingSpace = regexp.MustCompile(`[\p{Zs}\t\n]*$`)
-// var sourceBegin = regexp.MustCompile(`^[\p{Zs}\t]*<\$>`)
 var sourceBegin = regexp.MustCompile(`^<\$>`)
 
 var authorLine = regexp.MustCompile(`^>>>`)
 var keywordLine = regexp.MustCompile(`^\^[sS]:`)
 var supplementLine = regexp.MustCompile(`%%$`)
 
-// var UrlLine = regexp.MustCompile(`^[\p{Zs}\t]*https?://`)
 var UrlLine = regexp.MustCompile(`^https?://`)
 
 var citationName = regexp.MustCompile(`^[^“"{]*`)
@@ -34,12 +30,9 @@ var citationYear = regexp.MustCompile(`[^\pN]\pN{4}\pL?[^\pN]`)
 var citationYearAlt = regexp.MustCompile(`[^\pN]\pN{4}\pL?[\pP]?$`)
 var citationYearTrim = regexp.MustCompile(`\pN{4}\pL?`)
 
-//var citationYear = regexp.MustCompile(`\pN{4}\pL*`)
-
 var citNoteEnd = regexp.MustCompile(`-nb\.?$`)
 var noteEnd = regexp.MustCompile(`jmr\.?$`)
 
-// var multiLineQuote = regexp.MustCompile(`^[\p{Zs}\t]*///`)
 var multiLineQuote = regexp.MustCompile(`^///`)
 
 // A quote end is either tab-delimited pp., or space-delimited pp. with
