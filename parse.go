@@ -8,38 +8,33 @@ import (
 	"strings"
 )
 
-// Regular Expressions
+// Markup Tokens
 var blankLine = regexp.MustCompile(`^[\p{Zs}\t]*$`)
 var commentLine = regexp.MustCompile(`^##`)
 var discardLine = regexp.MustCompile(`^__`)
-
 var sourceBegin = regexp.MustCompile(`^<\$>`)
-
+var citNoteEnd = regexp.MustCompile(`-nb\.?$`)
+var multiLineQuote = regexp.MustCompile(`^///`)
+var noteEnd = regexp.MustCompile(`jmr\.?$`)
 var authorLine = regexp.MustCompile(`^>>>`)
-var keywordLine = regexp.MustCompile(`^\^[sS]:`)
 var supplementLine = regexp.MustCompile(`%%$`)
-
+var keywordLine = regexp.MustCompile(`^\^[sS]:`)
 var UrlLine = regexp.MustCompile(`^https?://`)
 
+// Citation Line Information
 var citationName = regexp.MustCompile(`^[^“"{]*`)
 var finalPeriod = regexp.MustCompile(`\.$`)
 var nameInitialPeriod = regexp.MustCompile(`[\p{Zs}.]{1}[\pL]{1}\.$`)
 var citationFamilyName = regexp.MustCompile(`^[^,]*`)
-
 var citationYear = regexp.MustCompile(`[^\pN]\pN{4}\pL?[^\pN]`)
 var citationYearAlt = regexp.MustCompile(`[^\pN]\pN{4}\pL?[\pP]?$`)
 var citationYearTrim = regexp.MustCompile(`\pN{4}\pL?`)
 
-var citNoteEnd = regexp.MustCompile(`-nb\.?$`)
-var noteEnd = regexp.MustCompile(`jmr\.?$`)
-
-var multiLineQuote = regexp.MustCompile(`^///`)
-
+// Quote Line Information
 // A quote end is either tab-delimited pp., or space-delimited pp. with
 // at least three spaces as the delimiter.
 var quoteEnd = regexp.MustCompile(`\t\p{Zs}*[pP]{1,2}\.?\p{Zs}+[\pNiIvVxXlL\?]*.*`)
 var quoteEndAlt = regexp.MustCompile(`\p{Zs}{3,}?[pP]{1,2}\.?\p{Zs}+[\pNiIvVxXlL\?]*.*`)
-
 var quotePage = regexp.MustCompile(
 	`[pP]{1,2}\.?\p{Zs}*[\pNiIvVxXlL\?]+[f]{0,2}\p{Zs}*[,\pPd]*\p{Zs}*[\pNiIvVxXlL\?]*[f]{0,2}`)
 var pageNumber = regexp.MustCompile(
