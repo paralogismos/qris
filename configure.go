@@ -17,6 +17,7 @@ const parsedSuffix = "_PARSED.ris"
 const discardSuffix = "_DISCARD.txt"
 const configDir = "qris"
 const configFile = "qris.conf"
+const keywordDelimiter = " / "
 
 // Set platform-specific line ending.
 var LineEnding string = PlatformLineEnding()

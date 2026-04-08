@@ -322,7 +322,7 @@ func WriteQuotes(pf ParsedFile, fname string, outOpts OutOpts) {
 				writeKeyword = citKeyword
 			}
 			if writeKeyword != "" && q.Keyword != "" {  // Neither keyword is empty.
-				writeKeyword = writeKeyword + " ; " + q.Keyword
+				writeKeyword = writeKeyword + keywordDelimiter + q.Keyword
 			} else {
 				writeKeyword = writeKeyword + q.Keyword   // At least one keyword is empty.
 			}
