@@ -315,11 +315,21 @@ func WriteQuotes(pf ParsedFile, fname string, outOpts OutOpts) {
 			if citNote != "" {
 				writeFieldToFile(file, "T2", citNote, enc)
 			}
-			writeKeyword := citKeyword + q.Keyword
-			if writeKeyword != "" {
-				writeKeyword = citKeyword + " ; " + q.Keyword
-				writeFieldToFile(file, "KW", q.Keyword, enc)
+
+			// Combine citation source and quote keywords.
+			writeKeyword := ""
+			if citKeyword != "" {
+				writeKeyword = citKeyword
 			}
+			if writeKeyword != "" && q.Keyword != "" {  // Neither keyword is empty.
+				writeKeyword = writeKeyword + " ; " + q.Keyword
+			} else {
+				writeKeyword = writeKeyword + q.Keyword   // At least one keyword is empty.
+			}
+			if writeKeyword != "" {
+				writeFieldToFile(file, "KW", writeKeyword, enc)
+			}
+
 			if q.Body != nil {
 				for _, line := range q.Body {
 					writeFieldToFile(file, "T1", line, enc)

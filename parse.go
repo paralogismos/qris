@@ -165,6 +165,10 @@ func ProcessFile(fpath string) ParsedFile {
 				pf.Sources[curSrc].Citation.Note = getCitationNote(body)
 				break
 			}
+			if lineType == KeywordLn {
+				pf.Sources[curSrc].Keyword = getKeyword(body)
+				break
+			}
 			if lineType == QuoteLn {
 				b, p := getQuote(body)
 				pf.Sources[curSrc].Quotes =
