@@ -178,7 +178,8 @@ type Quote struct {
 
 // A file may include multiple sources.
 type Source struct {
-	Citation Citation
+	Citation Citation  // The citation is associated with all quotes.
+	Keyword string  // A global keyword which is associated with all quotes.
 	Quotes   []Quote
 }
 
@@ -285,6 +286,7 @@ func WriteQuotes(pf ParsedFile, fname string, outOpts OutOpts) {
 		citName := s.Citation.Name
 		citYear := s.Citation.Year
 		citNote := s.Citation.Note
+		citKeyword := s.Keyword
 
 		for _, q := range s.Quotes { // loop over quotes of each source
 			writeFieldToFile(file, "TY", "", enc)
@@ -313,7 +315,9 @@ func WriteQuotes(pf ParsedFile, fname string, outOpts OutOpts) {
 			if citNote != "" {
 				writeFieldToFile(file, "T2", citNote, enc)
 			}
-			if q.Keyword != "" {
+			writeKeyword := citKeyword + q.Keyword
+			if writeKeyword != "" {
+				writeKeyword = citKeyword + " ; " + q.Keyword
 				writeFieldToFile(file, "KW", q.Keyword, enc)
 			}
 			if q.Body != nil {
