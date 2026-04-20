@@ -78,5 +78,50 @@ func utf8ToAnsi() map[rune]string {
 		'ý': "\xFD", 'þ': "\xFE", 'ÿ': "\xFF",
 		0x00A0: "\xA0", // NBSP : non-breaking space
 		0x00AD: "\xAD", // SHY : soft hyphen
+
+		// Ligature code points.
+		// https://en.wikipedia.org/wiki/Ligature_(writing)#Ligatures_in_Unicode_(Latin_alphabets)
+		0xA732: "AA", 0xA733: "aa",
+		0xA734: "AO", 0xA735: "ao",
+		0xA736: "AU", 0xA737: "au",
+		0xA738: "AV", 0xA739: "av",
+		0xA73A: "AV", 0xA73B: "av",
+		0xA73C: "AY", 0xA73D: "ay",
+
+		0x1F670: "et",
+
+		0xA76A: "Et", 0xA76B: "et",
+		0xFB00: "ff", 0xFB01: "fi",
+		0xFB02: "fl", 0xFB03: "ffi",
+		0xFB04: "ffl",
+
+		0x1D1A6: "HT", // Superscript HT ligature
+
+		0x01F6: "Hv", 0x0195: "hv",
+		0xA76C: "Is", 0xA76D: "is",
+		0x2114: "lb",
+		0x1EFA: "LL", 0x1EFB: "ll",
+
+		// These two code points are handled above, mapping them
+		// to 0x008C and 0x009C, respectively. This may not be the
+		// best mapping: perhaps change to the mapping below later.
+		// 0x0152: "OE",	0x0153: "oe",
+
+		0xA74E: "OO", 0xA74F: "oo",
+		0xAB62: "ce",               // 0xAB62 should be: 'ɔe'
+		0x1E9E: "SS",               // Lowercase eszett is already in ANSI
+		0xFB06: "st", 0xFB05: "st", // 0xFB05 should be: 'ſt'
+
+		0x1D1A7: "NT", // Superscript NT ligature
+
+		0xA728: "TZ", 0xA729: "tz",
+		0x1D6B: "ue", 0xAB63: "uo",
+
+		0xA760: "VY", 0xA761: "vy",
+		0xA7D6: "SS", 0xA7D7: "ss", // Middle Scots S and s
+
+		0xA7D4: "WW", 0xA7D5: "ww", // Old English double wynn
+		0xA7D2: "\xDE\xDE", 0xA7D3: "\xFE\xFE", // Old English double thorn
+
 	}
 }
